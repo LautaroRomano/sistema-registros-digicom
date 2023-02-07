@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Flex, Text, Select, Button, Checkbox } from "@chakra-ui/react";
 import styles from "../styles/Table.module.css";
 import axios from "axios";
+import FormAddService from "./FormAddService";
 
 const TIPOS_SERVICIOS = { 0: "PREVENTIVO", 1: "CORRECTIVO" };
 const TIPOS_EQUIPOS = { 0: "TELGECS", 1: "SECCIONADOR", 2: "RECONECTADOR" };
@@ -13,110 +14,121 @@ const ViewServicios = (props) => {
     tipoEquipo: -1,
   });
   const [rowSelected, setRowSelected] = useState();
+  const [newService, setNewService] = useState(false);
 
   useEffect(() => {
     axios.get("/api/servicios").then(({ data }) => setServiciosList(data));
   }, []);
 
   return (
-    <Flex
-      w={"100%"}
-      alignItems={"center"}
-      flexDir="column"
-      overflowY={"scroll"}
-    >
+    <>
+      {newService && (
+        <FormAddService setData={setNewService} data={newService} />
+      )}
       <Flex
-        my={"30px"}
-        w={"80%"}
-        h="100px"
-        px={"1.5rem"}
-        bg="#fff"
-        justifyContent="center"
+        w={"100%"}
         alignItems={"center"}
-        position="relative"
-        borderRadius={"15px"}
+        flexDir="column"
+        overflowY={"scroll"}
       >
         <Flex
-          position={"absolute"}
-          top={-5}
-          left="0"
-          p="10px"
-          bg={"#fff"}
-          borderTopRadius="15px"
-          color={"#gray.200"}
-          fontWeight="600"
+          my={"30px"}
+          w={"80%"}
+          h="100px"
+          px={"1.5rem"}
+          bg="#fff"
+          justifyContent="center"
+          alignItems={"center"}
+          position="relative"
+          borderRadius={"15px"}
         >
-          <Text mt={"-10px"}>Filtrar</Text>
-        </Flex>
-        <Flex>
-          <Select
-            value={filter.tipoServicio}
-            w="250px"
-            onChange={(e) => {
-              setFilter({ ...filter, tipoServicio: e.target.value });
-            }}
+          <Flex
+            position={"absolute"}
+            top={-5}
+            left="0"
+            p="10px"
+            bg={"#fff"}
+            borderTopRadius="15px"
+            color={"#gray.200"}
+            fontWeight="600"
           >
-            <option value="-1">Todos los tipos de servicios</option>
-            <option value="0">Preventivo</option>
-            <option value="1">Correctivo</option>
-          </Select>
-          <Select
-            value={filter.tipoEquipo}
-            w="250px"
-            ms={"15px"}
-            onChange={(e) => {
-              setFilter({ ...filter, tipoEquipo: e.target.value });
-            }}
-          >
-            <option value="-1">Todos los tipos de equipos</option>
-            <option value="0">Telgecs</option>
-            <option value="1">Seccionador</option>
-            <option value="2">Reconectador</option>
-          </Select>
+            <Text mt={"-10px"}>Filtrar</Text>
+          </Flex>
+          <Flex>
+            <Select
+              value={filter.tipoServicio}
+              w="250px"
+              onChange={(e) => {
+                setFilter({ ...filter, tipoServicio: e.target.value });
+              }}
+            >
+              <option value="-1">Todos los tipos de servicios</option>
+              <option value="0">Preventivo</option>
+              <option value="1">Correctivo</option>
+            </Select>
+            <Select
+              value={filter.tipoEquipo}
+              w="250px"
+              ms={"15px"}
+              onChange={(e) => {
+                setFilter({ ...filter, tipoEquipo: e.target.value });
+              }}
+            >
+              <option value="-1">Todos los tipos de equipos</option>
+              <option value="0">Telgecs</option>
+              <option value="1">Seccionador</option>
+              <option value="2">Reconectador</option>
+            </Select>
+          </Flex>
+          <Flex flexDir={"column"} ms="15px">
+            <Button
+              colorScheme={"blue"}
+              size="sm"
+              mb={"5px"}
+              onClick={() => setNewService({})}
+            >
+              Agregar
+            </Button>
+            <Button colorScheme={"blue"} size="sm" onClick={() => {}}>
+              Modificar
+            </Button>
+          </Flex>
         </Flex>
-        <Flex flexDir={"column"} ms="15px">
-          <Button colorScheme={"blue"} size="sm" mb={"5px"}>
-            Agregar
-          </Button>
-          <Button colorScheme={"blue"} size="sm" onClick={() => {}}>
-            Modificar
-          </Button>
-        </Flex>
-      </Flex>
 
-      <Flex
-        w={"80%"}
-        h="60%"
-        px={"1.5rem"}
-        py={"1rem"}
-        bg="#fff"
-        justifyContent="center"
-        alignItems={"start"}
-        position="relative"
-        borderRadius={"15px"}
-      >
         <Flex
-          position={"absolute"}
-          top={-5}
-          left="0"
-          p="10px"
-          bg={"#fff"}
-          borderTopRadius="15px"
-          color={"#gray.200"}
-          fontWeight="600"
+          w={"80%"}
+          h="60%"
+          px={"1.5rem"}
+          py={"1rem"}
+          bg="#fff"
+          justifyContent="center"
+          alignItems={"start"}
+          position="relative"
+          borderRadius={"15px"}
         >
-          <Text mt={"-10px"}>Lista de servicios</Text>
+          <Flex
+            position={"absolute"}
+            top={-5}
+            left="0"
+            p="10px"
+            bg={"#fff"}
+            borderTopRadius="15px"
+            color={"#gray.200"}
+            fontWeight="600"
+          >
+            <Text mt={"-10px"}>Lista de servicios</Text>
+          </Flex>
+          <Table
+            serviciosList={serviciosList}
+            filter={filter}
+            rowSelected={{
+              rowSelected: rowSelected,
+              setRowSelected: setRowSelected,
+            }}
+          ></Table>
         </Flex>
-        <Table
-          serviciosList={serviciosList}
-          filter={filter}
-          rowSelected={{
-            rowSelected: rowSelected,
-            setRowSelected: setRowSelected,
-          }}
-        ></Table>
       </Flex>
-    </Flex>
+    </>
   );
 };
 
