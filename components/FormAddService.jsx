@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Flex, Text, Input, Select, Textarea, Button } from "@chakra-ui/react";
 
-const FormAddService = ({ data, setData }) => {
+const FormAddService = ({ data, setData, postServicio, nombreEquipos }) => {
   const [step, setStep] = useState(0);
 
   const handleChange = (e) => {
@@ -9,8 +9,19 @@ const FormAddService = ({ data, setData }) => {
     setData({ ...data, [name]: value });
   };
 
+  const handlePostData = () => {
+    postServicio();
+  };
+
   if (step === 1) {
-    return <FormAddFalla data={data} setData={setData} setStep={setStep} />;
+    return (
+      <FormAddFalla
+        data={data}
+        setData={setData}
+        setStep={setStep}
+        handlePostData={handlePostData}
+      />
+    );
   }
 
   return (
@@ -47,30 +58,16 @@ const FormAddService = ({ data, setData }) => {
               justifyContent={"space-between"}
             >
               <Text w={"100px"} m="10px" fontWeight={"600"}>
-                Id equipo
+                Equipos
               </Text>
-              <Input disabled />
-            </Flex>
-            <Flex
-              w={"100%"}
-              h="50px"
-              bg={"white"}
-              alignItems="center"
-              mt={"25px"}
-              justifyContent={"space-between"}
-            >
-              <Text w={"100px"} m="10px" fontWeight={"600"}>
-                Tipo de equipo
-              </Text>
-              <Select
-                value={data.tipoEquipo}
-                name="tipoEquipo"
-                onChange={handleChange}
-              >
-                <option value="-1">Todos los tipos de equipos</option>
-                <option value="0">Telgecs</option>
-                <option value="1">Seccionador</option>
-                <option value="2">Reconectador</option>
+              <Select name="equipo" onChange={handleChange} value={data.equipo}>
+                {nombreEquipos.map((nom) => {
+                  return (
+                    <option value={nom.id_equipo} key={nom.id_equipo}>
+                      {nom.nombre}
+                    </option>
+                  );
+                })}
               </Select>
             </Flex>
             <Flex
@@ -142,14 +139,16 @@ const FormAddService = ({ data, setData }) => {
             Continuar
           </Button>
         ) : (
-          <Button colorScheme="blue">Finalizar</Button>
+          <Button colorScheme="blue" onClick={handlePostData}>
+            Finalizar
+          </Button>
         )}
       </Flex>
     </Flex>
   );
 };
 
-const FormAddFalla = ({ data, setData, setStep }) => {
+const FormAddFalla = ({ data, setData, setStep, handlePostData }) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setData({ ...data, [name]: value });
@@ -307,7 +306,9 @@ const FormAddFalla = ({ data, setData, setStep }) => {
         >
           Atras
         </Button>
-        <Button colorScheme="blue">Finalizar</Button>
+        <Button colorScheme="blue" onClick={handlePostData}>
+          Finalizar
+        </Button>
       </Flex>
     </Flex>
   );

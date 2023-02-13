@@ -6,6 +6,19 @@ import FormAddService from "./FormAddService";
 
 const TIPOS_SERVICIOS = { 0: "PREVENTIVO", 1: "CORRECTIVO" };
 const TIPOS_EQUIPOS = { 0: "TELGECS", 1: "SECCIONADOR", 2: "RECONECTADOR" };
+const NEW_SERVICE_INIT = {
+  fechaServicio: "",
+  tipoEquipo: "",
+  observacionesServicio: "",
+  tipoServicio: "",
+  tipoFalla: "",
+  fechaSolucion: "",
+  detalleFalla: "",
+  detalleSolucion: "",
+  observacionesFalla: "",
+  solucionado: "",
+  equipo: "",
+};
 
 const ViewServicios = (props) => {
   const [serviciosList, setServiciosList] = useState([]);
@@ -15,15 +28,40 @@ const ViewServicios = (props) => {
   });
   const [rowSelected, setRowSelected] = useState();
   const [newService, setNewService] = useState(false);
+  const [nombreEquipos, setNombreEquipos] = useState(false);
 
   useEffect(() => {
-    axios.get("/api/servicios").then(({ data }) => setServiciosList(data));
+    getServicios();
+    axios
+      .get("/api/equipos/nombres")
+      .then(({ data }) => setNombreEquipos(data));
   }, []);
+
+  const getServicios = () => {
+    axios.get("/api/servicios").then(({ data }) => setServiciosList(data));
+  };
+
+  const postServicio = () => {
+    if (newService) {
+      axios
+        .post("/api/servicios", newService)
+        .then(({ data }) => {
+          setNewService(false);
+          getServicios();
+        })
+        .catch((error) => console.log({ error }));
+    }
+  };
 
   return (
     <>
       {newService && (
-        <FormAddService setData={setNewService} data={newService} />
+        <FormAddService
+          setData={setNewService}
+          data={newService}
+          postServicio={postServicio}
+          nombreEquipos={nombreEquipos}
+        />
       )}
       <Flex
         w={"100%"}
@@ -85,7 +123,7 @@ const ViewServicios = (props) => {
               colorScheme={"blue"}
               size="sm"
               mb={"5px"}
-              onClick={() => setNewService({})}
+              onClick={() => setNewService(NEW_SERVICE_INIT)}
             >
               Agregar
             </Button>
@@ -230,11 +268,7 @@ const Table = ({ serviciosList, filter, rowSelected }) => (
                   {data.detalle_falla ? data.detalle_falla : "No corresponde"}
                 </td>
                 <td>
-                  {data.solucionado
-                    ? data.solucionado
-                      ? "SI"
-                      : "NO"
-                    : "No corresponde"}
+                  {data.solucionado ? (data.solucionado ? "SI" : "NO") : "NO"}
                 </td>
                 <td>
                   {data.detalle_solucion

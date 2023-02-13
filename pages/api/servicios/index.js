@@ -1,10 +1,21 @@
 import { connection } from "../../../dbconfig/db";
 
+const TIPOS_SERVICIOS = { 0: "PREVENTIVO", 1: "CORRECTIVO" };
+const TIPOS_FALLAS = {
+  0: "ALARMA",
+  1: "MALA COMUNICACION",
+  2: "OTROS",
+  3: "SIN COMUNICACION",
+  4: "SIN LECTURA",
+};
+
 export default async function handler(req, res) {
   try {
     switch (req.method) {
       case "GET":
         return await getServicios(req, res);
+      case "POST":
+        return await postServicios(req, res);
     }
   } catch (error) {
     console.log(error);
@@ -23,5 +34,54 @@ const getServicios = async (req, res) => {
     return res.status(200).json(result);
   } catch (error) {
     console.log(error);
+  }
+};
+
+const postServicios = async (req, res) => {
+  const {
+    fechaServicio,
+    observacionesServicio,
+    tipoServicio,
+    tipoFalla,
+    fechaSolucion,
+    detalleFalla,
+    detalleSolucion,
+    observacionesFalla,
+    solucionado,
+    equipo,
+  } = req.body;
+
+  try {
+    const [result] = await connection.query(
+      `INSERT INTO servicios (id_equipo, fecha, tipo_servicio, observaciones) VALUES (?, ?, ?, ?)`,
+      [
+        equipo,
+        fechaServicio,
+        TIPOS_SERVICIOS[tipoServicio],
+        observacionesServicio,
+      ]
+    );
+
+    const idServicioInsertado = result.insertId;
+
+    if (tipoServicio === "1")
+      await connection.query(
+        `INSERT INTO fallas (id_servicio, fecha_solucion, tipo_falla, detalle_falla, solucionado, detalle_solucion, observaciones) 
+        VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        [
+          idServicioInsertado,
+          fechaSolucion,
+          TIPOS_FALLAS[tipoFalla],
+          detalleFalla,
+          solucionado,
+          detalleSolucion,
+          observacionesFalla,
+        ]
+      );
+
+    return res.status(200).json();
+  } catch (error) {
+    console.log(error);
+    return res.status(405).json({ error });
   }
 };
