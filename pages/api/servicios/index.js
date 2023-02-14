@@ -4,9 +4,9 @@ const TIPOS_SERVICIOS = { 0: "PREVENTIVO", 1: "CORRECTIVO" };
 const TIPOS_FALLAS = {
   0: "ALARMA",
   1: "MALA COMUNICACION",
-  2: "OTROS",
   3: "SIN COMUNICACION",
   4: "SIN LECTURA",
+  2: "OTROS",
 };
 
 export default async function handler(req, res) {
@@ -59,7 +59,9 @@ const postServicios = async (req, res) => {
         equipo,
         fechaServicio,
         TIPOS_SERVICIOS[tipoServicio],
-        observacionesServicio,
+        observacionesServicio.length > 0
+          ? observacionesServicio
+          : "Sin observaciones.",
       ]
     );
 
@@ -73,10 +75,12 @@ const postServicios = async (req, res) => {
           idServicioInsertado,
           fechaSolucion,
           TIPOS_FALLAS[tipoFalla],
-          detalleFalla,
+          detalleFalla.length > 0 ? detalleFalla : "Sin detalle.",
           solucionado,
-          detalleSolucion,
-          observacionesFalla,
+          detalleSolucion.length > 0 ? detalleSolucion : "Sin detalle.",
+          observacionesFalla.length > 0
+            ? observacionesFalla
+            : "Sin observaciones.",
         ]
       );
 

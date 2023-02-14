@@ -3,6 +3,7 @@ import { Flex, Text, Select, Button, Checkbox } from "@chakra-ui/react";
 import styles from "../styles/Table.module.css";
 import axios from "axios";
 import FormAddService from "./FormAddService";
+import { validarDatosCrearNuevoServicio } from "./validarDatos";
 
 const TIPOS_SERVICIOS = { 0: "PREVENTIVO", 1: "CORRECTIVO" };
 const TIPOS_EQUIPOS = { 0: "TELGECS", 1: "SECCIONADOR", 2: "RECONECTADOR" };
@@ -10,14 +11,14 @@ const NEW_SERVICE_INIT = {
   fechaServicio: "",
   tipoEquipo: "",
   observacionesServicio: "",
-  tipoServicio: "",
-  tipoFalla: "",
+  tipoServicio: "0",
+  tipoFalla: "0",
   fechaSolucion: "",
   detalleFalla: "",
   detalleSolucion: "",
   observacionesFalla: "",
-  solucionado: "",
-  equipo: "",
+  solucionado: "0",
+  equipo: "1",
 };
 
 const ViewServicios = (props) => {
@@ -29,6 +30,7 @@ const ViewServicios = (props) => {
   const [rowSelected, setRowSelected] = useState();
   const [newService, setNewService] = useState(false);
   const [nombreEquipos, setNombreEquipos] = useState(false);
+  const [fallasDatos, setFallasDatos] = useState([]);
 
   useEffect(() => {
     getServicios();
@@ -42,7 +44,9 @@ const ViewServicios = (props) => {
   };
 
   const postServicio = () => {
-    if (newService) {
+    const validarDatos = validarDatosCrearNuevoServicio(newService);
+    setFallasDatos(validarDatos);
+    if (newService && !validarDatos.length > 0) {
       axios
         .post("/api/servicios", newService)
         .then(({ data }) => {
@@ -61,6 +65,8 @@ const ViewServicios = (props) => {
           data={newService}
           postServicio={postServicio}
           nombreEquipos={nombreEquipos}
+          fallasDatos={fallasDatos}
+          validarDatos={fallasDatos}
         />
       )}
       <Flex

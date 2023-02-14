@@ -1,7 +1,22 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Flex, Text, Input, Select, Textarea, Button } from "@chakra-ui/react";
 
-const FormAddService = ({ data, setData, postServicio, nombreEquipos }) => {
+const TIPOS_FALLAS = [
+  "ALARMA",
+  "MALA COMUNICACION",
+  "SIN COMUNICACION",
+  "SIN LECTURA",
+  "OTROS",
+];
+
+const FormAddService = ({
+  data,
+  setData,
+  postServicio,
+  nombreEquipos,
+  fallasDatos,
+  validarDatos,
+}) => {
   const [step, setStep] = useState(0);
 
   const handleChange = (e) => {
@@ -13,6 +28,12 @@ const FormAddService = ({ data, setData, postServicio, nombreEquipos }) => {
     postServicio();
   };
 
+  useEffect(() => {
+    if (validarDatos.length > 0 && !validarDatos[0].value) {
+      setStep(0);
+    }
+  }, [validarDatos]);
+
   if (step === 1) {
     return (
       <FormAddFalla
@@ -20,6 +41,7 @@ const FormAddService = ({ data, setData, postServicio, nombreEquipos }) => {
         setData={setData}
         setStep={setStep}
         handlePostData={handlePostData}
+        fallasDatos={fallasDatos}
       />
     );
   }
@@ -87,7 +109,6 @@ const FormAddService = ({ data, setData, postServicio, nombreEquipos }) => {
                 onChange={handleChange}
                 value={data.tipoServicio}
               >
-                <option value="-1">Todos los tipos de servicios</option>
                 <option value="0">Preventivo</option>
                 <option value="1">Correctivo</option>
               </Select>
@@ -111,6 +132,17 @@ const FormAddService = ({ data, setData, postServicio, nombreEquipos }) => {
                 value={data.fechaServicio}
               />
             </Flex>
+            {fallasDatos.length > 0 && !fallasDatos[0].value && (
+              <Text
+                w={"200px"}
+                m="3px"
+                fontWeight={"400"}
+                color="red"
+                fontSize={12}
+              >
+                *{fallasDatos[0].error}
+              </Text>
+            )}
             <Flex
               w={"100%"}
               h="50px"
@@ -126,6 +158,7 @@ const FormAddService = ({ data, setData, postServicio, nombreEquipos }) => {
                 name="observacionesServicio"
                 onChange={handleChange}
                 value={data.observacionesServicio}
+                placeholder="Sin observaciones."
               />
             </Flex>
           </Flex>
@@ -149,7 +182,13 @@ const FormAddService = ({ data, setData, postServicio, nombreEquipos }) => {
   );
 };
 
-const FormAddFalla = ({ data, setData, setStep, handlePostData }) => {
+const FormAddFalla = ({
+  data,
+  setData,
+  setStep,
+  handlePostData,
+  fallasDatos,
+}) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setData({ ...data, [name]: value });
@@ -196,10 +235,11 @@ const FormAddFalla = ({ data, setData, setStep, handlePostData }) => {
                 name="tipoFalla"
                 onChange={handleChange}
               >
-                <option value="-1">Todos los tipos de falla</option>
-                <option value="0">Cable coaxil</option>
-                <option value="1">Seccionador</option>
-                <option value="2">Reconectador</option>
+                {TIPOS_FALLAS.map((falla, i) => (
+                  <option value={i} key={i}>
+                    {falla}
+                  </option>
+                ))}
               </Select>
             </Flex>
             <Flex
@@ -217,6 +257,7 @@ const FormAddFalla = ({ data, setData, setStep, handlePostData }) => {
                 value={data.detalleFalla}
                 name="detalleFalla"
                 onChange={handleChange}
+                placeholder="Sin detalle."
               />
             </Flex>
             <Flex
@@ -234,6 +275,7 @@ const FormAddFalla = ({ data, setData, setStep, handlePostData }) => {
                 value={data.observacionesFalla}
                 name="observacionesFalla"
                 onChange={handleChange}
+                placeholder="Sin observaciones."
               />
             </Flex>
           </Flex>
@@ -255,6 +297,17 @@ const FormAddFalla = ({ data, setData, setStep, handlePostData }) => {
                 value={data.fechaSolucion}
               />
             </Flex>
+            {fallasDatos.length > 0 && !fallasDatos[1].value && (
+              <Text
+                w={"200px"}
+                m="3px"
+                fontWeight={"400"}
+                color="red"
+                fontSize={12}
+              >
+                *{fallasDatos[1].error}
+              </Text>
+            )}
             <Flex
               w={"100%"}
               h="50px"
@@ -270,6 +323,7 @@ const FormAddFalla = ({ data, setData, setStep, handlePostData }) => {
                 name="detalleSolucion"
                 onChange={handleChange}
                 value={data.detalleSolucion}
+                placeholder="Sin detalle."
               />
             </Flex>
 
