@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Flex } from "@chakra-ui/react";
+import { Flex, Image } from "@chakra-ui/react";
 import ViewEquipos from "../components/ViewEquipos";
 import ViewServicios from "../components/ViewServicios";
 
@@ -18,6 +18,16 @@ export default function Home() {
       alignItems="center"
       flexDir={"column"}
     >
+      <Image
+        width="209"
+        height="55"
+        src="https://digicom.net.ar/web/wp-content/uploads/2021/03/cropped-digicom-tucuman.fw_-1.png"
+        class="custom-logo"
+        alt=""
+        loading="lazy"
+        itemprop="logo"
+      />
+
       <Flex
         border="none"
         w={"90%"}
