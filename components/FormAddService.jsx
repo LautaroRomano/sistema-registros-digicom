@@ -61,13 +61,14 @@ const FormAddService = ({ data, setData, postServicio, nombreEquipos }) => {
                 Equipos
               </Text>
               <Select name="equipo" onChange={handleChange} value={data.equipo}>
-                {nombreEquipos.map((nom) => {
-                  return (
-                    <option value={nom.id_equipo} key={nom.id_equipo}>
-                      {nom.nombre}
-                    </option>
-                  );
-                })}
+                {Array.isArray(nombreEquipos) &&
+                  nombreEquipos.map((nom) => {
+                    return (
+                      <option value={nom.id_equipo} key={nom.id_equipo}>
+                        {nom.nombre}
+                      </option>
+                    );
+                  })}
               </Select>
             </Flex>
             <Flex
@@ -176,7 +177,7 @@ const FormAddFalla = ({ data, setData, setStep, handlePostData }) => {
         flexDir={"column"}
       >
         <Text fontWeight={"700"} my="15px">
-          Correccion
+          NUEVA CORRECCION
         </Text>
         <Flex w={"100%"} h="100%">
           <Flex w={"50%"} h="100%" flexDir="column" p={"10px"}>

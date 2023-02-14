@@ -73,13 +73,13 @@ const Table = () => (
       <thead>
         <tr>
           <th>
-            <h1>Sites</h1>
+            <h1></h1>
           </th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td>aaa</td>
+          <td></td>
         </tr>
       </tbody>
     </table>
