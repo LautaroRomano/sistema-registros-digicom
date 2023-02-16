@@ -46,7 +46,7 @@ const ViewServicios = (props) => {
   const postServicio = () => {
     const validarDatos = validarDatosCrearNuevoServicio(newService);
     setFallasDatos(validarDatos);
-    if (newService && !validarDatos.length > 0) {
+    if (newService && validarDatos[0].value && validarDatos[1].value) {
       axios
         .post("/api/servicios", newService)
         .then(({ data }) => {
