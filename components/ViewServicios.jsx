@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Flex, Text, Select, Button, Checkbox } from "@chakra-ui/react";
+import { Flex, Text, Select, Button, Input } from "@chakra-ui/react";
 import styles from "../styles/Table.module.css";
 import axios from "axios";
 import FormAddService from "./FormAddService";
@@ -136,6 +136,9 @@ const ViewServicios = (props) => {
             <Button colorScheme={"blue"} size="sm" onClick={() => {}}>
               Modificar
             </Button>
+          </Flex>
+          <Flex flexDir={"column"} ms="15px">
+            <Input placeholder='BUSCAR'></Input>
           </Flex>
         </Flex>
 
