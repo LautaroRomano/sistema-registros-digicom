@@ -174,7 +174,7 @@ const FormAddService = ({
           </Button>
         ) : (
           <Button colorScheme="blue" onClick={handlePostData}>
-            Finalizar
+            Guardar
           </Button>
         )}
       </Flex>
@@ -362,7 +362,7 @@ const FormAddFalla = ({
           Atras
         </Button>
         <Button colorScheme="blue" onClick={handlePostData}>
-          Finalizar
+          Guardar
         </Button>
       </Flex>
     </Flex>
