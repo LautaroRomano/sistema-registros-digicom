@@ -14,8 +14,8 @@ export default async function handler(req, res) {
 const getNombreEquipos = async (req, res) => {
   try {
     const [result] = await connection.query(`
-    SELECT eq.id_equipo, tg.nombre as 'nombreTelgecs', sc.nombre as 'nombreSeccionador', rc.nombre as 'nombreReconectador' 
-    FROM equipos as eq
+    SELECT eq.id_equipo, tg.nro_set as 'nombreTelgecs', sc.nombre as 'nombreSeccionador', rc.nombre as 'nombreReconectador' 
+    FROM configuracion as eq
     LEFT JOIN equipos_telgecs as tg on tg.id_equipo = eq.id_equipo
     LEFT JOIN equipos_seccionador as sc on sc.id_equipo = eq.id_equipo
     LEFT JOIN equipos_reconectador as rc on rc.id_equipo = eq.id_equipo;

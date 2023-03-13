@@ -6,7 +6,7 @@ import FormAddService from "./FormAddService";
 import { validarDatosCrearNuevoServicio } from "./validarDatos";
 
 const TIPOS_SERVICIOS = { 0: "PREVENTIVO", 1: "CORRECTIVO" };
-const TIPOS_EQUIPOS = { 0: "TELGECS", 1: "SECCIONADOR", 2: "RECONECTADOR" };
+const TIPOS_EQUIPOS = { 1: "telgecs", 2: "seccionador", 3: "reconectador" };
 const NEW_SERVICE_INIT = {
   fechaServicio: "",
   tipoEquipo: "",
@@ -18,7 +18,7 @@ const NEW_SERVICE_INIT = {
   detalleSolucion: "",
   observacionesFalla: "",
   solucionado: "0",
-  equipo: "1",
+  equipo: "12",
 };
 
 const ViewServicios = (props) => {
@@ -119,9 +119,9 @@ const ViewServicios = (props) => {
               }}
             >
               <option value="-1">Todos los tipos de equipos</option>
-              <option value="0">Telgecs</option>
-              <option value="1">Seccionador</option>
-              <option value="2">Reconectador</option>
+              <option value="1">Telgecs</option>
+              <option value="2">Seccionador</option>
+              <option value="3">Reconectador</option>
             </Select>
           </Flex>
           <Flex flexDir={"column"} ms="15px">
@@ -133,12 +133,6 @@ const ViewServicios = (props) => {
             >
               Agregar
             </Button>
-            <Button colorScheme={"blue"} size="sm" onClick={() => {}}>
-              Modificar
-            </Button>
-          </Flex>
-          <Flex flexDir={"column"} ms="15px">
-            <Input placeholder='BUSCAR'></Input>
           </Flex>
         </Flex>
 

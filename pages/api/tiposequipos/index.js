@@ -1,38 +1,19 @@
 import { connection } from "../../../dbconfig/db";
 
-const TIPOS_SERVICIOS = { 0: "PREVENTIVO", 1: "CORRECTIVO" };
-const TIPOS_FALLAS = {
-  0: "ALARMA",
-  1: "MALA COMUNICACION",
-  3: "SIN COMUNICACION",
-  4: "SIN LECTURA",
-  2: "OTROS",
-};
-
 export default async function handler(req, res) {
   try {
     switch (req.method) {
       case "GET":
-        return await getServicios(req, res);
-      case "POST":
-        return await postServicios(req, res);
+        return await getTipoEquipos(req, res);
     }
   } catch (error) {
     console.log(error);
   }
 }
 
-const getServicios = async (req, res) => {
+const getTipoEquipos = async (req, res) => {
   try {
-    const [result] = await connection.query(`
-        SELECT servicios.*, 
-        fallas.id_falla, fallas.fecha_solucion, fallas.tipo_falla, fallas.detalle_falla, fallas.solucionado, fallas.detalle_solucion, 
-        tipos_equipos.nombre as 'tipo_equipo', servicios.observaciones as 'observaciones_servicios', fallas.observaciones as 'observaciones_fallas' FROM servicios 
-        LEFT JOIN fallas on fallas.id_servicio = servicios.id_servicio 
-        LEFT JOIN configuracion on servicios.id_equipo = configuracion.id_equipo
-        LEFT JOIN tipos_equipos on tipos_equipos.id_tipo_equipo = configuracion.tipo_equipo
-        ORDER BY servicios.fecha DESC
-        `);
+    const [result] = await connection.query(`select * from tipos_equipos`);
     return res.status(200).json(result);
   } catch (error) {
     console.log(error);
