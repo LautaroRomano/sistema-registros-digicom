@@ -178,6 +178,7 @@ const ViewEquipos = (props) => {
               }
               setUpdateRow={setUpdateRow}
               tipo={tabSelected + 1 + ""}
+              ultimasVisitas={ultimasVisitas}
             ></Table>
           </Flex>
         </Flex>
@@ -186,7 +187,7 @@ const ViewEquipos = (props) => {
   );
 };
 
-const Table = ({ equiposList, setUpdateRow, tipo }) => {
+const Table = ({ equiposList, setUpdateRow, tipo, ultimasVisitas }) => {
   let keys =
     tipo === "1"
       ? Object.keys(EQUIPOS_TELGEC_TABLE)
@@ -216,7 +217,14 @@ const Table = ({ equiposList, setUpdateRow, tipo }) => {
                       setUpdateRow({ data: data, keyData: key });
                     }}
                   >
-                    {data[key] ? data[key] : "-"}
+                    {key === "ultima_visita"
+                      ? ultimasVisitas[data.id_equipo] &&
+                        ultimasVisitas[data.id_equipo][0]
+                        ? ultimasVisitas[data.id_equipo][0].fecha
+                        : "-"
+                      : data[key]
+                      ? data[key]
+                      : "-"}
                   </Td>
                 ))}
               </Tr>
