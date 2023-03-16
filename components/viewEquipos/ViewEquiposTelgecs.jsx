@@ -15,42 +15,16 @@ import {
   TableContainer,
 } from "@chakra-ui/react";
 
-const TIPOS_SERVICIOS = { 0: "PREVENTIVO", 1: "CORRECTIVO" };
-const TIPOS_EQUIPOS = { 0: "TELGECS", 1: "SECCIONADOR", 2: "RECONECTADOR" };
-
-const ViewEquipos = (props) => {
-  const [filter, setFilter] = useState({
-    tipoEquipo: -1,
-  });
-  const [newEquipo, setNewEquipo] = useState(false);
-  const [equiposTelgecs, setEquiposTelgecs] = useState([]);
-  const [equiposSeccionador, setEquiposSeccionador] = useState([]);
-  const [updateRow, setUpdateRow] = useState(false);
-  const [tabSelected, setTabSelected] = useState(0);
-  const [ultimasVisitas, setUltimasVisitas] = useState({});
+const ViewEquiposTelgecs = (props) => {
+  const [equipos, setEquipos] = useState([]);
 
   useEffect(() => {
     getEquiposTelgecs();
     getEquiposSeccionador();
   }, []);
 
-  useEffect(() => {
-    equiposTelgecs.forEach((eq) => {
-      axios.get(`/api/ultimavisita/${eq.id_equipo}`).then(({ data }) => {
-        setUltimasVisitas((ult) => ({ ...ult, [eq.id_equipo]: data }));
-      });
-    });
-    equiposSeccionador.forEach((eq) => {
-      axios.get(`/api/ultimavisita/${eq.id_equipo}`).then(({ data }) => {
-        setUltimasVisitas((ult) => ({ ...ult, [eq.id_equipo]: data }));
-      });
-    });
-  }, [equiposTelgecs, equiposSeccionador]);
-
   const getEquiposTelgecs = () => {
-    axios
-      .get("/api/equipos/telgecs")
-      .then(({ data }) => setEquiposTelgecs(data));
+    axios.get("/api/equipos/telgecs").then(({ data }) => setEquipos(data));
   };
   const getEquiposSeccionador = () => {
     axios
@@ -132,53 +106,110 @@ const ViewEquipos = (props) => {
         </Flex>
 
         <Flex
+          w={"80%"}
+          h="60%"
+          px={"1.5rem"}
+          py={"1rem"}
+          bg="#fff"
+          justifyContent="center"
+          alignItems={"start"}
+          position="relative"
+          borderRadius={"15px"}
+        >
+          <Flex
+            position={"absolute"}
+            top={-5}
+            left="0"
+            p="10px"
+            bg={"#fff"}
+            borderTopRadius="15px"
+            color={"#gray.200"}
+            fontWeight="600"
+          >
+            <Text mt={"-10px"}>Lista de equipos telgecs</Text>
+          </Flex>
+          <Table
+            equiposList={equipos}
+            setUpdateRow={setUpdateRow}
+            tipo="1"
+          ></Table>
+        </Flex>
+
+        <Flex
+          w={"80%"}
+          h="60%"
+          px={"1.5rem"}
+          py={"1rem"}
+          bg="#fff"
+          justifyContent="center"
+          alignItems={"start"}
+          position="relative"
+          borderRadius={"15px"}
+        >
+          <Flex
+            position={"absolute"}
+            top={-5}
+            left="0"
+            p="10px"
+            bg={"#fff"}
+            borderTopRadius="15px"
+            color={"#gray.200"}
+            fontWeight="600"
+          >
+            <Text mt={"-10px"}>Lista de equipos seccionador</Text>
+          </Flex>
+          <Table
+            equiposList={equiposSeccionador}
+            setUpdateRow={setUpdateRow}
+            tipo="2"
+          ></Table>
+        </Flex>
+
+        <Flex
           border="none"
           w={"90%"}
           h="90%"
           position="relative"
           flexDir={"column"}
         >
-          <Flex w={"100%"} h="30px" border="none" top="0" left={"0"}>
+          <Flex
+            w={"100%"}
+            h="30px"
+            bg={"#fff"}
+            border="none"
+            top="0"
+            left={"0"}
+          >
             <Flex
-              bg={tabSelected === 0 ? "#FFF" : "gray.200"}
-              color={tabSelected === 0 ? "primary" : "gray.400"}
-              fontWeight={tabSelected === 0 && "bold"}
+              bg={selected === 0 ? "primary" : "gray.200"}
+              color={selected === 0 ? "#fff" : "gray.700"}
               px={"1rem"}
               borderTopRadius="15px"
               name="0"
               cursor={"pointer"}
-              onClick={() => setTabSelected(0)}
+              onClick={() => handleChangeSelected(0)}
             >
               Equipos Telgecs
             </Flex>
             <Flex
-              bg={tabSelected === 1 ? "#FFF" : "gray.200"}
-              color={tabSelected === 1 ? "primary" : "gray.400"}
-              fontWeight={tabSelected === 1 && "bold"}
+              bg={selected === 1 ? "primary" : "gray.200"}
+              color={selected === 1 ? "#fff" : "gray.700"}
               ms="1px"
               px={"1rem"}
               borderTopRadius="15px"
               name="1"
               cursor={"pointer"}
-              onClick={() => setTabSelected(1)}
+              onClick={() => handleChangeSelected(1)}
             >
               Equipos Seccionador
             </Flex>
           </Flex>
-          <Flex
-            w={"100%"}
-            h="100%"
-            bg={"#fff"}
-            borderBottomRadius="10px"
-            p={"10px"}
-          >
-            <Table
-              equiposList={
-                tabSelected === 0 ? equiposTelgecs : equiposSeccionador
-              }
-              setUpdateRow={setUpdateRow}
-              tipo={tabSelected + 1 + ""}
-            ></Table>
+          <Flex w={"100%"} h="100%" bg={"primary"} borderBottomRadius="10px">
+            {tabSelected === 0 ? (
+              <ViewEquiposTelgecs />
+            ) : (
+              <ViewEquiposSeccioandor />
+            )}
           </Flex>
         </Flex>
       </Flex>
@@ -216,7 +247,15 @@ const Table = ({ equiposList, setUpdateRow, tipo }) => {
                       setUpdateRow({ data: data, keyData: key });
                     }}
                   >
-                    {data[key] ? data[key] : "-"}
+                    {data[key]
+                      ? key === "fecha_instalacion" || key === "cambio_bateria"
+                        ? armarFecha(data[key]).anio +
+                          "/" +
+                          armarFecha(data[key]).mes +
+                          "/" +
+                          armarFecha(data[key]).dia
+                        : data[key]
+                      : "-"}
                   </Td>
                 ))}
               </Tr>
@@ -228,85 +267,7 @@ const Table = ({ equiposList, setUpdateRow, tipo }) => {
   );
 };
 
-const UpdateRow = ({ data, keyData, setUpdateRow, getEquipos }) => {
-  const [newData, setNewData] = useState(data[keyData]);
-
-  const handleGuardar = () => {
-    axios
-      .put("/api/equipos", {
-        newData: newData,
-        keyData: keyData,
-        id_equipo: data.id_equipo,
-        tipo: data.tipo_equipo,
-      })
-      .then(({ data }) => {
-        setUpdateRow(false);
-        getEquipos();
-      });
-  };
-
-  return (
-    <Flex
-      position={"fixed"}
-      zIndex="10"
-      height={"100vh"}
-      w="100vw"
-      bg={"#0005"}
-      alignItems="center"
-      justifyContent="center"
-    >
-      <Flex
-        w={"400px"}
-        h="250px"
-        bg={"#fff"}
-        borderRadius="10px"
-        flexDir={"column"}
-        alignItems="center"
-        justifyContent={"center"}
-        position="relative"
-      >
-        <Text
-          bg={"#175796"}
-          my={"5px"}
-          fontSize="16px"
-          fontWeight={"bold"}
-          w="100%"
-          color="#FFF"
-          textAlign={"center"}
-          py="10px"
-        >
-          ACTUALIZAR DATO: {EQUIPOS_TELGEC_TABLE[keyData]}
-        </Text>
-        <Input
-          value={newData}
-          my={"25px"}
-          w="70%"
-          onChange={(e) => setNewData(e.target.value)}
-        ></Input>
-        <Flex>
-          <Button
-            my={"5px"}
-            mx="15px"
-            colorScheme={"orange"}
-            onClick={() => setUpdateRow(false)}
-          >
-            Cancelar
-          </Button>
-          <Button
-            my={"5px"}
-            mx="15px"
-            colorScheme={"blue"}
-            onClick={handleGuardar}
-          >
-            Guardar
-          </Button>
-        </Flex>
-      </Flex>
-    </Flex>
-  );
-};
-
-export default ViewEquipos;
+export default ViewEquiposTelgecs;
 
 const NEW_SERVICE_INIT = {
   id_rtu: null,
@@ -421,12 +382,13 @@ const EQUIPOS_SECCIONADOR_TABLE = {
   velocidad_rtu: "Velocidad RTU",
   numero_serie_radio_modem: "Nro. de serie RM",
   observaciones: "Observaciones",
-  /* configuracion: "Config",
-  t_m: "T/M",
-  numero_serie_medidor: "Nro. Serie Medidor",
-  id_modbus: "ID Modbus",
-  placa_radio_modem: "Placa de RM",
-  programa_radio_modem: "Programa de RM",
-  radio_modem_protegido: "RM protegido",
-  capacidad_rtu: "Capacidad RTU", */
+};
+
+const armarFecha = (fec) => {
+  let fecha = new Date(fec);
+  let dia = fecha.getDate().toString().padStart(2, "0");
+  let mes = (fecha.getMonth() + 1).toString().padStart(2, "0");
+  let anio = fecha.getFullYear().toString();
+
+  return { dia, mes, anio };
 };

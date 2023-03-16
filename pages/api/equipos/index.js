@@ -24,21 +24,43 @@ const getEquipos = async (req, res) => {
   }
 };
 const editarEquipo = async (req, res) => {
-  const { newData, keyData, id_equipo } = req.body;
+  const { newData, keyData, id_equipo, tipo } = req.body;
   try {
-    const [result] = await connection.query(
-      `update configuracion join equipos_telgecs set `+keyData+` = ? 
-    where configuracion.id_equipo = ? 
-    AND equipos_telgecs.id_equipo = ?`,
-      [newData, id_equipo, id_equipo]
-    );
-    return res.status(200).json(result);
+    if (tipo === 1)
+      await connection.query(
+        `update configuracion 
+      join equipos_telgecs on equipos_telgecs.id_equipo = configuracion.id_equipo set ` +
+          keyData +
+          ` = ? 
+    where configuracion.id_equipo = ?`,
+        [newData, id_equipo, id_equipo]
+      );
+    if (tipo === 2)
+      await connection.query(
+        `update configuracion 
+      join equipos_seccionador on equipos_seccionador.id_equipo = configuracion.id_equipo set ` +
+          keyData +
+          ` = ? 
+    where configuracion.id_equipo = ?`,
+        [newData, id_equipo, id_equipo]
+      );
+    if (tipo === 3)
+      await connection.query(
+        `update configuracion 
+      join equipos_reconectador on equipos_reconectador.id_equipo = configuracion.id_equipo set ` +
+          keyData +
+          ` = ? 
+    where configuracion.id_equipo = ?`,
+        [newData, id_equipo, id_equipo]
+      );
+    return res.status(200).json({ succes: true });
   } catch (error) {
     console.log(error);
   }
 };
 
 const postEquipos = async (req, res) => {
+  console.log(req.body);
   try {
     const [result] = await connection.query(
       `insert into configuracion values(0,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
@@ -68,22 +90,35 @@ const postEquipos = async (req, res) => {
       ]
     );
     const configID = result.insertId;
-    await connection.query(
-      `insert into equipos_telgecs values(1,?,?,?,?,?,?,?,?,?,?,?)`,
-      [
-        configID,
-        req.body.equipo_telgecs.configuracion,
-        req.body.equipo_telgecs.t_m,
-        req.body.equipo_telgecs.numero_serie_medidor,
-        req.body.equipo_telgecs.id_modbus,
-        req.body.equipo_telgecs.placa_radio_modem,
-        req.body.equipo_telgecs.programa_radio_modem,
-        req.body.equipo_telgecs.radio_modem_protegido,
-        req.body.equipo_telgecs.capacidad_rtu,
-        req.body.equipo_telgecs.nro_set,
-        req.body.equipo_telgecs.codigo_caja,
-      ]
-    );
+    if (req.body.tipo_equipo === "1")
+      await connection.query(
+        `insert into equipos_telgecs values(1,?,?,?,?,?,?,?,?,?,?,?)`,
+        [
+          configID,
+          req.body.equipo_telgecs.configuracion,
+          req.body.equipo_telgecs.t_m,
+          req.body.equipo_telgecs.numero_serie_medidor,
+          req.body.equipo_telgecs.id_modbus,
+          req.body.equipo_telgecs.placa_radio_modem,
+          req.body.equipo_telgecs.programa_radio_modem,
+          req.body.equipo_telgecs.radio_modem_protegido,
+          req.body.equipo_telgecs.capacidad_rtu,
+          req.body.equipo_telgecs.nro_set,
+          req.body.equipo_telgecs.codigo_caja,
+        ]
+      );
+    if (req.body.tipo_equipo === "2")
+      await connection.query(
+        `insert into equipos_seccionador values(0,?,?,?,?,?,?)`,
+        [
+          configID,
+          req.body.equipo_seccionador.nombre,
+          req.body.equipo_seccionador.marca_modelo,
+          req.body.equipo_seccionador.id_sistema,
+          req.body.equipo_seccionador.v_seccionador,
+          req.body.equipo_seccionador.distribuidor,
+        ]
+      );
     return res.status(200).json({ state: "succes" });
   } catch (error) {
     console.log(error);

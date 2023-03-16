@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Flex, Text, Input, Select, Textarea, Button } from "@chakra-ui/react";
 import axios from "axios";
 import FormAddEquipoTelcecs from "./formsAddEquipos/FormAddEquipoTelgecs";
+import FormAddEquipoSeccionador from "./formsAddEquipos/FormAddEquipoSeccionador";
 
 const TIPOS_FALLAS = [
   "ALARMA",
@@ -157,6 +158,16 @@ const FormAddEquipo = ({ data, setData, postEquipo }) => {
   if (step === 1 && data.tipo_equipo === "1") {
     return (
       <FormAddEquipoTelcecs
+        data={data}
+        handleChangeMain={handleChange}
+        handlePostData={handlePostData}
+        setStep={setStep}
+      />
+    );
+  }
+  if (step === 1 && data.tipo_equipo === "2") {
+    return (
+      <FormAddEquipoSeccionador
         data={data}
         handleChangeMain={handleChange}
         handlePostData={handlePostData}
