@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Flex, Text, Input, Select, Textarea, Button } from "@chakra-ui/react";
+import ViewDetallesServicios from "./ViewDetallesServicios";
+import SelectR from "react-select";
 
 const TIPOS_FALLAS = [
   "ALARMA",
@@ -16,6 +18,8 @@ const FormAddService = ({
   nombreEquipos,
   fallasDatos,
   validarDatos,
+  detallesServicios,
+  getDetallesServicios,
 }) => {
   const [step, setStep] = useState(0);
 
@@ -23,6 +27,8 @@ const FormAddService = ({
     const { name, value } = e.target;
     setData({ ...data, [name]: value });
   };
+
+  const [newDetalle, setNewDetalle] = useState(false);
 
   const handlePostData = () => {
     postServicio();
@@ -59,6 +65,12 @@ const FormAddService = ({
       zIndex={10}
       flexDir="column"
     >
+      {newDetalle && (
+        <ViewDetallesServicios
+          setData={setNewDetalle}
+          get={getDetallesServicios}
+        />
+      )}
       <Flex
         w={"70%"}
         height="80%"
@@ -82,16 +94,36 @@ const FormAddService = ({
               <Text w={"100px"} m="10px" fontWeight={"600"}>
                 Equipos
               </Text>
-              <Select name="equipo" onChange={handleChange} value={data.equipo}>
-                {Array.isArray(nombreEquipos) &&
-                  nombreEquipos.map((nom) => {
-                    return (
-                      <option value={nom.id_equipo} key={nom.id_equipo}>
-                        {nom.nombre}
-                      </option>
-                    );
-                  })}
-              </Select>
+              <SelectR
+                name="equipo"
+                onChange={({ value }) => {
+                  handleChange({
+                    target: { name: "equipo", value: value },
+                  });
+                }}
+                options={
+                  Array.isArray(nombreEquipos)
+                    ? nombreEquipos.map((nom) => {
+                        return {
+                          value: nom.id_equipo+'',
+                          label: nom.nombreTelgecs
+                            ? nom.nombreTelgecs
+                            : nom.nombreSeccionador
+                            ? nom.nombreSeccionador
+                            : nom.nombreReconectador
+                            ? nom.nombreReconectador
+                            : "-",
+                        };
+                      })
+                    : []
+                }
+                styles={{
+                  control: (baseStyles, state) => ({
+                    ...baseStyles,
+                    width: "25vw",
+                  }),
+                }}
+              />
             </Flex>
             <Flex
               w={"100%"}
@@ -112,6 +144,52 @@ const FormAddService = ({
                 <option value="0">Preventivo</option>
                 <option value="1">Correctivo</option>
               </Select>
+            </Flex>
+            <Flex
+              w={"100%"}
+              h="50px"
+              bg={"white"}
+              alignItems="center"
+              justifyContent={"space-between"}
+            >
+              <Text w={"100px"} m="10px" fontWeight={"600"}>
+                Servicio
+              </Text>
+              <Select
+                name="servicio"
+                onChange={handleChange}
+                value={data.servicio}
+              >
+                <option value={0}>...</option>
+                {Array.isArray(detallesServicios) &&
+                  detallesServicios.map((nom) => {
+                    return (
+                      <option
+                        value={nom.id_servicio_detalle}
+                        key={nom.id_servicio_detalle}
+                      >
+                        {nom.detalle}
+                      </option>
+                    );
+                  })}
+              </Select>
+              <Flex
+                onClick={() => setNewDetalle(true)}
+                minW="25px"
+                minH={"25px"}
+                bg="blue.400"
+                borderRadius={"50%"}
+                fontWeight="600"
+                fontSize={"19px"}
+                color={"#fff"}
+                cursor={"pointer"}
+                position="relative"
+                margin={"0 5px"}
+              >
+                <Text position={"absolute"} left="5px" top={"-3px"}>
+                  +
+                </Text>
+              </Flex>
             </Flex>
           </Flex>
           <Flex w={"50%"} h="100%" flexDir="column" p={"10px"}>

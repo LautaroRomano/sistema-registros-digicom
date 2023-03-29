@@ -25,13 +25,15 @@ export default async function handler(req, res) {
 const getServicios = async (req, res) => {
   try {
     const [result] = await connection.query(`
-        SELECT servicios.*, 
-        fallas.id_falla, fallas.fecha_solucion, fallas.tipo_falla, fallas.detalle_falla, fallas.solucionado, fallas.detalle_solucion, 
-        tipos_equipos.nombre as 'tipo_equipo', servicios.observaciones as 'observaciones_servicios', fallas.observaciones as 'observaciones_fallas' FROM servicios 
-        LEFT JOIN fallas on fallas.id_servicio = servicios.id_servicio 
-        LEFT JOIN configuracion on servicios.id_equipo = configuracion.id_equipo
-        LEFT JOIN tipos_equipos on tipos_equipos.id_tipo_equipo = configuracion.tipo_equipo
-        ORDER BY servicios.fecha DESC
+    SELECT servicios.*, 
+    fallas.id_falla, fallas.fecha_solucion, fallas.tipo_falla, fallas.detalle_falla, fallas.solucionado, fallas.detalle_solucion, 
+    servicios_detalles.detalle as 'servicioDetalle',
+    tipos_equipos.nombre as 'tipo_equipo', servicios.observaciones as 'observaciones_servicios', fallas.observaciones as 'observaciones_fallas' FROM servicios 
+    LEFT JOIN fallas on fallas.id_servicio = servicios.id_servicio 
+    LEFT JOIN configuracion on servicios.id_equipo = configuracion.id_equipo
+    LEFT JOIN tipos_equipos on tipos_equipos.id_tipo_equipo = configuracion.tipo_equipo
+    LEFT JOIN servicios_detalles on servicios.servicio = servicios_detalles.id_servicio_detalle
+    ORDER BY servicios.fecha DESC
         `);
     return res.status(200).json(result);
   } catch (error) {
@@ -51,11 +53,12 @@ const postServicios = async (req, res) => {
     observacionesFalla,
     solucionado,
     equipo,
+    servicio,
   } = req.body;
 
   try {
     const [result] = await connection.query(
-      `INSERT INTO servicios (id_equipo, fecha, tipo_servicio, observaciones) VALUES (?, ?, ?, ?)`,
+      `INSERT INTO servicios (id_equipo, fecha, tipo_servicio, observaciones, servicio) VALUES (?, ?, ?, ?, ?)`,
       [
         equipo,
         fechaServicio,
@@ -63,6 +66,7 @@ const postServicios = async (req, res) => {
         observacionesServicio.length > 0
           ? observacionesServicio
           : "Sin observaciones.",
+        servicio,
       ]
     );
 

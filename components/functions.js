@@ -4,5 +4,5 @@ export const armarFecha = (fec) => {
   let mes = (fecha.getMonth() + 1).toString().padStart(2, "0");
   let anio = fecha.getFullYear().toString();
 
-  return anio + "/" + mes + "/" + dia;
+  return dia + "/" + mes + "/" + anio;
 };

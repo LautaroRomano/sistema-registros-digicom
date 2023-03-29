@@ -60,7 +60,6 @@ const editarEquipo = async (req, res) => {
 };
 
 const postEquipos = async (req, res) => {
-  console.log(req.body);
   try {
     const [result] = await connection.query(
       `insert into configuracion values(0,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
@@ -109,7 +108,7 @@ const postEquipos = async (req, res) => {
       );
     if (req.body.tipo_equipo === "2")
       await connection.query(
-        `insert into equipos_seccionador values(0,?,?,?,?,?,?)`,
+        `insert into equipos_seccionador values(0,?,?,?,?,?,?,?,?)`,
         [
           configID,
           req.body.equipo_seccionador.nombre,
@@ -117,6 +116,8 @@ const postEquipos = async (req, res) => {
           req.body.equipo_seccionador.id_sistema,
           req.body.equipo_seccionador.v_seccionador,
           req.body.equipo_seccionador.distribuidor,
+          req.body.equipo_seccionador.piquete,
+          req.body.tipo_equipo == 2 ? "SECCIONADOR" : "RECONECTADOR",
         ]
       );
     return res.status(200).json({ state: "succes" });

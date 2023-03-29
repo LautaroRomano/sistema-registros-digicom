@@ -4,6 +4,7 @@ import styles from "../styles/Table.module.css";
 import axios from "axios";
 import FormAddService from "./FormAddService";
 import { validarDatosCrearNuevoServicio } from "./validarDatos";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 
 const TIPOS_SERVICIOS = { 0: "PREVENTIVO", 1: "CORRECTIVO" };
 const TIPOS_EQUIPOS = { 1: "telgecs", 2: "seccionador", 3: "reconectador" };
@@ -30,10 +31,12 @@ const ViewServicios = (props) => {
   const [rowSelected, setRowSelected] = useState();
   const [newService, setNewService] = useState(false);
   const [nombreEquipos, setNombreEquipos] = useState(false);
+  const [detallesServicios, setDetallesServicios] = useState([]);
   const [fallasDatos, setFallasDatos] = useState([]);
 
   useEffect(() => {
     getServicios();
+    getDetallesServicios();
     axios
       .get("/api/equipos/nombres")
       .then(({ data }) => setNombreEquipos(data));
@@ -41,6 +44,11 @@ const ViewServicios = (props) => {
 
   const getServicios = () => {
     axios.get("/api/servicios").then(({ data }) => setServiciosList(data));
+  };
+  const getDetallesServicios = () => {
+    axios
+      .get("/api/servicios/detalles")
+      .then(({ data }) => setDetallesServicios(data));
   };
 
   const postServicio = () => {
@@ -67,6 +75,8 @@ const ViewServicios = (props) => {
           nombreEquipos={nombreEquipos}
           fallasDatos={fallasDatos}
           validarDatos={fallasDatos}
+          detallesServicios={detallesServicios}
+          getDetallesServicios={getDetallesServicios}
         />
       )}
       <Flex
@@ -123,6 +133,27 @@ const ViewServicios = (props) => {
               <option value="2">Seccionador</option>
               <option value="3">Reconectador</option>
             </Select>
+            <Select
+              value={filter.servicio}
+              w="250px"
+              ms={"15px"}
+              onChange={(e) => {
+                setFilter({ ...filter, servicio: e.target.value });
+              }}
+            >
+              <option value="-1">Todos los servicios</option>
+              {Array.isArray(detallesServicios) &&
+                detallesServicios.map((nom) => {
+                  return (
+                    <option
+                      value={nom.id_servicio_detalle}
+                      key={nom.id_servicio_detalle}
+                    >
+                      {nom.detalle}
+                    </option>
+                  );
+                })}
+            </Select>
           </Flex>
           <Flex flexDir={"column"} ms="15px">
             <Button
@@ -166,6 +197,7 @@ const ViewServicios = (props) => {
               rowSelected: rowSelected,
               setRowSelected: setRowSelected,
             }}
+            nombreEquipos={nombreEquipos}
           ></Table>
         </Flex>
       </Flex>
@@ -173,7 +205,7 @@ const ViewServicios = (props) => {
   );
 };
 
-const Table = ({ serviciosList, filter, rowSelected }) => (
+const Table = ({ serviciosList, filter, rowSelected, nombreEquipos }) => (
   <Flex w={"100%"} h="100%" overflowY={"scroll"}>
     <table className={styles.container}>
       <thead>
@@ -186,6 +218,9 @@ const Table = ({ serviciosList, filter, rowSelected }) => (
           </th>
           <th>
             <h1>Tipo equipo</h1>
+          </th>
+          <th>
+            <h1>Servicio</h1>
           </th>
           <th>
             <h1>Equipo</h1>
@@ -227,11 +262,18 @@ const Table = ({ serviciosList, filter, rowSelected }) => (
           const nuevaFechaFalla = data.fecha_solucion
             ? `${dia}/${mes}/${anio}`
             : "No corresponde";
+
+          const esteEquipo = nombreEquipos.find(
+            (equ) => equ.id_equipo === data.id_equipo
+          );
+          console.log({ esteEquipo });
+
           if (
             (data.tipo_servicio === TIPOS_SERVICIOS[filter.tipoServicio] ||
               filter.tipoServicio == -1) &&
             (data.tipo_equipo === TIPOS_EQUIPOS[filter.tipoEquipo] ||
-              filter.tipoEquipo == -1)
+              filter.tipoEquipo == -1) &&
+            (data.servicio == filter.servicio || filter.servicio == -1)
           )
             return (
               <tr
@@ -259,7 +301,29 @@ const Table = ({ serviciosList, filter, rowSelected }) => (
                 <td>
                   {data.tipo_equipo ? data.tipo_equipo : "No corresponde"}
                 </td>
-                <td>{data.id_equipo ? data.id_equipo : "No corresponde"}</td>
+                <td>{data.servicioDetalle ? data.servicioDetalle : "-"}</td>
+                <td>
+                  {data.id_equipo ? (
+                    <div
+                      style={{
+                        width: "100%",
+                        display: "flex",
+                        justifyContent: "center",
+                      }}
+                    >
+                      {esteEquipo
+                        ? esteEquipo.nombreTelgecs
+                          ? esteEquipo.nombreTelgecs
+                          : esteEquipo.nombreSeccionador
+                          ? esteEquipo.nombreSeccionador
+                          : esteEquipo.nombreReconectador &&
+                            esteEquipo.nombreReconectador
+                        : "-"}
+                    </div>
+                  ) : (
+                    "No corresponde"
+                  )}
+                </td>
                 <td>
                   {data.observaciones_servicios
                     ? data.observaciones_servicios

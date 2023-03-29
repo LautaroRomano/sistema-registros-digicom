@@ -11,6 +11,11 @@ const TIPOS_FALLAS = [
 ];
 
 const INPUTS_CONFIG = {
+  tipo: {
+    dataType: "text",
+    placeholder: "Ingresa el tipo: ",
+    text: "Tipo: ",
+  },
   nombre: {
     dataType: "text",
     placeholder: "Ingresa el nombre: ",
@@ -35,6 +40,16 @@ const INPUTS_CONFIG = {
     dataType: "text",
     placeholder: "Ingresa el distribuidor",
     text: "Distribuidor: ",
+  },
+  seccionador: {
+    dataType: "text",
+    placeholder: "Ingresa el seccionador",
+    text: "Seccionador: ",
+  },
+  piquete: {
+    dataType: "text",
+    placeholder: "Ingresa el piquete",
+    text: "Piquete: ",
   },
 };
 

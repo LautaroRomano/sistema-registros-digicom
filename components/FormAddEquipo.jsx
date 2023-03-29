@@ -165,7 +165,7 @@ const FormAddEquipo = ({ data, setData, postEquipo }) => {
       />
     );
   }
-  if (step === 1 && data.tipo_equipo === "2") {
+  if (step === 1 && (data.tipo_equipo === "2" || data.tipo_equipo === "3")) {
     return (
       <FormAddEquipoSeccionador
         data={data}

@@ -22,7 +22,7 @@ export default function Home() {
         width="209"
         height="55"
         src="https://digicom.net.ar/web/wp-content/uploads/2021/03/cropped-digicom-tucuman.fw_-1.png"
-        class="custom-logo"
+        className="custom-logo"
         alt=""
         loading="lazy"
         itemprop="logo"

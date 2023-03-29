@@ -14,6 +14,8 @@ import {
   TableCaption,
   TableContainer,
 } from "@chakra-ui/react";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
+import ViewUltimaVisita from "./ViewUltimaVisita";
 
 const TIPOS_SERVICIOS = { 0: "PREVENTIVO", 1: "CORRECTIVO" };
 const TIPOS_EQUIPOS = { 0: "TELGECS", 1: "SECCIONADOR", 2: "RECONECTADOR" };
@@ -28,6 +30,7 @@ const ViewEquipos = (props) => {
   const [updateRow, setUpdateRow] = useState(false);
   const [tabSelected, setTabSelected] = useState(0);
   const [ultimasVisitas, setUltimasVisitas] = useState({});
+  const [viewUltimaVisita, setViewUltimaVisita] = useState(false);
 
   useEffect(() => {
     getEquiposTelgecs();
@@ -35,6 +38,10 @@ const ViewEquipos = (props) => {
   }, []);
 
   useEffect(() => {
+    getUltVisita();
+  }, [equiposTelgecs, equiposSeccionador]);
+
+  const getUltVisita = () => {
     equiposTelgecs.forEach((eq) => {
       axios.get(`/api/ultimavisita/${eq.id_equipo}`).then(({ data }) => {
         setUltimasVisitas((ult) => ({ ...ult, [eq.id_equipo]: data }));
@@ -45,7 +52,7 @@ const ViewEquipos = (props) => {
         setUltimasVisitas((ult) => ({ ...ult, [eq.id_equipo]: data }));
       });
     });
-  }, [equiposTelgecs, equiposSeccionador]);
+  };
 
   const getEquiposTelgecs = () => {
     axios
@@ -88,6 +95,14 @@ const ViewEquipos = (props) => {
             getEquiposSeccionador();
             getEquiposTelgecs();
           }}
+        />
+      )}
+      {viewUltimaVisita && (
+        <ViewUltimaVisita
+          data={ultimasVisitas[viewUltimaVisita.equipo.id_equipo]}
+          setData={setViewUltimaVisita}
+          equipo={viewUltimaVisita.equipo}
+          getUltVisita={getUltVisita}
         />
       )}
       <Flex
@@ -149,7 +164,7 @@ const ViewEquipos = (props) => {
               cursor={"pointer"}
               onClick={() => setTabSelected(0)}
             >
-              Equipos Telgecs
+              Telgecs
             </Flex>
             <Flex
               bg={tabSelected === 1 ? "#FFF" : "gray.200"}
@@ -162,7 +177,20 @@ const ViewEquipos = (props) => {
               cursor={"pointer"}
               onClick={() => setTabSelected(1)}
             >
-              Equipos Seccionador
+              Seccionador
+            </Flex>
+            <Flex
+              bg={tabSelected === 2 ? "#FFF" : "gray.200"}
+              color={tabSelected === 2 ? "primary" : "gray.400"}
+              fontWeight={tabSelected === 2 && "bold"}
+              ms="1px"
+              px={"1rem"}
+              borderTopRadius="15px"
+              name="1"
+              cursor={"pointer"}
+              onClick={() => setTabSelected(2)}
+            >
+              Reconectador
             </Flex>
           </Flex>
           <Flex
@@ -174,11 +202,18 @@ const ViewEquipos = (props) => {
           >
             <Table
               equiposList={
-                tabSelected === 0 ? equiposTelgecs : equiposSeccionador
+                tabSelected === 0
+                  ? equiposTelgecs
+                  : tabSelected === 1
+                  ? equiposSeccionador.filter((equ) => equ.tipo_equipo == 2)
+                  : tabSelected === 2
+                  ? equiposSeccionador.filter((equ) => equ.tipo_equipo == 3)
+                  : []
               }
               setUpdateRow={setUpdateRow}
               tipo={tabSelected + 1 + ""}
               ultimasVisitas={ultimasVisitas}
+              setViewUltimaVisita={setViewUltimaVisita}
             ></Table>
           </Flex>
         </Flex>
@@ -187,11 +222,21 @@ const ViewEquipos = (props) => {
   );
 };
 
-const Table = ({ equiposList, setUpdateRow, tipo, ultimasVisitas }) => {
+const Table = ({
+  equiposList,
+  setUpdateRow,
+  tipo,
+  ultimasVisitas,
+  setViewUltimaVisita,
+}) => {
   let keys =
     tipo === "1"
       ? Object.keys(EQUIPOS_TELGEC_TABLE)
-      : tipo === "2" && Object.keys(EQUIPOS_SECCIONADOR_TABLE);
+      : tipo === "2"
+      ? Object.keys(EQUIPOS_SECCIONADOR_TABLE)
+      : tipo === "3"
+      ? Object.keys(EQUIPOS_SECCIONADOR_TABLE)
+      : [];
   return (
     <TableContainer w={"100%"} h="100%" overflowY={"scroll"}>
       <TableC size="sm" variant="striped" colorScheme="blue">
@@ -201,7 +246,9 @@ const Table = ({ equiposList, setUpdateRow, tipo, ultimasVisitas }) => {
               <Th key={key} color="#fff">
                 {tipo === "1"
                   ? EQUIPOS_TELGEC_TABLE[key]
-                  : tipo === "2" && EQUIPOS_SECCIONADOR_TABLE[key]}
+                  : tipo === "2"
+                  ? EQUIPOS_SECCIONADOR_TABLE[key]
+                  : tipo === "3" && EQUIPOS_SECCIONADOR_TABLE[key]}
               </Th>
             ))}
           </Tr>
@@ -217,14 +264,36 @@ const Table = ({ equiposList, setUpdateRow, tipo, ultimasVisitas }) => {
                       setUpdateRow({ data: data, keyData: key });
                     }}
                   >
-                    {key === "ultima_visita"
-                      ? ultimasVisitas[data.id_equipo] &&
-                        ultimasVisitas[data.id_equipo][0]
-                        ? ultimasVisitas[data.id_equipo][0].fecha
-                        : "-"
-                      : data[key]
-                      ? data[key]
-                      : "-"}
+                    <Flex justifyContent={"center"} alignItems="center">
+                      {key === "ultima_visita"
+                        ? ultimasVisitas[data.id_equipo] &&
+                          ultimasVisitas[data.id_equipo][0]
+                          ? ultimasVisitas[data.id_equipo][0].fecha
+                          : "-"
+                        : data[key]
+                        ? data[key]
+                        : "-"}
+                      {key === "ultima_visita" &&
+                        ultimasVisitas[data.id_equipo] &&
+                        ultimasVisitas[data.id_equipo][0] && (
+                          <Flex
+                            w={"25px"}
+                            h="25px"
+                            color={"blue.400"}
+                            cursor="pointer"
+                            onClick={() => {
+                              setViewUltimaVisita({
+                                equipo: data,
+                                data: ultimasVisitas[data.id_equipo],
+                              });
+                            }}
+                          >
+                            <AddCircleIcon
+                              style={{ width: "100%", height: "100%" }}
+                            />
+                          </Flex>
+                        )}
+                    </Flex>
                   </Td>
                 ))}
               </Tr>
@@ -404,6 +473,7 @@ const EQUIPOS_SECCIONADOR_TABLE = {
   sucursal: "Sucursal",
   localidad: "Localidad",
   direccion: "Direccion",
+  tipo: "Tipo",
   nombre: "Nombre",
   ultima_visita: "Ultima Visita",
   marca_modelo: "Marca, modelo",
@@ -429,12 +499,4 @@ const EQUIPOS_SECCIONADOR_TABLE = {
   velocidad_rtu: "Velocidad RTU",
   numero_serie_radio_modem: "Nro. de serie RM",
   observaciones: "Observaciones",
-  /* configuracion: "Config",
-  t_m: "T/M",
-  numero_serie_medidor: "Nro. Serie Medidor",
-  id_modbus: "ID Modbus",
-  placa_radio_modem: "Placa de RM",
-  programa_radio_modem: "Programa de RM",
-  radio_modem_protegido: "RM protegido",
-  capacidad_rtu: "Capacidad RTU", */
 };
