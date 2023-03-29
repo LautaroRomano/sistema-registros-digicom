@@ -60,7 +60,7 @@ export default function Home() {
             Equipos
           </Flex>
         </Flex>
-        <Flex w={"100%"} h="100%" bg={"primary"} borderBottomRadius="10px">
+        <Flex w={"100%"} h="90%" bg={"primary"} borderBottomRadius="10px">
           {selected === 0 ? <ViewServicios /> : <ViewEquipos />}
         </Flex>
       </Flex>

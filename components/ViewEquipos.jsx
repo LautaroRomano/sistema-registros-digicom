@@ -1,24 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { Flex, Text, Select, Button, Input } from "@chakra-ui/react";
-import styles from "../styles/Table.module.css";
 import axios from "axios";
 import FormAddEquipo from "./FormAddEquipo";
 import {
   Table as TableC,
   Thead,
   Tbody,
-  Tfoot,
   Tr,
   Th,
   Td,
-  TableCaption,
   TableContainer,
 } from "@chakra-ui/react";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import ViewUltimaVisita from "./ViewUltimaVisita";
-
-const TIPOS_SERVICIOS = { 0: "PREVENTIVO", 1: "CORRECTIVO" };
-const TIPOS_EQUIPOS = { 0: "TELGECS", 1: "SECCIONADOR", 2: "RECONECTADOR" };
 
 const ViewEquipos = (props) => {
   const [filter, setFilter] = useState({
@@ -31,6 +25,8 @@ const ViewEquipos = (props) => {
   const [tabSelected, setTabSelected] = useState(0);
   const [ultimasVisitas, setUltimasVisitas] = useState({});
   const [viewUltimaVisita, setViewUltimaVisita] = useState(false);
+  const [pageSize] = useState(30)
+  const [page, setPage] = useState(0)
 
   useEffect(() => {
     getEquiposTelgecs();
@@ -38,19 +34,25 @@ const ViewEquipos = (props) => {
   }, []);
 
   useEffect(() => {
+    setPage(0)
+  }, [filter, tabSelected]);
+
+  useEffect(() => {
     getUltVisita();
-  }, [equiposTelgecs, equiposSeccionador]);
+  }, [equiposTelgecs, equiposSeccionador, page]);
 
   const getUltVisita = () => {
-    equiposTelgecs.forEach((eq) => {
-      axios.get(`/api/ultimavisita/${eq.id_equipo}`).then(({ data }) => {
-        setUltimasVisitas((ult) => ({ ...ult, [eq.id_equipo]: data }));
-      });
+    equiposTelgecs.forEach((eq, i) => {
+      if (!ultimasVisitas[eq.id_equipo] && i >= page * pageSize && i <= (page * pageSize) + pageSize)
+        axios.get(`/api/ultimavisita/${eq.id_equipo}`).then(({ data }) => {
+          setUltimasVisitas((ult) => ({ ...ult, [eq.id_equipo]: data }));
+        });
     });
-    equiposSeccionador.forEach((eq) => {
-      axios.get(`/api/ultimavisita/${eq.id_equipo}`).then(({ data }) => {
-        setUltimasVisitas((ult) => ({ ...ult, [eq.id_equipo]: data }));
-      });
+    equiposSeccionador.forEach((eq, i) => {
+      if (!ultimasVisitas[eq.id_equipo] && i >= page * pageSize && i <= (page * pageSize) + pageSize)
+        axios.get(`/api/ultimavisita/${eq.id_equipo}`).then(({ data }) => {
+          setUltimasVisitas((ult) => ({ ...ult, [eq.id_equipo]: data }));
+        });
     });
   };
 
@@ -109,7 +111,6 @@ const ViewEquipos = (props) => {
         w={"100%"}
         alignItems={"center"}
         flexDir="column"
-        overflowY={"scroll"}
       >
         <Flex
           my={"30px"}
@@ -149,7 +150,7 @@ const ViewEquipos = (props) => {
         <Flex
           border="none"
           w={"90%"}
-          h="90%"
+          h="80%"
           position="relative"
           flexDir={"column"}
         >
@@ -195,26 +196,62 @@ const ViewEquipos = (props) => {
           </Flex>
           <Flex
             w={"100%"}
-            h="100%"
+            h="85%"
             bg={"#fff"}
             borderBottomRadius="10px"
             p={"10px"}
+            flexDir='column'
           >
             <Table
               equiposList={
                 tabSelected === 0
                   ? equiposTelgecs
                   : tabSelected === 1
-                  ? equiposSeccionador.filter((equ) => equ.tipo_equipo == 2)
-                  : tabSelected === 2
-                  ? equiposSeccionador.filter((equ) => equ.tipo_equipo == 3)
-                  : []
+                    ? equiposSeccionador.filter((equ) => equ.tipo_equipo == 2)
+                    : tabSelected === 2
+                      ? equiposSeccionador.filter((equ) => equ.tipo_equipo == 3)
+                      : []
               }
               setUpdateRow={setUpdateRow}
               tipo={tabSelected + 1 + ""}
               ultimasVisitas={ultimasVisitas}
               setViewUltimaVisita={setViewUltimaVisita}
+              pageSize={pageSize}
+              page={page}
             ></Table>
+            <Flex mt={'5px'} w='100%' justifyContent={'end'}>
+              <Flex
+                bg={'primary'}
+                w={'25px'}
+                h='25px'
+                borderRadius={'50%'}
+                color='#FFF'
+                textAlign='center'
+                justifyContent={'center'}
+                fontWeight={'550'}
+                cursor='pointer'
+                mx={'5px'}
+                onClick={() => setPage(page => page > 0 ? page - 1 : page)}
+              >
+                {'<'}
+              </Flex>
+              <Flex bg={'#FFF'} h='30px'>Pagina: {page + 1}</Flex>
+              <Flex
+                bg={'primary'}
+                w={'25px'}
+                h='25px'
+                borderRadius={'50%'}
+                color='#FFF'
+                textAlign='center'
+                justifyContent={'center'}
+                fontWeight={'550'}
+                cursor='pointer'
+                mx={'5px'}
+                onClick={() => setPage(page => page + 1)}
+              >
+                {'>'}
+              </Flex>
+            </Flex>
           </Flex>
         </Flex>
       </Flex>
@@ -228,17 +265,20 @@ const Table = ({
   tipo,
   ultimasVisitas,
   setViewUltimaVisita,
+  pageSize,
+  page
 }) => {
   let keys =
     tipo === "1"
       ? Object.keys(EQUIPOS_TELGEC_TABLE)
       : tipo === "2"
-      ? Object.keys(EQUIPOS_SECCIONADOR_TABLE)
-      : tipo === "3"
-      ? Object.keys(EQUIPOS_SECCIONADOR_TABLE)
-      : [];
+        ? Object.keys(EQUIPOS_SECCIONADOR_TABLE)
+        : tipo === "3"
+          ? Object.keys(EQUIPOS_SECCIONADOR_TABLE)
+          : [];
+
   return (
-    <TableContainer w={"100%"} h="100%" overflowY={"scroll"}>
+    <TableContainer w={"100%"} h='100%' maxH="100%" overflowY={"scroll"}>
       <TableC size="sm" variant="striped" colorScheme="blue">
         <Thead bg={"#175796"}>
           <Tr>
@@ -247,57 +287,57 @@ const Table = ({
                 {tipo === "1"
                   ? EQUIPOS_TELGEC_TABLE[key]
                   : tipo === "2"
-                  ? EQUIPOS_SECCIONADOR_TABLE[key]
-                  : tipo === "3" && EQUIPOS_SECCIONADOR_TABLE[key]}
+                    ? EQUIPOS_SECCIONADOR_TABLE[key]
+                    : tipo === "3" && EQUIPOS_SECCIONADOR_TABLE[key]}
               </Th>
             ))}
           </Tr>
         </Thead>
         <Tbody>
           {equiposList.map((data, i) => {
-            return (
-              <Tr key={i}>
-                {keys.map((key) => (
-                  <Td
-                    key={key}
-                    onDoubleClick={() => {
-                      setUpdateRow({ data: data, keyData: key });
-                    }}
-                  >
-                    <Flex justifyContent={"center"} alignItems="center">
-                      {key === "ultima_visita"
-                        ? ultimasVisitas[data.id_equipo] &&
-                          ultimasVisitas[data.id_equipo][0]
-                          ? ultimasVisitas[data.id_equipo][0].fecha
-                          : "-"
-                        : data[key]
-                        ? data[key]
-                        : "-"}
-                      {key === "ultima_visita" &&
-                        ultimasVisitas[data.id_equipo] &&
-                        ultimasVisitas[data.id_equipo][0] && (
-                          <Flex
-                            w={"25px"}
-                            h="25px"
-                            color={"blue.400"}
-                            cursor="pointer"
-                            onClick={() => {
-                              setViewUltimaVisita({
-                                equipo: data,
-                                data: ultimasVisitas[data.id_equipo],
-                              });
-                            }}
-                          >
-                            <AddCircleIcon
-                              style={{ width: "100%", height: "100%" }}
-                            />
-                          </Flex>
-                        )}
-                    </Flex>
-                  </Td>
-                ))}
-              </Tr>
-            );
+            if (i >= page * pageSize && i <= (page * pageSize) + pageSize)
+              return (
+                <Tr key={i}>
+                  {keys.map((key) => (
+                    <Td
+                      key={key}
+                      onDoubleClick={() => {
+                        setUpdateRow({ data: data, keyData: key });
+                      }}
+                    >
+                      <Flex justifyContent={"center"} alignItems="center">
+                        {key === "ultima_visita"
+                          ? ultimasVisitas[data.id_equipo] &&
+                            ultimasVisitas[data.id_equipo][0]
+                            ? ultimasVisitas[data.id_equipo][0].fecha
+                            : ""
+                          : data[key]
+                            ? data[key]
+                            : "-"}
+                        {key === "ultima_visita" &&
+                          (
+                            <Flex
+                              w={"25px"}
+                              h="25px"
+                              color={"blue.400"}
+                              cursor="pointer"
+                              onClick={() => {
+                                setViewUltimaVisita({
+                                  equipo: data,
+                                  data: ultimasVisitas[data.id_equipo],
+                                });
+                              }}
+                            >
+                              <AddCircleIcon
+                                style={{ width: "100%", height: "100%" }}
+                              />
+                            </Flex>
+                          )}
+                      </Flex>
+                    </Td>
+                  ))}
+                </Tr>
+              );
           })}
         </Tbody>
       </TableC>

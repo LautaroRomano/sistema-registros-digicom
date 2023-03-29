@@ -1,4 +1,5 @@
 import { connection } from "../../../dbconfig/db";
+import { armarFecha } from "../../../components/functions";
 
 const TIPOS_SERVICIOS = { 0: "PREVENTIVO", 1: "CORRECTIVO" };
 const TIPOS_FALLAS = {
@@ -35,7 +36,11 @@ const getServicios = async (req, res) => {
     LEFT JOIN servicios_detalles on servicios.servicio = servicios_detalles.id_servicio_detalle
     ORDER BY servicios.fecha DESC
         `);
-    return res.status(200).json(result);
+    return res.status(200).json(result.map(serv => ({
+      ...serv,
+      fecha: serv.fecha ? armarFecha(serv.fecha) : null,
+      fechaSolucion: serv.fecha_solucion ? armarFecha(serv.fecha_solucion) : null
+    })));
   } catch (error) {
     console.log(error);
   }

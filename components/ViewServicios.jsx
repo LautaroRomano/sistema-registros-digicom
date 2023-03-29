@@ -4,10 +4,20 @@ import styles from "../styles/Table.module.css";
 import axios from "axios";
 import FormAddService from "./FormAddService";
 import { validarDatosCrearNuevoServicio } from "./validarDatos";
-import VisibilityIcon from "@mui/icons-material/Visibility";
+import {
+  Table as TableC,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  TableContainer,
+} from "@chakra-ui/react";
+import { Checkbox, CheckboxGroup } from '@chakra-ui/react'
 
 const TIPOS_SERVICIOS = { 0: "PREVENTIVO", 1: "CORRECTIVO" };
 const TIPOS_EQUIPOS = { 1: "telgecs", 2: "seccionador", 3: "reconectador" };
+
 const NEW_SERVICE_INIT = {
   fechaServicio: "",
   tipoEquipo: "",
@@ -28,11 +38,16 @@ const ViewServicios = (props) => {
     tipoServicio: -1,
     tipoEquipo: -1,
   });
-  const [rowSelected, setRowSelected] = useState();
+  const [rowsSelected, setRowsSelected] = useState([]);
   const [newService, setNewService] = useState(false);
-  const [nombreEquipos, setNombreEquipos] = useState(false);
+  const [nombreEquipos, setNombreEquipos] = useState([]);
   const [detallesServicios, setDetallesServicios] = useState([]);
   const [fallasDatos, setFallasDatos] = useState([]);
+  const [tabSelected, setTabSelected] = useState(0);
+  const [pageSize] = useState(30)
+  const [page, setPage] = useState(0)
+  const [updateRow, setUpdateRow] = useState(false);
+  const [viewTable, setViewTable] = useState(false)
 
   useEffect(() => {
     getServicios();
@@ -45,6 +60,7 @@ const ViewServicios = (props) => {
   const getServicios = () => {
     axios.get("/api/servicios").then(({ data }) => setServiciosList(data));
   };
+
   const getDetallesServicios = () => {
     axios
       .get("/api/servicios/detalles")
@@ -65,6 +81,10 @@ const ViewServicios = (props) => {
     }
   };
 
+  useEffect(() => {
+    setPage(0)
+  }, [filter, tabSelected]);
+
   return (
     <>
       {newService && (
@@ -77,6 +97,13 @@ const ViewServicios = (props) => {
           validarDatos={fallasDatos}
           detallesServicios={detallesServicios}
           getDetallesServicios={getDetallesServicios}
+        />
+      )}
+      {viewTable && (
+        <SelectColumns
+          setViewTable={setViewTable}
+          servicios={serviciosList}
+          rowsSelected={rowsSelected}
         />
       )}
       <Flex
@@ -168,191 +195,347 @@ const ViewServicios = (props) => {
         </Flex>
 
         <Flex
-          w={"80%"}
-          h="60%"
-          px={"1.5rem"}
-          py={"1rem"}
-          bg="#fff"
-          justifyContent="center"
-          alignItems={"start"}
+          border="none"
+          w={"90%"}
+          h="80%"
           position="relative"
-          borderRadius={"15px"}
+          flexDir={"column"}
         >
-          <Flex
-            position={"absolute"}
-            top={-5}
-            left="0"
-            p="10px"
-            bg={"#fff"}
-            borderTopRadius="15px"
-            color={"#gray.200"}
-            fontWeight="600"
-          >
-            <Text mt={"-10px"}>Lista de servicios</Text>
+          <Flex w={"100%"} h="30px" border="none" top="0" left={"0"}>
+            <Flex
+              bg={tabSelected === 0 ? "#FFF" : "gray.200"}
+              color={tabSelected === 0 ? "primary" : "gray.400"}
+              fontWeight={tabSelected === 0 && "bold"}
+              px={"1rem"}
+              borderTopRadius="15px"
+              name="0"
+              cursor={"pointer"}
+              onClick={() => setTabSelected(0)}
+            >
+              Servicios
+            </Flex>
           </Flex>
-          <Table
-            serviciosList={serviciosList}
-            filter={filter}
-            rowSelected={{
-              rowSelected: rowSelected,
-              setRowSelected: setRowSelected,
-            }}
-            nombreEquipos={nombreEquipos}
-          ></Table>
+          <Flex
+            w={"100%"}
+            h="85%"
+            bg={"#fff"}
+            borderBottomRadius="10px"
+            p={"10px"}
+            flexDir='column'
+          >
+            <Table
+              serviciosList={
+                tabSelected === 0
+                  ? serviciosList
+                  : []
+              }
+              setUpdateRow={setUpdateRow}
+              tipo={tabSelected + 1 + ""}
+              pageSize={pageSize}
+              page={page}
+              detallesServicios={detallesServicios}
+              nombreEquipos={nombreEquipos}
+              setRowsSelected={setRowsSelected}
+              rowsSelected={rowsSelected}
+            ></Table>
+            <Flex mt={'5px'} w='100%' justifyContent={'end'}>
+              <Flex
+                bg={'primary'}
+                w={'25px'}
+                h='25px'
+                borderRadius={'50%'}
+                color='#FFF'
+                textAlign='center'
+                justifyContent={'center'}
+                fontWeight={'550'}
+                cursor='pointer'
+                mx={'5px'}
+                onClick={() => setPage(page => page > 0 ? page - 1 : page)}
+              >
+                {'<'}
+              </Flex>
+              <Flex bg={'#FFF'} h='30px'>Pagina: {page + 1}</Flex>
+              <Flex
+                bg={'primary'}
+                w={'25px'}
+                h='25px'
+                borderRadius={'50%'}
+                color='#FFF'
+                textAlign='center'
+                justifyContent={'center'}
+                fontWeight={'550'}
+                cursor='pointer'
+                mx={'5px'}
+                onClick={() => setPage(page => page + 1)}
+              >
+                {'>'}
+              </Flex>
+            </Flex>
+          </Flex>
+          <Button w={'150px'} mt='15px' onClick={() => setViewTable(true)}>Generar tabla</Button>
         </Flex>
       </Flex>
     </>
   );
 };
 
-const Table = ({ serviciosList, filter, rowSelected, nombreEquipos }) => (
-  <Flex w={"100%"} h="100%" overflowY={"scroll"}>
-    <table className={styles.container}>
-      <thead>
-        <tr>
-          <th>
-            <h1>Tipo servicio</h1>
-          </th>
-          <th>
-            <h1>Fecha realizado</h1>
-          </th>
-          <th>
-            <h1>Tipo equipo</h1>
-          </th>
-          <th>
-            <h1>Servicio</h1>
-          </th>
-          <th>
-            <h1>Equipo</h1>
-          </th>
-          <th>
-            <h1>Observaciones</h1>
-          </th>
-          <th>
-            <h1>Fecha Solucion</h1>
-          </th>
-          <th>
-            <h1>Tipo falla</h1>
-          </th>
-          <th>
-            <h1>Detalle falla</h1>
-          </th>
-          <th>
-            <h1>Solucionado</h1>
-          </th>
-          <th>
-            <h1>Detalle solucion</h1>
-          </th>
-          <th>
-            <h1>Observaciones</h1>
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        {serviciosList.map((data, i) => {
-          let fecha = new Date(data.fecha);
-          let dia = fecha.getDate().toString().padStart(2, "0");
-          let mes = (fecha.getMonth() + 1).toString().padStart(2, "0");
-          let anio = fecha.getFullYear().toString();
-          const nuevaFechaServicio = `${dia}/${mes}/${anio}`;
-          fecha = new Date(data.fecha_solucion);
-          dia = fecha.getDate().toString().padStart(2, "0");
-          mes = (fecha.getMonth() + 1).toString().padStart(2, "0");
-          anio = fecha.getFullYear().toString();
-          const nuevaFechaFalla = data.fecha_solucion
-            ? `${dia}/${mes}/${anio}`
-            : "No corresponde";
-
-          const esteEquipo = nombreEquipos.find(
-            (equ) => equ.id_equipo === data.id_equipo
-          );
-          console.log({ esteEquipo });
-
-          if (
-            (data.tipo_servicio === TIPOS_SERVICIOS[filter.tipoServicio] ||
-              filter.tipoServicio == -1) &&
-            (data.tipo_equipo === TIPOS_EQUIPOS[filter.tipoEquipo] ||
-              filter.tipoEquipo == -1) &&
-            (data.servicio == filter.servicio || filter.servicio == -1)
-          )
-            return (
-              <tr
-                key={i}
-                className={
-                  rowSelected.rowSelected &&
-                  rowSelected.rowSelected.id_servicio === data.id_servicio &&
-                  styles.selected
-                }
-                onClick={() => {
-                  if (
-                    rowSelected.rowSelected &&
-                    rowSelected.rowSelected.id_servicio === data.id_servicio
-                  )
-                    rowSelected.setRowSelected(undefined);
-                  else rowSelected.setRowSelected(data);
-                }}
-              >
-                <td>
-                  {data.tipo_servicio ? data.tipo_servicio : "No corresponde"}
-                </td>
-                <td>
-                  {nuevaFechaServicio ? nuevaFechaServicio : "No corresponde"}
-                </td>
-                <td>
-                  {data.tipo_equipo ? data.tipo_equipo : "No corresponde"}
-                </td>
-                <td>{data.servicioDetalle ? data.servicioDetalle : "-"}</td>
-                <td>
-                  {data.id_equipo ? (
-                    <div
-                      style={{
-                        width: "100%",
-                        display: "flex",
-                        justifyContent: "center",
-                      }}
-                    >
-                      {esteEquipo
-                        ? esteEquipo.nombreTelgecs
-                          ? esteEquipo.nombreTelgecs
-                          : esteEquipo.nombreSeccionador
-                          ? esteEquipo.nombreSeccionador
-                          : esteEquipo.nombreReconectador &&
-                            esteEquipo.nombreReconectador
-                        : "-"}
-                    </div>
-                  ) : (
-                    "No corresponde"
-                  )}
-                </td>
-                <td>
-                  {data.observaciones_servicios
-                    ? data.observaciones_servicios
-                    : "No corresponde"}
-                </td>
-                <td>{nuevaFechaFalla ? nuevaFechaFalla : "No corresponde"}</td>
-                <td>{data.tipo_falla ? data.tipo_falla : "No corresponde"}</td>
-                <td>
-                  {data.detalle_falla ? data.detalle_falla : "No corresponde"}
-                </td>
-                <td>
-                  {data.solucionado ? (data.solucionado ? "SI" : "NO") : "NO"}
-                </td>
-                <td>
-                  {data.detalle_solucion
-                    ? data.detalle_solucion
-                    : "No corresponde"}
-                </td>
-                <td>
-                  {data.observaciones_fallas
-                    ? data.observaciones_fallas
-                    : "No corresponde"}
-                </td>
-              </tr>
-            );
-        })}
-      </tbody>
-    </table>
-  </Flex>
-);
-
 export default ViewServicios;
+
+
+const Table = ({
+  serviciosList,
+  setUpdateRow,
+  tipo,
+  pageSize,
+  page,
+  detallesServicios,
+  nombreEquipos,
+  setRowsSelected,
+  rowsSelected
+}) => {
+  let keys =
+    tipo === "1"
+      ? Object.keys(FALLAS_TABLE)
+      : [];
+
+  return (
+    <TableContainer w={"100%"} h='100%' maxH="100%" overflowY={"scroll"}>
+      <TableC size="sm" variant="striped" colorScheme="blue">
+        <Thead bg={"#175796"}>
+          <Tr>
+            <Th key={0} color="#fff">
+              Seleccionar
+            </Th>
+            {keys.map((key) => (
+              <Th key={key} color="#fff">
+                {tipo === "1"
+                  && FALLAS_TABLE[key]
+                }
+              </Th>
+            ))}
+          </Tr>
+        </Thead>
+        <Tbody>
+          {serviciosList.map((data, i) => {
+            const thisEquipo = nombreEquipos.find(f => f.id_equipo === data.id_equipo)
+            const thisServicio = detallesServicios.find(f => f.id_servicio_detalle === data.servicio)
+
+            if (i >= page * pageSize && i <= (page * pageSize) + pageSize)
+              return (
+                <Tr key={i}>
+                  <Td
+                    key={i + 1}
+                  >
+                    <Checkbox
+                      value={rowsSelected.find(id_servicio => id_servicio === data.id_servicio) ? true : false}
+                      onChange={(e) => {
+                        setRowsSelected(rows => {
+                          if (rowsSelected.find(id_servicio => id_servicio === data.id_servicio))
+                            return rows.filter(id_servicio => id_servicio !== data.id_servicio)
+                          else return [...rows, data.id_servicio]
+                        })
+                      }}
+                      checked={rowsSelected.find(id_servicio => id_servicio === data.id_servicio) ? true : false}
+                    ></Checkbox>
+                  </Td>
+                  {
+                    keys.map((key) => (
+                      <Td
+                        key={key}
+                        onDoubleClick={() => {
+                          setUpdateRow({ data: data, keyData: key });
+                        }}
+                      >
+                        {data[key] ?
+                          key === 'servicio' ?
+                            thisServicio ? thisServicio.detalle
+                              : '-'
+                            :
+                            key === 'id_equipo' ?
+                              thisEquipo ? thisEquipo.nombreTelgecs ? thisEquipo.nombreTelgecs
+                                : thisEquipo.nombreSeccionador ? thisEquipo.nombreSeccionador
+                                  : thisEquipo.nombreReconectador ? thisEquipo.nombreReconectador
+                                    : '-'
+                                : '-'
+                              :
+                              data[key]
+                          : '-'}
+                      </Td>
+                    ))
+                  }
+                </Tr>
+              );
+          })}
+        </Tbody>
+      </TableC>
+    </TableContainer >
+  );
+};
+
+const UpdateRow = ({ data, keyData, setUpdateRow, getEquipos }) => {
+  const [newData, setNewData] = useState(data[keyData]);
+
+  const handleGuardar = () => {
+    axios
+      .put("/api/equipos", {
+        newData: newData,
+        keyData: keyData,
+        id_equipo: data.id_equipo,
+        tipo: data.tipo_equipo,
+      })
+      .then(({ data }) => {
+        setUpdateRow(false);
+        getEquipos();
+      });
+  };
+
+  return (
+    <Flex
+      position={"fixed"}
+      zIndex="10"
+      height={"100vh"}
+      w="100vw"
+      bg={"#0005"}
+      alignItems="center"
+      justifyContent="center"
+    >
+      <Flex
+        w={"400px"}
+        h="250px"
+        bg={"#fff"}
+        borderRadius="10px"
+        flexDir={"column"}
+        alignItems="center"
+        justifyContent={"center"}
+        position="relative"
+      >
+        <Text
+          bg={"#175796"}
+          my={"5px"}
+          fontSize="16px"
+          fontWeight={"bold"}
+          w="100%"
+          color="#FFF"
+          textAlign={"center"}
+          py="10px"
+        >
+          ACTUALIZAR DATO: {SERVICIOS_TABLE[keyData]}
+        </Text>
+        <Input
+          value={newData}
+          my={"25px"}
+          w="70%"
+          onChange={(e) => setNewData(e.target.value)}
+        ></Input>
+        <Flex>
+          <Button
+            my={"5px"}
+            mx="15px"
+            colorScheme={"orange"}
+            onClick={() => setUpdateRow(false)}
+          >
+            Cancelar
+          </Button>
+          <Button
+            my={"5px"}
+            mx="15px"
+            colorScheme={"blue"}
+            onClick={handleGuardar}
+          >
+            Guardar
+          </Button>
+        </Flex>
+      </Flex>
+    </Flex>
+  );
+};
+const SelectColumns = ({ rowsSelected, servicios, setViewTable }) => {
+  const [viewTables, setViewTables] = useState(false);
+  const [columnsSelected, setColumnsSelected] = useState([]);
+  const keys = Object.keys(FALLAS_TABLE)
+  return (
+    <Flex
+      position={"fixed"}
+      zIndex="10"
+      height={"100vh"}
+      w="100vw"
+      bg={"#0005"}
+      alignItems="center"
+      justifyContent="center"
+    >
+      <Flex
+        w={"400px"}
+        h="450px"
+        bg={"#fff"}
+        borderRadius="10px"
+        flexDir={"column"}
+        alignItems="center"
+        justifyContent={"center"}
+        position="relative"
+      >
+        <Text
+          bg={"#175796"}
+          my={"5px"}
+          fontSize="16px"
+          fontWeight={"bold"}
+          w="100%"
+          color="#FFF"
+          textAlign={"center"}
+          py="10px"
+        >
+          Selecciona las columnas
+        </Text>
+        <CheckboxGroup mt={'25px'}>
+          {
+            keys.map(key => (
+              <Flex w={'90%'}>
+                <Checkbox
+                  onChange={(e) => {
+                    setColumnsSelected(keys => {
+                      if (columnsSelected.find(k => k === key))
+                        return keys.filter(k => k !== key)
+                      else return [...keys, key]
+                    })
+                  }}
+                ></Checkbox>
+                <Text>{FALLAS_TABLE[key]}</Text>
+              </Flex>
+            ))
+          }
+        </CheckboxGroup>
+        <Flex mt={'25px'}>
+          <Button
+            my={"5px"}
+            mx="15px"
+            colorScheme={"orange"}
+            onClick={() => setViewTable(false)}
+          >
+            Cancelar
+          </Button>
+          <Button
+            my={"5px"}
+            mx="15px"
+            colorScheme={"blue"}
+            onClick={() => { console.log(columnsSelected) }}
+          >
+            Ver Tabla
+          </Button>
+        </Flex>
+      </Flex>
+    </Flex >
+  );
+};
+
+const FALLAS_TABLE = {
+  servicio: "Servicio",
+  fecha: "Fecha realizado",
+  tipo_servicio: "Tipo de servicio",
+  id_equipo: "Equipo",
+  observaciones_servicios: "Observaciones",
+  tipo_falla: "Tipo de falla",
+  detalle_falla: "Detalle falla",
+  solucionado: "Solucionado",
+  fecha_solucion: "Fecha solucion",
+  detalle_solucion: "Detalle Solucion",
+  observaciones_fallas: "Observaciones Falla",
+};
