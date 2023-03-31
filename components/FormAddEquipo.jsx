@@ -69,7 +69,7 @@ const INPUTS_CONFIG = {
     text: "Velocidad de RTU: ",
   },
   canal_radio: {
-    dataType: "number",
+    dataType: "text",
     placeholder: "Ingresa el canal de radio",
     text: "Canal radio: ",
   },

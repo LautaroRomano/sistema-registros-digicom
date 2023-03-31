@@ -23,36 +23,37 @@ const getEquipos = async (req, res) => {
     console.log(error);
   }
 };
+const equiposNombres = [
+  null,
+  "equipos_telgecs",
+  "equipos_seccionador",
+  "equipos_reconectador",
+];
+
 const editarEquipo = async (req, res) => {
   const { newData, keyData, id_equipo, tipo } = req.body;
+
   try {
-    if (tipo === 1)
-      await connection.query(
+    if (Array.isArray(keyData)) {
+      keyData.forEach((key) => {
+        connection.query(
+          `update configuracion 
+          join ${equiposNombres[tipo]} as equ on equ.id_equipo = configuracion.id_equipo 
+          set ${key} = ? 
+          where configuracion.id_equipo = ?`,
+          [newData[key], id_equipo]
+        );
+      });
+    } else {
+      connection.query(
         `update configuracion 
-      join equipos_telgecs on equipos_telgecs.id_equipo = configuracion.id_equipo set ` +
-          keyData +
-          ` = ? 
-    where configuracion.id_equipo = ?`,
-        [newData, id_equipo, id_equipo]
+        join ${equiposNombres[tipo]} as equ on equ.id_equipo = configuracion.id_equipo 
+        set ${keyData} = ? 
+        where configuracion.id_equipo = ?`,
+        [newData, id_equipo]
       );
-    if (tipo === 2)
-      await connection.query(
-        `update configuracion 
-      join equipos_seccionador on equipos_seccionador.id_equipo = configuracion.id_equipo set ` +
-          keyData +
-          ` = ? 
-    where configuracion.id_equipo = ?`,
-        [newData, id_equipo, id_equipo]
-      );
-    if (tipo === 3)
-      await connection.query(
-        `update configuracion 
-      join equipos_reconectador on equipos_reconectador.id_equipo = configuracion.id_equipo set ` +
-          keyData +
-          ` = ? 
-    where configuracion.id_equipo = ?`,
-        [newData, id_equipo, id_equipo]
-      );
+    }
+
     return res.status(200).json({ succes: true });
   } catch (error) {
     console.log(error);
