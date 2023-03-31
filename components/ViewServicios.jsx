@@ -488,7 +488,7 @@ const SelectColumns = ({ rowsSelected, servicios, setViewTable }) => {
         <CheckboxGroup mt={'25px'}>
           {
             keys.map(key => (
-              <Flex w={'90%'}>
+              <Flex w={'90%'} key={key}>
                 <Checkbox
                   onChange={(e) => {
                     setColumnsSelected(keys => {
