@@ -13,7 +13,7 @@ const ViewUltimaVisita = ({ data, setData, getUltVisita, equipo }) => {
           fecha: newData,
         })
         .then(({ data }) => {
-          getUltVisita();
+          getUltVisita(equipo.id_equipo);
         });
   };
 

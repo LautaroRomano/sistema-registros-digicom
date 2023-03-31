@@ -9,7 +9,10 @@ import {
 } from "@chakra-ui/react";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import { Flex } from "@chakra-ui/react";
-import { EQUIPOS_SECCIONADOR_TABLE, EQUIPOS_TELGEC_TABLE } from "../constants/viewEquipos";
+import {
+  EQUIPOS_SECCIONADOR_TABLE,
+  EQUIPOS_TELGEC_TABLE,
+} from "../constants/viewEquipos";
 
 const EquiposTable = ({
   equiposList,

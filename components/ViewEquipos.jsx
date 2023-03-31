@@ -8,7 +8,7 @@ import UpdateRow from "./UpdateRowEquipo";
 
 const ViewEquipos = (props) => {
   const [filter, setFilter] = useState({
-    nombre: ''
+    nombre: "",
   });
   const [newEquipo, setNewEquipo] = useState(false);
   const [equiposTelgecs, setEquiposTelgecs] = useState([]);
@@ -19,6 +19,11 @@ const ViewEquipos = (props) => {
   const [viewUltimaVisita, setViewUltimaVisita] = useState(false);
   const [pageSize] = useState(30);
   const [page, setPage] = useState(0);
+  const [serviciosFiltrados, setServiciosFiltrados] = useState({
+    telgecs: [],
+    seccionador: [],
+    reconectador: [],
+  });
 
   useEffect(() => {
     getEquiposTelgecs();
@@ -27,13 +32,47 @@ const ViewEquipos = (props) => {
 
   useEffect(() => {
     setPage(0);
+
+    setServiciosFiltrados({
+      telgecs: equiposTelgecs.filter((equ) => {
+        if (
+          filter.nombre.length <= 1 ||
+          compararCadenas(equ.nro_set, filter.nombre)
+        )
+          return equ;
+      }),
+      seccionador: equiposSeccionador
+        .filter((equ) => equ.tipo_equipo == 2)
+        .filter((equ) => {
+          if (
+            filter.nombre.length <= 1 ||
+            compararCadenas(equ.nombre, filter.nombre)
+          )
+            return equ;
+        }),
+      reconectador: equiposSeccionador
+        .filter((equ) => equ.tipo_equipo == 3)
+        .filter((equ) => {
+          if (
+            filter.nombre.length <= 1 ||
+            compararCadenas(equ.nombre, filter.nombre)
+          )
+            return equ;
+        }),
+    });
   }, [filter, tabSelected]);
 
   useEffect(() => {
     getUltVisita();
   }, [equiposTelgecs, equiposSeccionador, page]);
 
-  const getUltVisita = () => {
+  const getUltVisita = (id) => {
+    if (id) {
+      axios.get(`/api/ultimavisita/${id}`).then(({ data }) => {
+        setUltimasVisitas((ult) => ({ ...ult, [id]: data }));
+      });
+      return;
+    }
     equiposTelgecs.forEach((eq, i) => {
       if (
         !ultimasVisitas[eq.id_equipo] &&
@@ -57,14 +96,23 @@ const ViewEquipos = (props) => {
   };
 
   const getEquiposTelgecs = () => {
-    axios
-      .get("/api/equipos/telgecs")
-      .then(({ data }) => setEquiposTelgecs(data));
+    axios.get("/api/equipos/telgecs").then(({ data }) => {
+      setServiciosFiltrados((fil) => ({
+        ...fil,
+        telgecs: data,
+      }));
+      setEquiposTelgecs(data);
+    });
   };
   const getEquiposSeccionador = () => {
-    axios
-      .get("/api/equipos/seccionador")
-      .then(({ data }) => setEquiposSeccionador(data));
+    axios.get("/api/equipos/seccionador").then(({ data }) => {
+      setEquiposSeccionador(data);
+      setServiciosFiltrados((fil) => ({
+        ...fil,
+        seccionador: data.filter((equ) => equ.tipo_equipo == 2),
+        reconectador: data.filter((equ) => equ.tipo_equipo == 3),
+      }));
+    });
   };
 
   const postEquipo = () => {
@@ -131,19 +179,26 @@ const ViewEquipos = (props) => {
           >
             <Text mt={"-10px"}>Filtrar</Text>
           </Flex>
-          <Flex flexDir={'column'} alignItems={'center'} justifyContent='center'>
-            <Flex flexDir={'column'} alignItems={'center'} justifyContent={'center'}>
+          <Flex
+            flexDir={"column"}
+            alignItems={"center"}
+            justifyContent="center"
+          >
+            <Flex
+              flexDir={"column"}
+              alignItems={"center"}
+              justifyContent={"center"}
+            >
               <Input
                 value={filter.nombre}
                 w="250px"
                 ms={"15px"}
-                my='3px'
+                my="3px"
                 onChange={(e) => {
                   setFilter({ ...filter, nombre: e.target.value });
                 }}
-                placeholder='Nombre equipo'
-              >
-              </Input>
+                placeholder="Nombre equipo"
+              ></Input>
             </Flex>
             <Flex flexDir={"column"} ms="15px">
               <Button
@@ -216,22 +271,12 @@ const ViewEquipos = (props) => {
             <Table
               equiposList={
                 tabSelected === 0
-                  ? equiposTelgecs.filter(equ => {
-                    if (filter.nombre.length <= 1 || (equ && equ.nro_set.includes(filter.nombre))) return equ
-                  })
+                  ? serviciosFiltrados.telgecs
                   : tabSelected === 1
-                    ? equiposSeccionador
-                      .filter((equ) => equ.tipo_equipo == 2)
-                      .filter(equ => {
-                        if (filter.nombre.length <= 1 || (equ && equ.nombre.includes(filter.nombre))) return equ
-                      })
-                    : tabSelected === 2
-                      ? equiposSeccionador
-                        .filter((equ) => equ.tipo_equipo == 3)
-                        .filter(equ => {
-                          if (filter.nombre.length <= 1 || (equ && equ.nombre.includes(filter.nombre))) return equ
-                        })
-                      : []
+                  ? serviciosFiltrados.seccionador
+                  : tabSelected === 2
+                  ? serviciosFiltrados.reconectador
+                  : []
               }
               setUpdateRow={setUpdateRow}
               tipo={tabSelected + 1 + ""}
@@ -257,7 +302,16 @@ const ViewEquipos = (props) => {
                 {"<"}
               </Flex>
               <Flex bg={"#FFF"} h="30px">
-                Pagina: {page + 1}
+                Pagina: {page + 1} de{" "}
+                {Math.floor(
+                  tabSelected === 0
+                    ? serviciosFiltrados.telgecs.length / 30 + 1
+                    : tabSelected === 1
+                    ? serviciosFiltrados.seccionador.length / 30 + 1
+                    : tabSelected === 2
+                    ? serviciosFiltrados.reconectador.length / 30 + 1
+                    : 0
+                )}
               </Flex>
               <Flex
                 bg={"primary"}
@@ -270,7 +324,22 @@ const ViewEquipos = (props) => {
                 fontWeight={"550"}
                 cursor="pointer"
                 mx={"5px"}
-                onClick={() => setPage((page) => page + 1)}
+                onClick={() =>
+                  setPage((page) =>
+                    page + 1 <
+                    Math.floor(
+                      tabSelected === 0
+                        ? serviciosFiltrados.telgecs.length / 30 + 1
+                        : tabSelected === 1
+                        ? serviciosFiltrados.seccionador.length / 30 + 1
+                        : tabSelected === 2
+                        ? serviciosFiltrados.reconectador.length / 30 + 1
+                        : 0
+                    )
+                      ? page + 1
+                      : page
+                  )
+                }
               >
                 {">"}
               </Flex>
@@ -332,4 +401,10 @@ const NEW_SERVICE_INIT = {
     distribuidor: null,
     seccionador: null,
   },
+};
+
+const compararCadenas = (cad1, cad2) => {
+  if (!cad1) return false;
+  if (!cad2) return false;
+  return cad1.toLowerCase().includes(cad2.toLowerCase());
 };

@@ -13,7 +13,7 @@ import {
   Td,
   TableContainer,
 } from "@chakra-ui/react";
-import { Checkbox, CheckboxGroup } from '@chakra-ui/react'
+import { Checkbox, CheckboxGroup } from "@chakra-ui/react";
 
 const TIPOS_SERVICIOS = { 0: "PREVENTIVO", 1: "CORRECTIVO" };
 const TIPOS_EQUIPOS = { 1: "telgecs", 2: "seccionador", 3: "reconectador" };
@@ -35,9 +35,10 @@ const NEW_SERVICE_INIT = {
 const ViewServicios = (props) => {
   const [serviciosList, setServiciosList] = useState([]);
   const [filter, setFilter] = useState({
-    tipoServicio: -1,
-    tipoEquipo: -1,
-    nombre: ''
+    tipoServicio: "-1",
+    tipoEquipo: "-1",
+    servicio: "-1",
+    nombre: "",
   });
   const [rowsSelected, setRowsSelected] = useState([]);
   const [newService, setNewService] = useState(false);
@@ -45,10 +46,11 @@ const ViewServicios = (props) => {
   const [detallesServicios, setDetallesServicios] = useState([]);
   const [fallasDatos, setFallasDatos] = useState([]);
   const [tabSelected, setTabSelected] = useState(0);
-  const [pageSize] = useState(30)
-  const [page, setPage] = useState(0)
+  const [pageSize] = useState(30);
+  const [page, setPage] = useState(0);
   const [updateRow, setUpdateRow] = useState(false);
-  const [viewTable, setViewTable] = useState(false)
+  const [viewTable, setViewTable] = useState(false);
+  const [serviciosFiltrados, setServiciosFiltrados] = useState([]);
 
   useEffect(() => {
     getServicios();
@@ -59,7 +61,10 @@ const ViewServicios = (props) => {
   }, []);
 
   const getServicios = () => {
-    axios.get("/api/servicios").then(({ data }) => setServiciosList(data));
+    axios.get("/api/servicios").then(({ data }) => {
+      setServiciosList(data);
+      setServiciosFiltrados(data);
+    });
   };
 
   const getDetallesServicios = () => {
@@ -83,7 +88,22 @@ const ViewServicios = (props) => {
   };
 
   useEffect(() => {
-    setPage(0)
+    setPage(0);
+
+    setServiciosFiltrados(
+      serviciosList.filter((serv) => {
+        const equ = nombreEquipos.find((f) => f.id_equipo == serv.id_equipo);
+        const equNom = equ
+          ? equ.nombreReconectador || equ.nombreSeccionador || equ.nombreTelgecs
+          : null;
+        if (
+          (filter.tipoServicio == -1 ||
+            serv.tipo_servicio == filter.tipoServicio) &&
+          (filter.nombre.length <= 1 || compararCadenas(equNom, filter.nombre))
+        )
+          return serv;
+      })
+    );
   }, [filter, tabSelected]);
 
   return (
@@ -105,6 +125,7 @@ const ViewServicios = (props) => {
           setViewTable={setViewTable}
           servicios={serviciosList}
           rowsSelected={rowsSelected}
+          detallesServicios={detallesServicios}
         />
       )}
       <Flex
@@ -136,11 +157,15 @@ const ViewServicios = (props) => {
           >
             <Text mt={"-10px"}>Filtrar</Text>
           </Flex>
-          <Flex flexDir={'column'} alignItems={'center'} justifyContent='center'>
+          <Flex
+            flexDir={"column"}
+            alignItems={"center"}
+            justifyContent="center"
+          >
             <Select
               value={filter.tipoServicio}
               w="250px"
-              my='3px'
+              my="3px"
               onChange={(e) => {
                 setFilter({ ...filter, tipoServicio: e.target.value });
               }}
@@ -152,7 +177,7 @@ const ViewServicios = (props) => {
             <Select
               value={filter.tipoEquipo}
               w="250px"
-              my='3px'
+              my="3px"
               onChange={(e) => {
                 setFilter({ ...filter, tipoEquipo: e.target.value });
               }}
@@ -163,12 +188,16 @@ const ViewServicios = (props) => {
               <option value="3">Reconectador</option>
             </Select>
           </Flex>
-          <Flex flexDir={'column'} alignItems={'center'} justifyContent={'center'}>
+          <Flex
+            flexDir={"column"}
+            alignItems={"center"}
+            justifyContent={"center"}
+          >
             <Select
               value={filter.servicio}
               w="250px"
               ms={"15px"}
-              my='3px'
+              my="3px"
               onChange={(e) => {
                 setFilter({ ...filter, servicio: e.target.value });
               }}
@@ -190,13 +219,12 @@ const ViewServicios = (props) => {
               value={filter.nombre}
               w="250px"
               ms={"15px"}
-              my='3px'
+              my="3px"
               onChange={(e) => {
                 setFilter({ ...filter, nombre: e.target.value });
               }}
-              placeholder='Nombre equipo'
-            >
-            </Input>
+              placeholder="Nombre equipo"
+            ></Input>
           </Flex>
           <Flex flexDir={"column"} ms="15px">
             <Button
@@ -237,21 +265,10 @@ const ViewServicios = (props) => {
             bg={"#fff"}
             borderBottomRadius="10px"
             p={"10px"}
-            flexDir='column'
+            flexDir="column"
           >
             <Table
-              serviciosList={
-                tabSelected === 0
-                  ? serviciosList.filter(serv => {
-                    const equ = nombreEquipos.find(f => f.id_equipo == serv.id_equipo);
-                    const equNom = equ ? equ.nombreReconectador || equ.nombreSeccionador || equ.nombreTelgecs : null
-                    if (
-                      (filter.tipoServicio == -1 || serv.tipo_servicio == filter.tipoServicio) &&
-                      (filter.nombre.length <= 1 || (equNom && equNom.includes(filter.nombre)))
-                    ) return serv
-                  })
-                  : []
-              }
+              serviciosList={tabSelected === 0 ? serviciosFiltrados : []}
               setUpdateRow={setUpdateRow}
               tipo={tabSelected + 1 + ""}
               pageSize={pageSize}
@@ -261,41 +278,57 @@ const ViewServicios = (props) => {
               setRowsSelected={setRowsSelected}
               rowsSelected={rowsSelected}
             ></Table>
-            <Flex mt={'5px'} w='100%' justifyContent={'end'}>
+            <Flex mt={"5px"} w="100%" justifyContent={"end"}>
               <Flex
-                bg={'primary'}
-                w={'25px'}
-                h='25px'
-                borderRadius={'50%'}
-                color='#FFF'
-                textAlign='center'
-                justifyContent={'center'}
-                fontWeight={'550'}
-                cursor='pointer'
-                mx={'5px'}
-                onClick={() => setPage(page => page > 0 ? page - 1 : page)}
+                bg={"primary"}
+                w={"25px"}
+                h="25px"
+                borderRadius={"50%"}
+                color="#FFF"
+                textAlign="center"
+                justifyContent={"center"}
+                fontWeight={"550"}
+                cursor="pointer"
+                mx={"5px"}
+                onClick={() => setPage((page) => (page > 0 ? page - 1 : page))}
               >
-                {'<'}
+                {"<"}
               </Flex>
-              <Flex bg={'#FFF'} h='30px'>Pagina: {page + 1}</Flex>
+              <Flex bg={"#FFF"} h="30px">
+                Pagina: {page + 1} de{" "}
+                {Math.floor(serviciosFiltrados.length / 30 + 1)}
+              </Flex>
               <Flex
-                bg={'primary'}
-                w={'25px'}
-                h='25px'
-                borderRadius={'50%'}
-                color='#FFF'
-                textAlign='center'
-                justifyContent={'center'}
-                fontWeight={'550'}
-                cursor='pointer'
-                mx={'5px'}
-                onClick={() => setPage(page => page + 1)}
+                bg={"primary"}
+                w={"25px"}
+                h="25px"
+                borderRadius={"50%"}
+                color="#FFF"
+                textAlign="center"
+                justifyContent={"center"}
+                fontWeight={"550"}
+                cursor="pointer"
+                mx={"5px"}
+                onClick={() =>
+                  setPage((page) =>
+                    page + 1 < Math.floor(serviciosFiltrados.length / 30 + 1)
+                      ? page + 1
+                      : page
+                  )
+                }
               >
-                {'>'}
+                {">"}
               </Flex>
             </Flex>
           </Flex>
-          <Button w={'150px'} mt='15px' onClick={() => setViewTable(true)}>Generar tabla</Button>
+          <Button
+            w={"150px"}
+            my="15px"
+            onClick={() => setViewTable(true)}
+            colorScheme="orange"
+          >
+            Generar tabla
+          </Button>
         </Flex>
       </Flex>
     </>
@@ -303,7 +336,6 @@ const ViewServicios = (props) => {
 };
 
 export default ViewServicios;
-
 
 const Table = ({
   serviciosList,
@@ -314,15 +346,12 @@ const Table = ({
   detallesServicios,
   nombreEquipos,
   setRowsSelected,
-  rowsSelected
+  rowsSelected,
 }) => {
-  let keys =
-    tipo === "1"
-      ? Object.keys(FALLAS_TABLE)
-      : [];
+  let keys = tipo === "1" ? Object.keys(FALLAS_TABLE) : [];
 
   return (
-    <TableContainer w={"100%"} h='100%' maxH="100%" overflowY={"scroll"}>
+    <TableContainer w={"100%"} h="100%" maxH="100%" overflowY={"scroll"}>
       <TableC size="sm" variant="striped" colorScheme="blue">
         <Thead bg={"#175796"}>
           <Tr>
@@ -331,67 +360,86 @@ const Table = ({
             </Th>
             {keys.map((key) => (
               <Th key={key} color="#fff">
-                {tipo === "1"
-                  && FALLAS_TABLE[key]
-                }
+                {tipo === "1" && FALLAS_TABLE[key]}
               </Th>
             ))}
           </Tr>
         </Thead>
         <Tbody>
           {serviciosList.map((data, i) => {
-            const thisEquipo = nombreEquipos.find(f => f.id_equipo === data.id_equipo)
-            const thisServicio = detallesServicios.find(f => f.id_servicio_detalle === data.servicio)
+            const thisEquipo = nombreEquipos.find(
+              (f) => f.id_equipo === data.id_equipo
+            );
+            const thisServicio = detallesServicios.find(
+              (f) => f.id_servicio_detalle === data.servicio
+            );
 
-            if (i >= page * pageSize && i <= (page * pageSize) + pageSize)
+            if (i >= page * pageSize && i <= page * pageSize + pageSize)
               return (
                 <Tr key={i}>
-                  <Td
-                    key={i + 1}
-                  >
+                  <Td key={i + 1}>
                     <Checkbox
-                      value={rowsSelected.find(id_servicio => id_servicio === data.id_servicio) ? true : false}
+                      value={
+                        rowsSelected.find(
+                          (id_servicio) => id_servicio === data.id_servicio
+                        )
+                          ? true
+                          : false
+                      }
                       onChange={(e) => {
-                        setRowsSelected(rows => {
-                          if (rowsSelected.find(id_servicio => id_servicio === data.id_servicio))
-                            return rows.filter(id_servicio => id_servicio !== data.id_servicio)
-                          else return [...rows, data.id_servicio]
-                        })
+                        setRowsSelected((rows) => {
+                          if (
+                            rowsSelected.find(
+                              (id_servicio) => id_servicio === data.id_servicio
+                            )
+                          )
+                            return rows.filter(
+                              (id_servicio) => id_servicio !== data.id_servicio
+                            );
+                          else return [...rows, data.id_servicio];
+                        });
                       }}
-                      checked={rowsSelected.find(id_servicio => id_servicio === data.id_servicio) ? true : false}
+                      checked={
+                        rowsSelected.find(
+                          (id_servicio) => id_servicio === data.id_servicio
+                        )
+                          ? true
+                          : false
+                      }
                     ></Checkbox>
                   </Td>
-                  {
-                    keys.map((key) => (
-                      <Td
-                        key={key}
-                        onDoubleClick={() => {
-                          setUpdateRow({ data: data, keyData: key });
-                        }}
-                      >
-                        {data[key] ?
-                          key === 'servicio' ?
-                            thisServicio ? thisServicio.detalle
-                              : '-'
-                            :
-                            key === 'id_equipo' ?
-                              thisEquipo ? thisEquipo.nombreTelgecs ? thisEquipo.nombreTelgecs
-                                : thisEquipo.nombreSeccionador ? thisEquipo.nombreSeccionador
-                                  : thisEquipo.nombreReconectador ? thisEquipo.nombreReconectador
-                                    : '-'
-                                : '-'
-                              :
-                              data[key]
-                          : '-'}
-                      </Td>
-                    ))
-                  }
+                  {keys.map((key) => (
+                    <Td
+                      key={key}
+                      onDoubleClick={() => {
+                        setUpdateRow({ data: data, keyData: key });
+                      }}
+                    >
+                      {data[key]
+                        ? key === "servicio"
+                          ? thisServicio
+                            ? thisServicio.detalle
+                            : "-"
+                          : key === "id_equipo"
+                          ? thisEquipo
+                            ? thisEquipo.nombreTelgecs
+                              ? thisEquipo.nombreTelgecs
+                              : thisEquipo.nombreSeccionador
+                              ? thisEquipo.nombreSeccionador
+                              : thisEquipo.nombreReconectador
+                              ? thisEquipo.nombreReconectador
+                              : "-"
+                            : "-"
+                          : data[key]
+                        : "-"}
+                    </Td>
+                  ))}
                 </Tr>
               );
           })}
         </Tbody>
       </TableC>
-    </TableContainer >
+    </TableContainer>
   );
 };
 
@@ -472,10 +520,89 @@ const UpdateRow = ({ data, keyData, setUpdateRow, getEquipos }) => {
     </Flex>
   );
 };
-const SelectColumns = ({ rowsSelected, servicios, setViewTable }) => {
+const SelectColumns = ({
+  rowsSelected,
+  servicios,
+  setViewTable,
+  detallesServicios,
+}) => {
   const [viewTables, setViewTables] = useState(false);
   const [columnsSelected, setColumnsSelected] = useState([]);
-  const keys = Object.keys(FALLAS_TABLE)
+  const keys = Object.keys(FALLAS_TABLE);
+
+  if (viewTables) {
+    return (
+      <Flex
+        position={"fixed"}
+        zIndex="10"
+        height={"100vh"}
+        w="100vw"
+        maxW="100vw"
+        bg={"#0005"}
+        alignItems="center"
+        justifyContent="center"
+      >
+        <Flex
+          bg={"#fff"}
+          borderRadius="10px"
+          flexDir={"column"}
+          alignItems="center"
+          w={"70vw"}
+          justifyContent={"center"}
+          position="relative"
+          p={"25px"}
+          overflow={"scroll"}
+        >
+          <TableContainer w={"100%"} h="100%" maxH="100%">
+            <TableC size="sm" variant="striped" colorScheme="blue">
+              <Thead bg={"#175796"}>
+                <Tr>
+                  {columnsSelected.map((key) => (
+                    <Th key={key} color="#fff">
+                      {FALLAS_TABLE[key]}
+                    </Th>
+                  ))}
+                </Tr>
+              </Thead>
+              <Tbody>
+                {servicios.map((data, i) => {
+                  if (rowsSelected.includes(data.id_servicio))
+                    return (
+                      <Tr key={i}>
+                        {columnsSelected.map((key) => (
+                          <Td key={key}>
+                            <Flex justifyContent={"center"} alignItems="center">
+                              {key === "servicio"
+                                ? detallesServicios.find(
+                                    (f) => f.id_servicio_detalle == data[key]
+                                  ).detalle
+                                : data[key]
+                                ? data[key]
+                                : "-"}
+                            </Flex>
+                          </Td>
+                        ))}
+                      </Tr>
+                    );
+                })}
+              </Tbody>
+            </TableC>
+          </TableContainer>
+          <Button
+            mt={"15px"}
+            onClick={() => {
+              setViewTable(false);
+              setViewTables(false);
+            }}
+            colorScheme="orange"
+          >
+            Cerrar
+          </Button>
+        </Flex>
+      </Flex>
+    );
+  }
+
   return (
     <Flex
       position={"fixed"}
@@ -508,25 +635,23 @@ const SelectColumns = ({ rowsSelected, servicios, setViewTable }) => {
         >
           Selecciona las columnas
         </Text>
-        <CheckboxGroup mt={'25px'}>
-          {
-            keys.map(key => (
-              <Flex w={'90%'} key={key}>
-                <Checkbox
-                  onChange={(e) => {
-                    setColumnsSelected(keys => {
-                      if (columnsSelected.find(k => k === key))
-                        return keys.filter(k => k !== key)
-                      else return [...keys, key]
-                    })
-                  }}
-                ></Checkbox>
-                <Text>{FALLAS_TABLE[key]}</Text>
-              </Flex>
-            ))
-          }
+        <CheckboxGroup mt={"25px"}>
+          {keys.map((key) => (
+            <Flex w={"90%"} key={key}>
+              <Checkbox
+                onChange={(e) => {
+                  setColumnsSelected((keys) => {
+                    if (columnsSelected.find((k) => k === key))
+                      return keys.filter((k) => k !== key);
+                    else return [...keys, key];
+                  });
+                }}
+              ></Checkbox>
+              <Text>{FALLAS_TABLE[key]}</Text>
+            </Flex>
+          ))}
         </CheckboxGroup>
-        <Flex mt={'25px'}>
+        <Flex mt={"25px"}>
           <Button
             my={"5px"}
             mx="15px"
@@ -539,13 +664,15 @@ const SelectColumns = ({ rowsSelected, servicios, setViewTable }) => {
             my={"5px"}
             mx="15px"
             colorScheme={"blue"}
-            onClick={() => { console.log(columnsSelected) }}
+            onClick={() => {
+              setViewTables(true);
+            }}
           >
             Ver Tabla
           </Button>
         </Flex>
       </Flex>
-    </Flex >
+    </Flex>
   );
 };
 
@@ -561,4 +688,11 @@ const FALLAS_TABLE = {
   fecha_solucion: "Fecha solucion",
   detalle_solucion: "Detalle Solucion",
   observaciones_fallas: "Observaciones Falla",
+};
+
+const compararCadenas = (cad1, cad2) => {
+  if (!cad1) return false;
+  if (!cad2) return false;
+  if (cad2.length <= 1) return true;
+  return cad1.toLowerCase().includes(cad2.toLowerCase());
 };
