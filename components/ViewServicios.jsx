@@ -37,6 +37,7 @@ const ViewServicios = (props) => {
   const [filter, setFilter] = useState({
     tipoServicio: -1,
     tipoEquipo: -1,
+    nombre: ''
   });
   const [rowsSelected, setRowsSelected] = useState([]);
   const [newService, setNewService] = useState(false);
@@ -135,10 +136,11 @@ const ViewServicios = (props) => {
           >
             <Text mt={"-10px"}>Filtrar</Text>
           </Flex>
-          <Flex>
+          <Flex flexDir={'column'} alignItems={'center'} justifyContent='center'>
             <Select
               value={filter.tipoServicio}
               w="250px"
+              my='3px'
               onChange={(e) => {
                 setFilter({ ...filter, tipoServicio: e.target.value });
               }}
@@ -150,7 +152,7 @@ const ViewServicios = (props) => {
             <Select
               value={filter.tipoEquipo}
               w="250px"
-              ms={"15px"}
+              my='3px'
               onChange={(e) => {
                 setFilter({ ...filter, tipoEquipo: e.target.value });
               }}
@@ -160,10 +162,13 @@ const ViewServicios = (props) => {
               <option value="2">Seccionador</option>
               <option value="3">Reconectador</option>
             </Select>
+          </Flex>
+          <Flex flexDir={'column'} alignItems={'center'} justifyContent={'center'}>
             <Select
               value={filter.servicio}
               w="250px"
               ms={"15px"}
+              my='3px'
               onChange={(e) => {
                 setFilter({ ...filter, servicio: e.target.value });
               }}
@@ -181,6 +186,17 @@ const ViewServicios = (props) => {
                   );
                 })}
             </Select>
+            <Input
+              value={filter.nombre}
+              w="250px"
+              ms={"15px"}
+              my='3px'
+              onChange={(e) => {
+                setFilter({ ...filter, nombre: e.target.value });
+              }}
+              placeholder='Nombre equipo'
+            >
+            </Input>
           </Flex>
           <Flex flexDir={"column"} ms="15px">
             <Button
@@ -189,7 +205,7 @@ const ViewServicios = (props) => {
               mb={"5px"}
               onClick={() => setNewService(NEW_SERVICE_INIT)}
             >
-              Agregar
+              Nuevo servicio
             </Button>
           </Flex>
         </Flex>
@@ -226,7 +242,14 @@ const ViewServicios = (props) => {
             <Table
               serviciosList={
                 tabSelected === 0
-                  ? serviciosList
+                  ? serviciosList.filter(serv => {
+                    const equ = nombreEquipos.find(f => f.id_equipo == serv.id_equipo);
+                    const equNom = equ ? equ.nombreReconectador || equ.nombreSeccionador || equ.nombreTelgecs : null
+                    if (
+                      (filter.tipoServicio == -1 || serv.tipo_servicio == filter.tipoServicio) &&
+                      (filter.nombre.length <= 1 || (equNom && equNom.includes(filter.nombre)))
+                    ) return serv
+                  })
                   : []
               }
               setUpdateRow={setUpdateRow}

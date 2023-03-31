@@ -8,7 +8,7 @@ import UpdateRow from "./UpdateRowEquipo";
 
 const ViewEquipos = (props) => {
   const [filter, setFilter] = useState({
-    tipoEquipo: -1,
+    nombre: ''
   });
   const [newEquipo, setNewEquipo] = useState(false);
   const [equiposTelgecs, setEquiposTelgecs] = useState([]);
@@ -131,15 +131,30 @@ const ViewEquipos = (props) => {
           >
             <Text mt={"-10px"}>Filtrar</Text>
           </Flex>
-          <Flex flexDir={"column"} ms="15px">
-            <Button
-              colorScheme={"blue"}
-              size="sm"
-              mb={"5px"}
-              onClick={() => setNewEquipo(NEW_SERVICE_INIT)}
-            >
-              Agregar
-            </Button>
+          <Flex flexDir={'column'} alignItems={'center'} justifyContent='center'>
+            <Flex flexDir={'column'} alignItems={'center'} justifyContent={'center'}>
+              <Input
+                value={filter.nombre}
+                w="250px"
+                ms={"15px"}
+                my='3px'
+                onChange={(e) => {
+                  setFilter({ ...filter, nombre: e.target.value });
+                }}
+                placeholder='Nombre equipo'
+              >
+              </Input>
+            </Flex>
+            <Flex flexDir={"column"} ms="15px">
+              <Button
+                colorScheme={"blue"}
+                size="sm"
+                mb={"5px"}
+                onClick={() => setNewEquipo(NEW_SERVICE_INIT)}
+              >
+                Nuevo equipo
+              </Button>
+            </Flex>
           </Flex>
         </Flex>
 
@@ -201,12 +216,22 @@ const ViewEquipos = (props) => {
             <Table
               equiposList={
                 tabSelected === 0
-                  ? equiposTelgecs
+                  ? equiposTelgecs.filter(equ => {
+                    if (filter.nombre.length <= 1 || (equ && equ.nro_set.includes(filter.nombre))) return equ
+                  })
                   : tabSelected === 1
-                  ? equiposSeccionador.filter((equ) => equ.tipo_equipo == 2)
-                  : tabSelected === 2
-                  ? equiposSeccionador.filter((equ) => equ.tipo_equipo == 3)
-                  : []
+                    ? equiposSeccionador
+                      .filter((equ) => equ.tipo_equipo == 2)
+                      .filter(equ => {
+                        if (filter.nombre.length <= 1 || (equ && equ.nombre.includes(filter.nombre))) return equ
+                      })
+                    : tabSelected === 2
+                      ? equiposSeccionador
+                        .filter((equ) => equ.tipo_equipo == 3)
+                        .filter(equ => {
+                          if (filter.nombre.length <= 1 || (equ && equ.nombre.includes(filter.nombre))) return equ
+                        })
+                      : []
               }
               setUpdateRow={setUpdateRow}
               tipo={tabSelected + 1 + ""}
