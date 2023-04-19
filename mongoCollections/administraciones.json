@@ -1,0 +1,31 @@
+[{
+  "_id": {
+    "$oid": "643ff1e9206dc1a05dbe0bfc"
+  },
+  "id_administracion": 1,
+  "nombre": "Banda del Río Salí"
+},{
+  "_id": {
+    "$oid": "643ff1e9206dc1a05dbe0bfd"
+  },
+  "id_administracion": 2,
+  "nombre": "Concepción"
+},{
+  "_id": {
+    "$oid": "643ff1e9206dc1a05dbe0bfe"
+  },
+  "id_administracion": 3,
+  "nombre": "Metropolitana"
+},{
+  "_id": {
+    "$oid": "643ff1e9206dc1a05dbe0bff"
+  },
+  "id_administracion": 4,
+  "nombre": "Monteros"
+},{
+  "_id": {
+    "$oid": "643ff1e9206dc1a05dbe0c00"
+  },
+  "id_administracion": 5,
+  "nombre": "Tafí Viejo"
+}]
