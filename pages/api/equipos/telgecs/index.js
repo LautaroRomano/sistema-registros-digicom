@@ -28,6 +28,7 @@ const getEquipos = async (req, res) => {
         result[i].fecha_instalacion = armarFecha(re.fecha_instalacion);
       if (re.cambio_bateria)
         result[i].cambio_bateria = armarFecha(re.cambio_bateria);
+      i++;
     }
     return res.status(200).json(result);
   } catch (error) {

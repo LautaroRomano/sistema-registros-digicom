@@ -5,6 +5,8 @@ import FormAddEquipo from "./FormAddEquipo";
 import ViewUltimaVisita from "./ViewUltimaVisita";
 import Table from "./tables/EquiposTable";
 import UpdateRow from "./UpdateRowEquipo";
+import PDFButton from "../components/createpdf/PDFButton";
+import ViewPDF from "../components/createpdf/ViewPDF";
 
 const ViewEquipos = (props) => {
   const [filter, setFilter] = useState({
@@ -17,6 +19,7 @@ const ViewEquipos = (props) => {
   const [tabSelected, setTabSelected] = useState(0);
   const [ultimasVisitas, setUltimasVisitas] = useState({});
   const [viewUltimaVisita, setViewUltimaVisita] = useState(false);
+  const [cambiosDeBateria, setCambiosDeBateria] = useState(false);
   const [pageSize] = useState(30);
   const [page, setPage] = useState(0);
   const [serviciosFiltrados, setServiciosFiltrados] = useState({
@@ -78,10 +81,14 @@ const ViewEquipos = (props) => {
         !ultimasVisitas[eq.id_equipo] &&
         i >= page * pageSize &&
         i <= page * pageSize + pageSize
-      )
+      ) {
         axios.get(`/api/ultimavisita/${eq.id_equipo}`).then(({ data }) => {
           setUltimasVisitas((ult) => ({ ...ult, [eq.id_equipo]: data }));
         });
+        axios.get(`/api/cambiosdebateria/${eq.id_equipo}`).then(({ data }) => {
+          setCambiosDeBateria((ult) => ({ ...ult, [eq.id_equipo]: data }));
+        });
+      }
     });
     equiposSeccionador.forEach((eq, i) => {
       if (
@@ -92,6 +99,9 @@ const ViewEquipos = (props) => {
         axios.get(`/api/ultimavisita/${eq.id_equipo}`).then(({ data }) => {
           setUltimasVisitas((ult) => ({ ...ult, [eq.id_equipo]: data }));
         });
+      axios.get(`/api/cambiosdebateria/${eq.id_equipo}`).then(({ data }) => {
+        setCambiosDeBateria((ult) => ({ ...ult, [eq.id_equipo]: data }));
+      });
     });
   };
 
@@ -126,6 +136,8 @@ const ViewEquipos = (props) => {
         })
         .catch((error) => console.log({ error }));
   };
+
+  return <ViewPDF />;
 
   return (
     <>
@@ -281,6 +293,7 @@ const ViewEquipos = (props) => {
               setUpdateRow={setUpdateRow}
               tipo={tabSelected + 1 + ""}
               ultimasVisitas={ultimasVisitas}
+              cambiosDeBateria={cambiosDeBateria}
               setViewUltimaVisita={setViewUltimaVisita}
               pageSize={pageSize}
               page={page}
@@ -343,6 +356,7 @@ const ViewEquipos = (props) => {
               >
                 {">"}
               </Flex>
+              <PDFButton></PDFButton>
             </Flex>
           </Flex>
         </Flex>

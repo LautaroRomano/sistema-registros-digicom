@@ -19,6 +19,7 @@ const EquiposTable = ({
   setUpdateRow,
   tipo,
   ultimasVisitas,
+  cambiosDeBateria,
   setViewUltimaVisita,
   pageSize,
   page,
@@ -65,6 +66,11 @@ const EquiposTable = ({
                           ? ultimasVisitas[data.id_equipo] &&
                             ultimasVisitas[data.id_equipo][0]
                             ? ultimasVisitas[data.id_equipo][0].fecha
+                            : ""
+                          : key === "fecha_cambio_bateria"
+                          ? cambiosDeBateria[data.id_equipo] &&
+                            cambiosDeBateria[data.id_equipo][0]
+                            ? cambiosDeBateria[data.id_equipo][0].fecha
                             : ""
                           : data[key]
                           ? data[key]
