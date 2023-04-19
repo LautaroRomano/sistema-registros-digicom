@@ -1,14 +1,12 @@
 import { useState } from "react";
-import { Flex, Image } from "@chakra-ui/react";
-import ViewEquipos from "../components/ViewEquipos";
-import ViewServicios from "../components/ViewServicios";
+import { Flex, Image, Text } from "@chakra-ui/react";
+import SettingsIcon from "@mui/icons-material/Settings";
+import ViewConfig from "../components/ViewConfig";
 
 export default function Home() {
-  const [selected, setSelected] = useState(0);
+  const [viewConfig, setViewConfig] = useState(false);
 
-  const handleChangeSelected = (value) => {
-    setSelected(value);
-  };
+  const handleChangeViewConfig = () => setViewConfig((state) => !state);
 
   return (
     <Flex
@@ -18,6 +16,9 @@ export default function Home() {
       alignItems="center"
       flexDir={"column"}
     >
+      {viewConfig && (
+        <ViewConfig handleChangeViewConfig={handleChangeViewConfig} />
+      )}
       <Image
         width="209"
         height="55"
@@ -35,33 +36,23 @@ export default function Home() {
         position="relative"
         flexDir={"column"}
       >
-        <Flex w={"100%"} h="30px" bg={"#fff"} border="none" top="0" left={"0"}>
-          <Flex
-            bg={selected === 0 ? "primary" : "gray.200"}
-            color={selected === 0 ? "#fff" : "gray.700"}
-            px={"1rem"}
-            borderTopRadius="15px"
-            name="0"
+        <Flex
+          w={"100%"}
+          h="30px"
+          justifyContent={"end"}
+          alignItems="center"
+          bg={"#fff"}
+          border="none"
+        >
+          <Text
+            _hover={{ bg: "#acacac" }}
+            borderRadius={"35%"}
+            p={"5px"}
+            onClick={handleChangeViewConfig}
             cursor={"pointer"}
-            onClick={() => handleChangeSelected(0)}
           >
-            Servicios
-          </Flex>
-          <Flex
-            bg={selected === 1 ? "primary" : "gray.200"}
-            color={selected === 1 ? "#fff" : "gray.700"}
-            ms="1px"
-            px={"1rem"}
-            borderTopRadius="15px"
-            name="1"
-            cursor={"pointer"}
-            onClick={() => handleChangeSelected(1)}
-          >
-            Equipos
-          </Flex>
-        </Flex>
-        <Flex w={"100%"} h="90%" bg={"primary"} borderBottomRadius="10px">
-          {selected === 0 ? <ViewServicios /> : <ViewEquipos />}
+            <SettingsIcon />
+          </Text>
         </Flex>
       </Flex>
     </Flex>
