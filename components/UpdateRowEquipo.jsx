@@ -13,14 +13,9 @@ const UpdateRowEquipo = ({ data, keyData, setUpdateRow, getEquipos }) => {
     axios
       .put("/api/equipos", {
         newData: newData,
-        keyData:
-          keyData === "sucursal" ||
-          keyData === "localidad" ||
-          keyData === "administracion"
-            ? ["administracion", "localidad", "sucursal"]
-            : keyData,
-        id_equipo: data.id_equipo,
-        tipo: data.tipo_equipo,
+        keyData: keyData,
+        _id: data._id,
+        tipo_equipo: 0,
       })
       .then(({ data }) => {
         setUpdateRow(false);
@@ -73,7 +68,9 @@ const UpdateRowEquipo = ({ data, keyData, setUpdateRow, getEquipos }) => {
     return (
       <Flex
         position={"fixed"}
-        zIndex="10"
+        top={0}
+        left={0}
+        zIndex={1000}
         height={"100vh"}
         w="100vw"
         bg={"#0005"}

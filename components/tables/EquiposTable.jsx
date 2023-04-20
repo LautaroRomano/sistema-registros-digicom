@@ -6,32 +6,24 @@ import {
   Th,
   Td,
   TableContainer,
+  Input
 } from "@chakra-ui/react";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import { Flex } from "@chakra-ui/react";
-import {
-  EQUIPOS_SECCIONADOR_TABLE,
-  EQUIPOS_TELGEC_TABLE,
-} from "../constants/viewEquipos";
+import { useState } from "react";
 
 const EquiposTable = ({
   equiposList,
+  equiposConfig,
   setUpdateRow,
-  tipo,
-  ultimasVisitas,
-  cambiosDeBateria,
-  setViewUltimaVisita,
   pageSize,
   page,
+  newEquipo,
+  postEquipo,
+  handleChangeData,
+  newEquipoData
 }) => {
-  let keys =
-    tipo === "1"
-      ? Object.keys(EQUIPOS_TELGEC_TABLE)
-      : tipo === "2"
-      ? Object.keys(EQUIPOS_SECCIONADOR_TABLE)
-      : tipo === "3"
-      ? Object.keys(EQUIPOS_SECCIONADOR_TABLE)
-      : [];
+  let keys = equiposConfig
 
   return (
     <TableContainer w={"100%"} h="100%" maxH="100%" overflowY={"scroll"}>
@@ -40,16 +32,27 @@ const EquiposTable = ({
           <Tr>
             {keys.map((key) => (
               <Th key={key} color="#fff">
-                {tipo === "1"
-                  ? EQUIPOS_TELGEC_TABLE[key]
-                  : tipo === "2"
-                  ? EQUIPOS_SECCIONADOR_TABLE[key]
-                  : tipo === "3" && EQUIPOS_SECCIONADOR_TABLE[key]}
+                {key}
               </Th>
             ))}
           </Tr>
         </Thead>
         <Tbody>
+          {
+            newEquipo &&
+            <Tr >
+              {keys.map((key, i) => (
+                <Td
+                  key={key}
+                >
+                  <Flex justifyContent={"center"} alignItems="center" w={"100%"} h={"100%"}>
+                    <Input p={0} w={"100%"} h={"100%"} borderRadius={'1px'} onChange={handleChangeData} name={key} value={newEquipoData[key]} bg={'#fff'}></Input>
+                  </Flex>
+                </Td>
+              ))}
+            </Tr>
+          }
+
           {equiposList.map((data, i) => {
             if (i >= page * pageSize && i <= page * pageSize + pageSize)
               return (
@@ -62,19 +65,10 @@ const EquiposTable = ({
                       }}
                     >
                       <Flex justifyContent={"center"} alignItems="center">
-                        {key === "ultima_visita"
-                          ? ultimasVisitas[data.id_equipo] &&
-                            ultimasVisitas[data.id_equipo][0]
-                            ? ultimasVisitas[data.id_equipo][0].fecha
-                            : ""
-                          : key === "fecha_cambio_bateria"
-                          ? cambiosDeBateria[data.id_equipo] &&
-                            cambiosDeBateria[data.id_equipo][0]
-                            ? cambiosDeBateria[data.id_equipo][0].fecha
-                            : ""
-                          : data[key]
-                          ? data[key]
-                          : "-"}
+                        {
+                          data[key]
+                            ? data[key]
+                            : "-"}
                         {key === "ultima_visita" && (
                           <Flex
                             w={"25px"}
