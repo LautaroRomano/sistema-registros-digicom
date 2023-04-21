@@ -1,5 +1,4 @@
 import { Flex, Input, Button, Text, Select } from "@chakra-ui/react";
-import { EQUIPOS_TELGEC_TABLE } from "./constants/viewEquipos";
 import { useState, useEffect } from "react";
 import axios from "axios";
 
@@ -226,7 +225,7 @@ const UpdateRowEquipo = ({ data, keyData, setUpdateRow, getEquipos }) => {
           textAlign={"center"}
           py="10px"
         >
-          ACTUALIZAR DATO: {EQUIPOS_TELGEC_TABLE[keyData]}
+          ACTUALIZAR DATO: {keyData}
         </Text>
         <Input
           type={keyData === "fecha_instalacion" ? "date" : "text"}

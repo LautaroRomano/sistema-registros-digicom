@@ -2,11 +2,18 @@ import { useState } from "react";
 import { Flex, Image, Text } from "@chakra-ui/react";
 import SettingsIcon from "@mui/icons-material/Settings";
 import ViewConfig from "../components/ViewConfig";
+import SelectR from "react-select";
 
 export default function Home() {
   const [viewConfig, setViewConfig] = useState(false);
-
   const handleChangeViewConfig = () => setViewConfig((state) => !state);
+  const [newService, setNewService] = useState(false);
+  const [newServiceData, setNewServiceData] = useState({});
+
+  const handleChange = ({ target }) => {
+    const { name, value } = target;
+    setNewServiceData((state) => ({ ...state, [name]: value }));
+  };
 
   return (
     <Flex
@@ -53,6 +60,26 @@ export default function Home() {
           >
             <SettingsIcon />
           </Text>
+        </Flex>
+        <Flex bg={"red"} w={"100%"} h={"100%"}>
+          <SelectR
+            name="equipo"
+            onChange={({ value }) => {
+              handleChange({
+                target: { name: "equipo", value: value },
+              });
+            }}
+            options={{
+              value: "",
+              label: "label",
+            }}
+            /* styles={{
+              control: (baseStyles, state) => ({
+                ...baseStyles,
+                width: "25vw",
+              }),
+            }} */
+          />
         </Flex>
       </Flex>
     </Flex>
