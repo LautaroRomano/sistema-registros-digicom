@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Flex, Text, Select, Button, Input } from "@chakra-ui/react";
 import axios from "axios";
-import ViewUltimaVisita from "./ViewUltimaVisita";
-import Table from "./tables/EquiposTable";
-import UpdateRow from "./UpdateRowEquipo";
+import ViewUltimaVisita from "../../components/ViewUltimaVisita";
+import Table from "../../components/tables/EquiposTable";
+import UpdateRow from "../../components/UpdateRowEquipo";
+import Navbar from "../../components/Navbar";
 import CloseIcon from "@mui/icons-material/Close";
 
-const TIPOS_EQUIPOS = { 0: "TELGECS", 1: "SECCIONADOR", 2: "RECONECTADOR" };
-
-const ViewEquipos = ({ handleChangeView, tipoEquipo }) => {
+const ViewEquipos = () => {
   const [filter, setFilter] = useState({ nombre: "" });
   const [newEquipo, setNewEquipo] = useState(false);
   const [equipos, setEquipos] = useState([]);
@@ -24,12 +23,10 @@ const ViewEquipos = ({ handleChangeView, tipoEquipo }) => {
   };
 
   useEffect(() => {
-    if (TIPOS_EQUIPOS[tipoEquipo] === "TELGECS") {
-      getEquiposTelgecs();
-    }
+    getEquipos();
   }, []);
 
-  const getEquiposTelgecs = () => {
+  const getEquipos = () => {
     axios.get(`/api/equipos`).then((res) => {
       setEquipos(res.data);
     });
@@ -44,7 +41,7 @@ const ViewEquipos = ({ handleChangeView, tipoEquipo }) => {
       .then((res) => {
         setNewEquipoData({});
         setNewEquipo(false);
-        getEquiposTelgecs();
+        getEquipos();
       })
       .catch((err) => {});
   };
@@ -57,7 +54,7 @@ const ViewEquipos = ({ handleChangeView, tipoEquipo }) => {
           keyData={updateRow.keyData}
           setUpdateRow={setUpdateRow}
           getEquipos={() => {
-            getEquiposTelgecs();
+            getEquipos();
           }}
         />
       )}
@@ -81,7 +78,9 @@ const ViewEquipos = ({ handleChangeView, tipoEquipo }) => {
           bg={"#0001"}
           zIndex={100}
           color={"#262626"}
+          flexDir={"column"}
         >
+          <Navbar />
           <Flex
             w={"80%"}
             h={"80%"}
@@ -92,6 +91,9 @@ const ViewEquipos = ({ handleChangeView, tipoEquipo }) => {
             borderRadius={"15px"}
             position={"relative"}
           >
+            <Text fontSize={"1.5rem"} fontWeight={"600"} color={"#fff"}>
+              Telgecs
+            </Text>
             <Flex
               my={"30px"}
               w={"80%"}
@@ -148,7 +150,7 @@ const ViewEquipos = ({ handleChangeView, tipoEquipo }) => {
             >
               <Flex
                 w={"100%"}
-                h="85%"
+                h="95%"
                 bg={"#fff"}
                 borderBottomRadius="10px"
                 p={"10px"}
@@ -167,6 +169,42 @@ const ViewEquipos = ({ handleChangeView, tipoEquipo }) => {
                   newEquipoData={newEquipoData}
                 />
                 <Flex mt={"5px"} w="100%" justifyContent={"end"}>
+                  <Flex justifyContent={"end"} ms="15px">
+                    <Flex me="15px">
+                      {newEquipo ? (
+                        <Flex>
+                          <Button
+                            colorScheme={"green"}
+                            size="sm"
+                            mx={"5px"}
+                            onClick={postEquipo}
+                          >
+                            Guardar equipo
+                          </Button>
+                          <Button
+                            colorScheme={"orange"}
+                            size="sm"
+                            mx={"5px"}
+                            onClick={() => {
+                              setNewEquipo(false);
+                              setNewEquipoData({});
+                            }}
+                          >
+                            Cancelar
+                          </Button>
+                        </Flex>
+                      ) : (
+                        <Button
+                          colorScheme={"blue"}
+                          size="sm"
+                          mb={"5px"}
+                          onClick={() => setNewEquipo(true)}
+                        >
+                          Nuevo equipo
+                        </Button>
+                      )}
+                    </Flex>
+                  </Flex>
                   <Flex
                     bg={"primary"}
                     w={"25px"}
@@ -205,42 +243,6 @@ const ViewEquipos = ({ handleChangeView, tipoEquipo }) => {
                     }
                   >
                     {">"}
-                  </Flex>
-                </Flex>
-                <Flex w={"100%"} justifyContent={"end"} ms="15px">
-                  <Flex me="15px">
-                    {newEquipo ? (
-                      <Flex>
-                        <Button
-                          colorScheme={"green"}
-                          size="sm"
-                          mx={"5px"}
-                          onClick={postEquipo}
-                        >
-                          Guardar equipo
-                        </Button>
-                        <Button
-                          colorScheme={"orange"}
-                          size="sm"
-                          mx={"5px"}
-                          onClick={() => {
-                            setNewEquipo(false);
-                            setNewEquipoData({});
-                          }}
-                        >
-                          Cancelar
-                        </Button>
-                      </Flex>
-                    ) : (
-                      <Button
-                        colorScheme={"blue"}
-                        size="sm"
-                        mb={"5px"}
-                        onClick={() => setNewEquipo(true)}
-                      >
-                        Nuevo equipo
-                      </Button>
-                    )}
                   </Flex>
                 </Flex>
               </Flex>

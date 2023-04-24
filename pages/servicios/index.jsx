@@ -1,21 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { Flex, Text, Select, Button, Input } from "@chakra-ui/react";
 import axios from "axios";
-import ViewUltimaVisita from "./ViewUltimaVisita";
-import Table from "./tables/EquiposTable";
-import UpdateRow from "./UpdateRowEquipo";
+import ViewUltimaVisita from "../../components/ViewUltimaVisita";
+import Table from "../../components/tables/ServiciosTable";
+import UpdateRow from "../../components/UpdateRowEquipo";
+import Navbar from "../../components/Navbar";
 import CloseIcon from "@mui/icons-material/Close";
 
-const TIPOS_EQUIPOS = { 0: "TELGECS", 1: "SECCIONADOR", 2: "RECONECTADOR" };
-
-const ViewEquipos = ({ handleChangeView, tipoEquipo }) => {
+const ViewServicios = () => {
   const [filter, setFilter] = useState({ nombre: "" });
   const [newEquipo, setNewEquipo] = useState(false);
-  const [equipos, setEquipos] = useState([]);
-  const [equiposConfig, setEquiposConfig] = useState([]);
+  const [servicios, setEquipos] = useState([]);
+  const [config, setConfig] = useState([]);
   const [updateRow, setUpdateRow] = useState(false);
   const [viewUltimaVisita, setViewUltimaVisita] = useState(false);
-  const [pageSize] = useState(30);
+  const [pageSize] = useState(15);
   const [page, setPage] = useState(0);
   const [newEquipoData, setNewEquipoData] = useState({});
 
@@ -24,27 +23,25 @@ const ViewEquipos = ({ handleChangeView, tipoEquipo }) => {
   };
 
   useEffect(() => {
-    if (TIPOS_EQUIPOS[tipoEquipo] === "TELGECS") {
-      getEquiposTelgecs();
-    }
+    get();
   }, []);
 
-  const getEquiposTelgecs = () => {
-    axios.get(`/api/equipos`).then((res) => {
+  const get = () => {
+    axios.get(`/api/servicios`).then((res) => {
       setEquipos(res.data);
     });
     axios.get(`/api/getconfig`).then((res) => {
-      setEquiposConfig(res.data.equiposTelgecsData);
+      setConfig(res.data);
     });
   };
 
-  const postEquipo = () => {
+  const post = () => {
     axios
-      .post(`/api/equipos`, newEquipoData)
+      .post(`/api/servicios`, newEquipoData)
       .then((res) => {
         setNewEquipoData({});
         setNewEquipo(false);
-        getEquiposTelgecs();
+        get();
       })
       .catch((err) => {});
   };
@@ -56,8 +53,8 @@ const ViewEquipos = ({ handleChangeView, tipoEquipo }) => {
           data={updateRow.data}
           keyData={updateRow.keyData}
           setUpdateRow={setUpdateRow}
-          getEquipos={() => {
-            getEquiposTelgecs();
+          get={() => {
+            get();
           }}
         />
       )}
@@ -81,7 +78,9 @@ const ViewEquipos = ({ handleChangeView, tipoEquipo }) => {
           bg={"#0001"}
           zIndex={100}
           color={"#262626"}
+          flexDir={"column"}
         >
+          <Navbar />
           <Flex
             w={"80%"}
             h={"80%"}
@@ -92,6 +91,9 @@ const ViewEquipos = ({ handleChangeView, tipoEquipo }) => {
             borderRadius={"15px"}
             position={"relative"}
           >
+            <Text fontSize={"1.5rem"} fontWeight={"600"} color={"#fff"}>
+              Servicios
+            </Text>
             <Flex
               my={"30px"}
               w={"80%"}
@@ -148,21 +150,20 @@ const ViewEquipos = ({ handleChangeView, tipoEquipo }) => {
             >
               <Flex
                 w={"100%"}
-                h="85%"
+                h="95%"
                 bg={"#fff"}
                 borderBottomRadius="10px"
                 p={"10px"}
                 flexDir="column"
               >
                 <Table
-                  equiposList={equipos}
-                  equiposConfig={equiposConfig}
+                  fields={servicios}
+                  columns={config.serviciosData || []}
                   setUpdateRow={setUpdateRow}
                   tipo={1}
                   pageSize={pageSize}
                   page={page}
                   newEquipo={newEquipo}
-                  postEquipo={postEquipo}
                   handleChangeData={handleChangeData}
                   newEquipoData={newEquipoData}
                 />
@@ -185,7 +186,8 @@ const ViewEquipos = ({ handleChangeView, tipoEquipo }) => {
                     {"<"}
                   </Flex>
                   <Flex bg={"#FFF"} h="30px">
-                    Pagina: {page + 1} de {Math.floor(0)}
+                    Pagina: {page + 1} de{" "}
+                    {Math.floor(servicios.length / pageSize) + 1}
                   </Flex>
                   <Flex
                     bg={"primary"}
@@ -200,47 +202,13 @@ const ViewEquipos = ({ handleChangeView, tipoEquipo }) => {
                     mx={"5px"}
                     onClick={() =>
                       setPage((page) =>
-                        page + 1 < Math.floor(0) ? page + 1 : page
+                        page + 1 < Math.floor(servicios.length / pageSize) + 1
+                          ? page + 1
+                          : page
                       )
                     }
                   >
                     {">"}
-                  </Flex>
-                </Flex>
-                <Flex w={"100%"} justifyContent={"end"} ms="15px">
-                  <Flex me="15px">
-                    {newEquipo ? (
-                      <Flex>
-                        <Button
-                          colorScheme={"green"}
-                          size="sm"
-                          mx={"5px"}
-                          onClick={postEquipo}
-                        >
-                          Guardar equipo
-                        </Button>
-                        <Button
-                          colorScheme={"orange"}
-                          size="sm"
-                          mx={"5px"}
-                          onClick={() => {
-                            setNewEquipo(false);
-                            setNewEquipoData({});
-                          }}
-                        >
-                          Cancelar
-                        </Button>
-                      </Flex>
-                    ) : (
-                      <Button
-                        colorScheme={"blue"}
-                        size="sm"
-                        mb={"5px"}
-                        onClick={() => setNewEquipo(true)}
-                      >
-                        Nuevo equipo
-                      </Button>
-                    )}
                   </Flex>
                 </Flex>
               </Flex>
@@ -252,7 +220,7 @@ const ViewEquipos = ({ handleChangeView, tipoEquipo }) => {
   );
 };
 
-export default ViewEquipos;
+export default ViewServicios;
 
 const compararCadenas = (cad1, cad2) => {
   if (!cad1) return false;

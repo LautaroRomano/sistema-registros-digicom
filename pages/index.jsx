@@ -6,6 +6,7 @@ import SelectR from "react-select";
 import axios from "axios";
 import Swal from "sweetalert2";
 import NuevoServicio from "../components/NuevoServicio";
+import Navbar from "../components/Navbar";
 
 export default function Home() {
   const [viewConfig, setViewConfig] = useState(false);
@@ -56,16 +57,7 @@ export default function Home() {
       {viewConfig && (
         <ViewConfig handleChangeViewConfig={handleChangeViewConfig} />
       )}
-      <Image
-        width="209"
-        height="55"
-        src="https://digicom.net.ar/web/wp-content/uploads/2021/03/cropped-digicom-tucuman.fw_-1.png"
-        className="custom-logo"
-        alt=""
-        loading="lazy"
-        itemprop="logo"
-      />
-
+      <Navbar />
       {newService ? (
         <NuevoServicio
           setNewService={setNewService}
