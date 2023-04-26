@@ -260,5 +260,28 @@
     "capacidad_rtu",
     "nro_set",
     "codigo_caja"
+  ],
+  "tiposEquipos": [
+    "CAMARA",
+    "RECONECTADOR",
+    "SET",
+    "SECCIONADOR",
+    "REBAJE",
+    "CMM"
+  ],
+  "tiposDeProblemas": [
+    "Cambio de bateria",
+    "Radio modem"
+  ],
+  "serviciosData": [
+    "inicioTarea",
+    "finTarea",
+    "tipoServicio",
+    "tipoProblema",
+    "origenProblema",
+    "solucion",
+    "seSoluciono",
+    "observaciones",
+    "equipo"
   ]
 }]

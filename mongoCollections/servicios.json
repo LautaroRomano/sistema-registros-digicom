@@ -1,0 +1,44 @@
+[{
+  "_id": {
+    "$oid": "6446d06f142ecde82933f675"
+  },
+  "equipo": 1,
+  "inicioTarea": {
+    "$numberLong": "1682362459853"
+  },
+  "tipoServicio": "CORRECTIVO",
+  "seSoluciono": "Si",
+  "tipoProblema": "Cambio de bateria",
+  "origenProblema": "bateria",
+  "solucion": "se cambio la bateria",
+  "observaciones": "sin obervaciones",
+  "finTarea": {
+    "$numberLong": "1682362476811"
+  }
+},{
+  "_id": {
+    "$oid": "6446d115142ecde82933f676"
+  },
+  "equipo": 1,
+  "inicioTarea": {
+    "$numberLong": "1682362637669"
+  },
+  "tipoServicio": "PREVENTIVO",
+  "seSoluciono": "Si",
+  "finTarea": {
+    "$numberLong": "1682362645438"
+  }
+},{
+  "_id": {
+    "$oid": "6446d12a142ecde82933f677"
+  },
+  "equipo": 1,
+  "inicioTarea": {
+    "$numberLong": "1682362660901"
+  },
+  "tipoServicio": "PREVENTIVO",
+  "seSoluciono": "Si",
+  "finTarea": {
+    "$numberLong": "1682362666590"
+  }
+}]

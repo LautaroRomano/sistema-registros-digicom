@@ -4,10 +4,8 @@
   "id_master": 19456,
   "latitud_sur": "26°49'38.19\"S",
   "latitud_oeste": "65° 8'58.79\"O",
-  "orientacion_antena": 260,
-  "fecha_instalacion": {
-    "$date": "2009-04-17T00:00:00.000Z"
-  },
+  "orientacion_antena": "261",
+  "fecha_instalacion": "2009-04-17",
   "cambio_bateria": null,
   "numero_serie": "00265a 04/2009",
   "numero_serie_reemplazo": "",
@@ -17,12 +15,12 @@
   "rpt_asociado": "no aplica",
   "v_prim": 13200,
   "numero_serie_radio_modem": "424",
-  "sucursal": 1,
-  "localidad": 1,
+  "sucursal": "Banda del Río Salí",
+  "localidad": "ALDERETES",
   "direccion": "ALFREDO GUZMAN 1º CDRA - EL CORTE",
-  "administracion": 1,
+  "administracion": "Banda del Río Salí",
   "observaciones": "Tor.",
-  "tipo_equipo": 0,
+  "tipo_equipo": "SET",
   "id_radio": 19979,
   "configuracion": null,
   "t_m": null,
@@ -32,6 +30,6 @@
   "programa_radio_modem": null,
   "radio_modem_protegido": null,
   "capacidad_rtu": null,
-  "nro_set": null,
+  "nro_set": "254",
   "codigo_caja": null
 }]
