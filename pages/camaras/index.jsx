@@ -27,17 +27,20 @@ const ViewEquipos = () => {
   }, []);
 
   const getEquipos = () => {
-    axios.get(`/api/equipos/equiposTelgecs`).then((res) => {
+    axios.get(`/api/equipos/equiposCamaras`).then((res) => {
       setEquipos(res.data);
     });
     axios.get(`/api/getconfig`).then((res) => {
-      setEquiposConfig(res.data.equiposTelgecsData);
+      setEquiposConfig(res.data.equiposCamaraData);
     });
   };
 
   const postEquipo = () => {
     axios
-      .post(`/api/equipos/equiposTelgecs`, newEquipoData)
+      .post(`/api/equipos/equiposCamaras`, {
+        ...newEquipoData,
+        coleccion: 'equiposCamaras'
+      })
       .then((res) => {
         setNewEquipoData({});
         setNewEquipo(false);
@@ -92,7 +95,7 @@ const ViewEquipos = () => {
             position={"relative"}
           >
             <Text fontSize={"1.5rem"} fontWeight={"600"} color={"#fff"}>
-              Telgecs
+              Camaras
             </Text>
             <Flex
               my={"30px"}
@@ -135,7 +138,7 @@ const ViewEquipos = () => {
                     onChange={(e) => {
                       setFilter({ ...filter, nombre: e.target.value });
                     }}
-                    placeholder="Nombre equipo"
+                    placeholder="Nombre camara"
                   ></Input>
                 </Flex>
               </Flex>
@@ -255,9 +258,3 @@ const ViewEquipos = () => {
 };
 
 export default ViewEquipos;
-
-const compararCadenas = (cad1, cad2) => {
-  if (!cad1) return false;
-  if (!cad2) return false;
-  return cad1.toLowerCase().includes(cad2.toLowerCase());
-};

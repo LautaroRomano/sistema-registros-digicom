@@ -27,17 +27,20 @@ const ViewEquipos = () => {
   }, []);
 
   const getEquipos = () => {
-    axios.get(`/api/equipos/equiposTelgecs`).then((res) => {
+    axios.get(`/api/equipos/equiposSeccionador`).then((res) => {
       setEquipos(res.data);
     });
     axios.get(`/api/getconfig`).then((res) => {
-      setEquiposConfig(res.data.equiposTelgecsData);
+      setEquiposConfig(res.data.equiposSeccionadorData);
     });
   };
 
   const postEquipo = () => {
     axios
-      .post(`/api/equipos/equiposTelgecs`, newEquipoData)
+      .post(`/api/equipos/equiposSeccionador`, {
+        ...newEquipoData,
+        coleccion: 'equiposSeccionador'
+      })
       .then((res) => {
         setNewEquipoData({});
         setNewEquipo(false);
@@ -92,7 +95,7 @@ const ViewEquipos = () => {
             position={"relative"}
           >
             <Text fontSize={"1.5rem"} fontWeight={"600"} color={"#fff"}>
-              Telgecs
+              Seccionadores
             </Text>
             <Flex
               my={"30px"}
@@ -135,7 +138,7 @@ const ViewEquipos = () => {
                     onChange={(e) => {
                       setFilter({ ...filter, nombre: e.target.value });
                     }}
-                    placeholder="Nombre equipo"
+                    placeholder="Nombre seccionador"
                   ></Input>
                 </Flex>
               </Flex>
@@ -160,7 +163,7 @@ const ViewEquipos = () => {
                   equiposList={equipos}
                   equiposConfig={equiposConfig}
                   setUpdateRow={setUpdateRow}
-                  tipo={1}
+                  tipo={2}
                   pageSize={pageSize}
                   page={page}
                   newEquipo={newEquipo}

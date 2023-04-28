@@ -14,7 +14,6 @@ export default async function handler(req, res) {
   }
 }
 const get = async (req, res) => {
-  try {
     try {
       // Connect the client to the server	(optional starting in v4.7)
       await client.connect();
@@ -25,13 +24,13 @@ const get = async (req, res) => {
         .find({})
         .toArray();
       res.status(200).json(result[0]);
-    } finally {
+    } catch (error) {
+      console.log(error);
+    }
+    finally {
       // Ensures that the client will close when you finish/error
       await client.close();
     }
-  } catch (error) {
-    console.log(error);
-  }
 };
 
 const put = async (req, res) => {

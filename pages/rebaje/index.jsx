@@ -27,17 +27,20 @@ const ViewEquipos = () => {
   }, []);
 
   const getEquipos = () => {
-    axios.get(`/api/equipos/equiposTelgecs`).then((res) => {
+    axios.get(`/api/equipos/equiposRebaje`).then((res) => {
       setEquipos(res.data);
     });
     axios.get(`/api/getconfig`).then((res) => {
-      setEquiposConfig(res.data.equiposTelgecsData);
+      setEquiposConfig(res.data.equiposSeccionadorData);
     });
   };
 
   const postEquipo = () => {
     axios
-      .post(`/api/equipos/equiposTelgecs`, newEquipoData)
+      .post(`/api/equipos/equiposRebaje`, {
+        ...newEquipoData,
+        coleccion: 'equiposRebaje'
+      })
       .then((res) => {
         setNewEquipoData({});
         setNewEquipo(false);
@@ -92,7 +95,7 @@ const ViewEquipos = () => {
             position={"relative"}
           >
             <Text fontSize={"1.5rem"} fontWeight={"600"} color={"#fff"}>
-              Telgecs
+              Rebajes
             </Text>
             <Flex
               my={"30px"}
@@ -135,7 +138,7 @@ const ViewEquipos = () => {
                     onChange={(e) => {
                       setFilter({ ...filter, nombre: e.target.value });
                     }}
-                    placeholder="Nombre equipo"
+                    placeholder="Nombre rebaje"
                   ></Input>
                 </Flex>
               </Flex>
@@ -160,7 +163,7 @@ const ViewEquipos = () => {
                   equiposList={equipos}
                   equiposConfig={equiposConfig}
                   setUpdateRow={setUpdateRow}
-                  tipo={1}
+                  tipo={2}
                   pageSize={pageSize}
                   page={page}
                   newEquipo={newEquipo}
@@ -179,7 +182,7 @@ const ViewEquipos = () => {
                             mx={"5px"}
                             onClick={postEquipo}
                           >
-                            Guardar equipo
+                            Guardar rebaje
                           </Button>
                           <Button
                             colorScheme={"orange"}
@@ -200,7 +203,7 @@ const ViewEquipos = () => {
                           mb={"5px"}
                           onClick={() => setNewEquipo(true)}
                         >
-                          Nuevo equipo
+                          Nuevo rebaje
                         </Button>
                       )}
                     </Flex>
@@ -255,9 +258,3 @@ const ViewEquipos = () => {
 };
 
 export default ViewEquipos;
-
-const compararCadenas = (cad1, cad2) => {
-  if (!cad1) return false;
-  if (!cad2) return false;
-  return cad1.toLowerCase().includes(cad2.toLowerCase());
-};
