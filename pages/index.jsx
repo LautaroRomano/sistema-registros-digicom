@@ -28,7 +28,7 @@ export default function Home() {
 
   useEffect(() => {
     getConfig();
-    axios.get(`/api/equipos`).then((res) => {
+    axios.get(`/api/equipos/equiposTelgecs`).then((res) => {
       setEquiposTelgecs(res.data);
     });
   }, []);

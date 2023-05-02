@@ -9,6 +9,8 @@ import {
   Input,
 } from "@chakra-ui/react";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
+import ArrowUp from "@mui/icons-material/KeyboardArrowUp";
+import ArrowDown from "@mui/icons-material/KeyboardArrowDown";
 import { Flex, Text } from "@chakra-ui/react";
 import { useState } from "react";
 
@@ -22,8 +24,11 @@ const ServiciosTable = ({
   handleChangeData,
   newEquipoData,
 }) => {
+  const [updateColumns, setUpdateColumns] = useState(false)
   return (
     <>
+    {
+      updateColumns &&
       <Flex
         position={"fixed"}
         zIndex={1}
@@ -32,13 +37,35 @@ const ServiciosTable = ({
         w={"100%"}
         h={"100%"}
         bg={"#175796aa"}
-        justifyContent={'center'}
-        alignItems={'center'}
+        justifyContent={"center"}
+        alignItems={"center"}
       >
-        <Flex bg={"#FFF"} p={"25px"} borderRadius={"5px"}>
+        <Flex bg={"#FFF"} p={"25px"} borderRadius={"5px"} flexDir={"column"} w={'400px'} align={'center'}>
           <Text>Columns config</Text>
+          <Flex flexDir={"column"} w={'100%'}>
+            {columns.map((col) => (
+              <Flex
+                key={col}
+                w={"100%"}
+                justifyContent={"space-between"}
+                h={"25px"}
+                py={"5px"}
+              >
+                <Text>{col}</Text>
+                <Flex my={"1px"} h={"5px"}>
+                  <Text>
+                    <ArrowUp></ArrowUp>
+                  </Text>
+                  <Text>
+                    <ArrowDown></ArrowDown>
+                  </Text>
+                </Flex>
+              </Flex>
+            ))}
+          </Flex>
         </Flex>
       </Flex>
+}
       <TableContainer w={"100%"} h="100%" maxH="100%" overflowY={"scroll"}>
         <TableC size="sm" variant="striped" colorScheme="blue">
           <Thead bg={"#175796"}>
