@@ -21,8 +21,10 @@ const EquiposTable = ({
   newEquipo,
   postEquipo,
   handleChangeData,
-  newEquipoData
+  newEquipoData,
+  filter
 }) => {
+  const filterKeys = filter ? Object.keys(filter) : []
   let keys = equiposConfig
 
   return (
@@ -53,46 +55,54 @@ const EquiposTable = ({
             </Tr>
           }
 
-          {equiposList.map((data, i) => {
-            if (i >= page * pageSize && i <= page * pageSize + pageSize)
-              return (
-                <Tr key={i}>
-                  {keys.map((key) => (
-                    <Td
-                      key={key}
-                      onDoubleClick={() => {
-                        setUpdateRow({ data: data, keyData: key });
-                      }}
-                    >
-                      <Flex justifyContent={"center"} alignItems="center">
-                        {
-                          data[key]
-                            ? data[key]
-                            : "-"}
-                        {key === "ultima_visita" && (
-                          <Flex
-                            w={"25px"}
-                            h="25px"
-                            color={"blue.400"}
-                            cursor="pointer"
-                            onClick={() => {
-                              setViewUltimaVisita({
-                                equipo: data,
-                                data: ultimasVisitas[data.id_equipo],
-                              });
-                            }}
-                          >
-                            <AddCircleIcon
-                              style={{ width: "100%", height: "100%" }}
-                            />
-                          </Flex>
-                        )}
-                      </Flex>
-                    </Td>
-                  ))}
-                </Tr>
-              );
-          })}
+          {equiposList
+            .filter(equipo => {
+              for (const key of filterKeys) {
+                if (filter[key].length < 2) return true
+                if (compararCadenas(equipo[key]+'',filter[key])) return true
+              }
+              return false
+            })
+            .map((data, i) => {
+              if (i >= page * pageSize && i <= page * pageSize + pageSize)
+                return (
+                  <Tr key={i}>
+                    {keys.map((key) => (
+                      <Td
+                        key={key}
+                        onDoubleClick={() => {
+                          setUpdateRow({ data: data, keyData: key });
+                        }}
+                      >
+                        <Flex justifyContent={"center"} alignItems="center">
+                          {
+                            data[key]
+                              ? data[key]
+                              : "-"}
+                          {key === "ultima_visita" && (
+                            <Flex
+                              w={"25px"}
+                              h="25px"
+                              color={"blue.400"}
+                              cursor="pointer"
+                              onClick={() => {
+                                setViewUltimaVisita({
+                                  equipo: data,
+                                  data: ultimasVisitas[data.id_equipo],
+                                });
+                              }}
+                            >
+                              <AddCircleIcon
+                                style={{ width: "100%", height: "100%" }}
+                              />
+                            </Flex>
+                          )}
+                        </Flex>
+                      </Td>
+                    ))}
+                  </Tr>
+                );
+            })}
         </Tbody>
       </TableC>
     </TableContainer>
@@ -100,3 +110,10 @@ const EquiposTable = ({
 };
 
 export default EquiposTable;
+
+const compararCadenas = (cad1, cad2) => {
+  if (!cad1) return false;
+  if (!cad2) return false;
+  return cad1.toLowerCase().includes(cad2.toLowerCase());
+};
+

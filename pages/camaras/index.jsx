@@ -226,7 +226,7 @@ const ViewEquipos = () => {
                     {"<"}
                   </Flex>
                   <Flex bg={"#FFF"} h="30px">
-                    Pagina: {page + 1} de {Math.floor(0)}
+                    Pagina: {page + 1} de {Math.floor(equipos.length / pageSize) + 1}
                   </Flex>
                   <Flex
                     bg={"primary"}
@@ -241,7 +241,9 @@ const ViewEquipos = () => {
                     mx={"5px"}
                     onClick={() =>
                       setPage((page) =>
-                        page + 1 < Math.floor(0) ? page + 1 : page
+                        page + 1 < Math.floor(equipos.length / pageSize) + 1
+                          ? page + 1
+                          : page
                       )
                     }
                   >

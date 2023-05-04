@@ -171,7 +171,7 @@ const ViewEquipos = () => {
                   handleChangeData={handleChangeData}
                   newEquipoData={newEquipoData}
                 />
-                <Flex mt={"5px"} w="100%" justifyContent={"end"}>
+                 <Flex mt={"5px"} w="100%" justifyContent={"end"}>
                   <Flex justifyContent={"end"} ms="15px">
                     <Flex me="15px">
                       {newEquipo ? (
@@ -182,7 +182,7 @@ const ViewEquipos = () => {
                             mx={"5px"}
                             onClick={postEquipo}
                           >
-                            Guardar rebaje
+                            Guardar equipo
                           </Button>
                           <Button
                             colorScheme={"orange"}
@@ -203,7 +203,7 @@ const ViewEquipos = () => {
                           mb={"5px"}
                           onClick={() => setNewEquipo(true)}
                         >
-                          Nuevo rebaje
+                          Nuevo equipo
                         </Button>
                       )}
                     </Flex>
@@ -226,7 +226,7 @@ const ViewEquipos = () => {
                     {"<"}
                   </Flex>
                   <Flex bg={"#FFF"} h="30px">
-                    Pagina: {page + 1} de {Math.floor(0)}
+                    Pagina: {page + 1} de {Math.floor(equipos.length / pageSize) + 1}
                   </Flex>
                   <Flex
                     bg={"primary"}
@@ -241,7 +241,9 @@ const ViewEquipos = () => {
                     mx={"5px"}
                     onClick={() =>
                       setPage((page) =>
-                        page + 1 < Math.floor(0) ? page + 1 : page
+                        page + 1 < Math.floor(equipos.length / pageSize) + 1
+                          ? page + 1
+                          : page
                       )
                     }
                   >

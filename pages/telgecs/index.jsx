@@ -8,7 +8,7 @@ import Navbar from "../../components/Navbar";
 import CloseIcon from "@mui/icons-material/Close";
 
 const ViewEquipos = () => {
-  const [filter, setFilter] = useState({ nombre: "" });
+  const [filter, setFilter] = useState({ nro_set: "" });
   const [newEquipo, setNewEquipo] = useState(false);
   const [equipos, setEquipos] = useState([]);
   const [equiposConfig, setEquiposConfig] = useState([]);
@@ -43,7 +43,7 @@ const ViewEquipos = () => {
         setNewEquipo(false);
         getEquipos();
       })
-      .catch((err) => {});
+      .catch((err) => { });
   };
 
   return (
@@ -128,14 +128,14 @@ const ViewEquipos = () => {
                   justifyContent={"center"}
                 >
                   <Input
-                    value={filter.nombre}
+                    value={filter.nro_set}
                     w="250px"
                     ms={"15px"}
                     my="3px"
                     onChange={(e) => {
-                      setFilter({ ...filter, nombre: e.target.value });
+                      setFilter({ ...filter, nro_set: e.target.value });
                     }}
-                    placeholder="Nombre equipo"
+                    placeholder="Numero Set"
                   ></Input>
                 </Flex>
               </Flex>
@@ -167,6 +167,7 @@ const ViewEquipos = () => {
                   postEquipo={postEquipo}
                   handleChangeData={handleChangeData}
                   newEquipoData={newEquipoData}
+                  filter={filter}
                 />
                 <Flex mt={"5px"} w="100%" justifyContent={"end"}>
                   <Flex justifyContent={"end"} ms="15px">
@@ -223,7 +224,7 @@ const ViewEquipos = () => {
                     {"<"}
                   </Flex>
                   <Flex bg={"#FFF"} h="30px">
-                    Pagina: {page + 1} de {Math.floor(0)}
+                    Pagina: {page + 1} de {Math.floor(equipos.length / pageSize) + 1}
                   </Flex>
                   <Flex
                     bg={"primary"}
@@ -238,7 +239,9 @@ const ViewEquipos = () => {
                     mx={"5px"}
                     onClick={() =>
                       setPage((page) =>
-                        page + 1 < Math.floor(0) ? page + 1 : page
+                        page + 1 < Math.floor(equipos.length / pageSize) + 1
+                          ? page + 1
+                          : page
                       )
                     }
                   >
@@ -255,9 +258,3 @@ const ViewEquipos = () => {
 };
 
 export default ViewEquipos;
-
-const compararCadenas = (cad1, cad2) => {
-  if (!cad1) return false;
-  if (!cad2) return false;
-  return cad1.toLowerCase().includes(cad2.toLowerCase());
-};
