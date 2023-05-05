@@ -12,7 +12,9 @@ export default function NuevoServicio({
   newServiceData,
   handleChange,
   postNewService,
+  deleteTipoProblema
 }) {
+
   const sendNuevoTipoDeProblema = () => {
     Swal.fire({
       title: "Ingresa el nuevo tipo de problema",
@@ -82,6 +84,30 @@ export default function NuevoServicio({
           <option value="CORRECTIVO">CORRECTIVO</option>
         </Select>
       </Flex>
+      {
+        newServiceData.tipoProblema && newServiceData.tipoProblema.length > 0 &&
+        <Flex
+          w={"60vw"}
+          alignItems={"center"}
+          bg={"#00468C"}
+          p={"10px"}
+          borderRadius={"10px"}
+          color={"#fff"}
+          mt={"15px"}
+        >
+          <Text>Tipos de problemas seleccionados: </Text>
+          <Flex overflowX={'scroll'} w={'100%'}>
+            {
+              newServiceData.tipoProblema && newServiceData.tipoProblema.map(pro => (
+                <Flex mb={'2px'} align={'center'} mx={'2px'}>
+                  <Text key={pro} bg={'#fff'} color={'#262626'} borderRadius={'15px 0 0 15px'} px={'4px'} py={'2px'}>{pro}</Text>
+                  <Text onClick={() => deleteTipoProblema(pro)} bg={'#aaf'} color={'#262626'} borderRadius={'0 15px 15px 0'} px={'8px'} py={'5px'} fontSize={'12px'} fontWeight={'bold'} cursor={'pointer'}>X</Text>
+                </Flex>
+              ))
+            }
+          </Flex>
+        </Flex>
+      }
       <Flex
         w={"60vw"}
         alignItems={"center"}
@@ -98,7 +124,7 @@ export default function NuevoServicio({
           color={"#252525"}
           bg={"#FFF"}
           name="tipoProblema"
-          value={newServiceData.tipoProblema}
+          value={newServiceData.tipoProblema ? newServiceData.tipoProblema[0] : null}
           onChange={handleChange}
         >
           <option value={null}>Sin tipo de problema</option>

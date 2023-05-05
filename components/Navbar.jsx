@@ -140,11 +140,11 @@ const Navbar = () => {
         <Image
           width="209"
           height="55"
-          src="https://digicom.net.ar/web/wp-content/uploads/2021/03/cropped-digicom-tucuman.fw_-1.png"
+          src="/images/logo.png"
           className="custom-logo"
           alt=""
           loading="lazy"
-          itemprop="logo"
+          itemProp="logo"
         />
       </Flex>
     </Flex>

@@ -5,7 +5,6 @@ import ViewUltimaVisita from "../../components/ViewUltimaVisita";
 import Table from "../../components/tables/ServiciosTable";
 import UpdateRow from "../../components/UpdateRowEquipo";
 import Navbar from "../../components/Navbar";
-import CloseIcon from "@mui/icons-material/Close";
 
 const ViewServicios = () => {
   const [filter, setFilter] = useState({ nombre: "" });
@@ -33,17 +32,6 @@ const ViewServicios = () => {
     axios.get(`/api/getconfig`).then((res) => {
       setConfig(res.data);
     });
-  };
-
-  const post = () => {
-    axios
-      .post(`/api/servicios`, newEquipoData)
-      .then((res) => {
-        setNewEquipoData({});
-        setNewEquipo(false);
-        get();
-      })
-      .catch((err) => {});
   };
 
   return (

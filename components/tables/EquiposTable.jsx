@@ -57,9 +57,10 @@ const EquiposTable = ({
 
           {equiposList
             .filter(equipo => {
+              if(filterKeys.length === 0) return true
               for (const key of filterKeys) {
                 if (filter[key].length < 2) return true
-                if (compararCadenas(equipo[key]+'',filter[key])) return true
+                if (compararCadenas(equipo[key] + '', filter[key])) return true
               }
               return false
             })

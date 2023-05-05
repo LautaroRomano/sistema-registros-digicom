@@ -14,23 +14,24 @@ export default async function handler(req, res) {
   }
 }
 const get = async (req, res) => {
-    try {
-      // Connect the client to the server	(optional starting in v4.7)
-      await client.connect();
-      // Send a ping to confirm a successful connection
-      const result = await client
-        .db("registrosDigicom")
-        .collection("config")
-        .find({})
-        .toArray();
-      res.status(200).json(result[0]);
-    } catch (error) {
-      console.log(error);
-    }
-    finally {
-      // Ensures that the client will close when you finish/error
-      await client.close();
-    }
+  try {
+    // Connect the client to the server	(optional starting in v4.7)
+    await client.connect();
+    // Send a ping to confirm a successful connection
+    const result = await client
+      .db("registrosDigicom")
+      .collection("config")
+      .find({})
+      .toArray();
+    res.status(200).json(result[0]);
+  } catch (error) {
+    console.log(error);
+    res.status(400).json(error);
+  }
+  finally {
+    // Ensures that the client will close when you finish/error
+    // await client.close();
+  }
 };
 
 const put = async (req, res) => {
@@ -47,7 +48,8 @@ const put = async (req, res) => {
     res.status(200).json(result);
   } catch (error) {
     console.log(error);
+    res.status(400).json(error);
   } finally {
-    await client.close();
+    // await client.close();
   }
 };

@@ -19,8 +19,18 @@ export default function Home() {
 
   const handleChange = ({ target }) => {
     const { name, value } = target;
-    setNewServiceData((state) => ({ ...state, [name]: value }));
+    if (value === 'Sin tipo de problema') return
+    if (name === 'tipoProblema')
+      setNewServiceData((state) => ({ ...state, [name]: state[name] ? [...state[name], value] : [value] }));
+    else
+      setNewServiceData((state) => ({ ...state, [name]: value }));
   };
+
+  const deleteTipoProblema = (tp) => {
+    const name = 'tipoProblema'
+    setNewServiceData((state) => ({ ...state, [name]: state[name] ? state[name].filter(f => f !== tp) : [] }));
+  }
+
   const handleChangeSearchEquipo = ({ target }) => {
     const { name, value } = target;
     setSearchEquipo((state) => ({ ...state, [name]: value }));
@@ -67,6 +77,7 @@ export default function Home() {
           newServiceData={newServiceData}
           handleChange={handleChange}
           postNewService={postNewService}
+          deleteTipoProblema={deleteTipoProblema}
         />
       ) : (
         <Flex

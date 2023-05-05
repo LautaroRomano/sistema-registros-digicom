@@ -34,8 +34,9 @@ const get = async (req, res) => {
       res.status(200).json(result);
     } catch (error) {
       console.log(error);
+      res.status(400).json(error);
     } finally {
-      await client.close();
+      // await client.close();
     }
   }
   try {
@@ -53,8 +54,9 @@ const get = async (req, res) => {
 
   } catch (error) {
     console.log(error);
+    res.status(400).json(error);
   } finally {
-    await client.close();
+    // await client.close();
   }
 
 };
@@ -73,30 +75,32 @@ const post = async (req, res) => {
       res.status(200).json(result);
     } finally {
       // Ensures that the client will close when you finish/error
-      await client.close();
+      // await client.close();
     }
   } catch (error) {
     console.log(error);
   }
 };
 const put = async (req, res) => {
-  const { collection } = req.query
+  const { coleccion } = req.query
   const { body } = req;
+  console.log('coleccion',coleccion)
+  console.log('body',body)
   try {
-    try {
-      await client.connect();
-      const result = await client
-        .db("registrosDigicom")
-        .collection(collection+'')
-        .updateOne(
-          { _id: new ObjectId(body._id) },
-          { $set: { [body.keyData]: body.newData } }
-        );
-      return res.status(200).json(result);
-    } finally {
-      await client.close();
-    }
+    await client.connect();
+    const result = await client
+      .db("registrosDigicom")
+      .collection(coleccion)
+      .updateOne(
+        { _id: new ObjectId(body._id) },
+        { $set: { [body.keyData]: body.newData } }
+      );
+    return res.status(200).json(result);
+    
   } catch (error) {
     console.log(error);
+    return res.status(400).json({});
+  } finally {
+    // await client.close();
   }
 };
