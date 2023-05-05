@@ -14,7 +14,7 @@ export default function Home() {
   const [newService, setNewService] = useState(false);
   const [newServiceData, setNewServiceData] = useState({});
   const [searchEquipo, setSearchEquipo] = useState({});
-  const [equiposTelgecs, setEquiposTelgecs] = useState([]);
+  const [equipos, setEquipos] = useState([]);
   const [config, setConfig] = useState({});
 
   const handleChange = ({ target }) => {
@@ -28,8 +28,8 @@ export default function Home() {
 
   useEffect(() => {
     getConfig();
-    axios.get(`/api/equipos/equiposTelgecs`).then((res) => {
-      setEquiposTelgecs(res.data);
+    axios.get(`/api/equipos/all`).then((res) => {
+      setEquipos(res.data);
     });
   }, []);
 
@@ -270,7 +270,7 @@ export default function Home() {
               w={"40vw"}
               my={"3px"}
             >
-              {equiposTelgecs && (
+              {equipos && (
                 <Flex alignItems={"center"}>
                   <Text
                     fontWeight={"bold"}
@@ -288,7 +288,7 @@ export default function Home() {
                         target: { name: "equipo", value: value },
                       });
                     }}
-                    options={equiposTelgecs
+                    options={equipos
                       .map((equ) => {
                         if (
                           searchEquipo.administracion &&
@@ -311,15 +311,9 @@ export default function Home() {
                         )
                           return;
 
-                        if (equ.nro_set == null)
-                          return {
-                            value: equ._id,
-                            label: "SET: Sin asignar",
-                          };
-
                         return {
                           value: equ._id,
-                          label: "SET: " + equ.nro_set,
+                          label: `${equ.tipoEquipo}: ` + (equ.nro_set ? equ.nro_set : equ.nombre ? equ.nombre : "Sin asignar"),
                         };
                       })
                       .filter((equ) => equ !== undefined)}
@@ -348,24 +342,24 @@ export default function Home() {
                 onClick={
                   !newService && searchEquipo.equipo
                     ? () => {
-                        Swal.fire({
-                          title: "Quiere iniciar un nuevo servicio?",
-                          showCancelButton: "Cancelar",
-                          confirmButtonText: "Comenzar",
-                        }).then((result) => {
-                          if (result.isConfirmed) {
-                            const now = new Date();
-                            setNewServiceData({
-                              equipo: searchEquipo.equipo,
-                              inicioTarea: now.getTime(),
-                              tipoServicio: "PREVENTIVO",
-                              seSoluciono: "Si",
-                            });
-                            setNewService(true);
-                          }
-                        });
-                      }
-                    : () => {}
+                      Swal.fire({
+                        title: "Quiere iniciar un nuevo servicio?",
+                        showCancelButton: "Cancelar",
+                        confirmButtonText: "Comenzar",
+                      }).then((result) => {
+                        if (result.isConfirmed) {
+                          const now = new Date();
+                          setNewServiceData({
+                            equipo: searchEquipo.equipo,
+                            inicioTarea: now.getTime(),
+                            tipoServicio: "PREVENTIVO",
+                            seSoluciono: "Si",
+                          });
+                          setNewService(true);
+                        }
+                      });
+                    }
+                    : () => { }
                 }
               >
                 Nuevo servicio

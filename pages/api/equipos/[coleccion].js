@@ -16,25 +16,49 @@ export default async function handler(req, res) {
   }
 }
 const get = async (req, res) => {
-  const coleccion  = req.query.coleccion
-  try {
+  const coleccion = req.query.coleccion
+  if (coleccion == 'all') {
     try {
-      // Connect the client to the server	(optional starting in v4.7)
       await client.connect();
-      // Send a ping to confirm a successful connection
-      const result = await client
-        .db("registrosDigicom")
-        .collection(coleccion)
-        .find({})
-        .toArray();
+      let result = []
+      const keys = ["equiposReconectador", "equiposCamaras", "equiposCMM", "equiposRebaje", "equiposSeccionador","equiposTelgecs"]
+      const tiposEquipos = [
+        "RECONECTADOR",
+        "CAMARA",
+        "CMM",
+        "REBAJE",
+        "SECCIONADOR",
+        "SET",
+      ]
+      for (const [index, eq] of keys.entries()) {
+        const data = await client
+          .db("registrosDigicom")
+          .collection(eq)
+          .find({})
+          .toArray();
+        result = [...result, ...data.map(dat => ({ ...dat, tipoEquipo: tiposEquipos[index] }))];
+      }
       res.status(200).json(result);
+    } catch (error) {
+      console.log(error);
     } finally {
-      // Ensures that the client will close when you finish/error
       await client.close();
     }
+  }
+  try {
+    await client.connect();
+    const result = await client
+      .db("registrosDigicom")
+      .collection(coleccion)
+      .find({})
+      .toArray();
+    res.status(200).json(result);
   } catch (error) {
     console.log(error);
+  } finally {
+    await client.close();
   }
+
 };
 
 const post = async (req, res) => {
@@ -58,7 +82,7 @@ const post = async (req, res) => {
   }
 };
 const put = async (req, res) => {
-  const {collection} = req.query
+  const { collection } = req.query
   const { body } = req;
   try {
     try {
