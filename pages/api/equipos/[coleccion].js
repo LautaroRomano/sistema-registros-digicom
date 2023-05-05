@@ -17,19 +17,12 @@ export default async function handler(req, res) {
 }
 const get = async (req, res) => {
   const coleccion = req.query.coleccion
+  const keys = ["equiposReconectador", "equiposCamaras", "equiposCMM", "equiposRebaje", "equiposSeccionador", "equiposTelgecs"]
+  const tiposEquipos = ["RECONECTADOR", "CAMARA", "CMM", "REBAJE", "SECCIONADOR", "SET"]
   if (coleccion == 'all') {
     try {
       await client.connect();
       let result = []
-      const keys = ["equiposReconectador", "equiposCamaras", "equiposCMM", "equiposRebaje", "equiposSeccionador","equiposTelgecs"]
-      const tiposEquipos = [
-        "RECONECTADOR",
-        "CAMARA",
-        "CMM",
-        "REBAJE",
-        "SECCIONADOR",
-        "SET",
-      ]
       for (const [index, eq] of keys.entries()) {
         const data = await client
           .db("registrosDigicom")
@@ -52,7 +45,12 @@ const get = async (req, res) => {
       .collection(coleccion)
       .find({})
       .toArray();
-    res.status(200).json(result);
+    res.status(200).json(result.map(equ => ({
+      ...equ,
+      tipoEquipo: tiposEquipos[keys.findIndex(f => f === coleccion)],
+      coleccion: coleccion
+    })));
+
   } catch (error) {
     console.log(error);
   } finally {
@@ -89,12 +87,12 @@ const put = async (req, res) => {
       await client.connect();
       const result = await client
         .db("registrosDigicom")
-        .collection(collection)
+        .collection(collection+'')
         .updateOne(
           { _id: new ObjectId(body._id) },
           { $set: { [body.keyData]: body.newData } }
         );
-      res.status(200).json(result);
+      return res.status(200).json(result);
     } finally {
       await client.close();
     }

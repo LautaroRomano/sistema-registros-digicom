@@ -35,7 +35,6 @@ const get = async (req, res) => {
 
 const put = async (req, res) => {
   const { body } = req;
-  console.log(body);
   try {
     await client.connect();
     const result = await client

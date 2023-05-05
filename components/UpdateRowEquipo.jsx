@@ -9,8 +9,9 @@ const UpdateRowEquipo = ({ data, keyData, setUpdateRow, getEquipos }) => {
   const [localidadesList, setLocalidadesList] = useState([]);
 
   const handleGuardar = () => {
+    const collection = data.coleccion
     axios
-      .put("/api/equipos", {
+      .put(`/api/equipos/${collection}`, {
         newData: newData,
         keyData: keyData,
         _id: data._id,
