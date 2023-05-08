@@ -23,49 +23,50 @@ const ServiciosTable = ({
   newEquipo,
   handleChangeData,
   newEquipoData,
+  filter
 }) => {
   const [updateColumns, setUpdateColumns] = useState(false)
   return (
     <>
-    {
-      updateColumns &&
-      <Flex
-        position={"fixed"}
-        zIndex={1}
-        top={0}
-        left={0}
-        w={"100%"}
-        h={"100%"}
-        bg={"#175796aa"}
-        justifyContent={"center"}
-        alignItems={"center"}
-      >
-        <Flex bg={"#FFF"} p={"25px"} borderRadius={"5px"} flexDir={"column"} w={'400px'} align={'center'}>
-          <Text>Columns config</Text>
-          <Flex flexDir={"column"} w={'100%'}>
-            {columns.map((col) => (
-              <Flex
-                key={col}
-                w={"100%"}
-                justifyContent={"space-between"}
-                h={"25px"}
-                py={"5px"}
-              >
-                <Text>{col}</Text>
-                <Flex my={"1px"} h={"5px"}>
-                  <Text>
-                    <ArrowUp></ArrowUp>
-                  </Text>
-                  <Text>
-                    <ArrowDown></ArrowDown>
-                  </Text>
+      {
+        updateColumns &&
+        <Flex
+          position={"fixed"}
+          zIndex={1}
+          top={0}
+          left={0}
+          w={"100%"}
+          h={"100%"}
+          bg={"#175796aa"}
+          justifyContent={"center"}
+          alignItems={"center"}
+        >
+          <Flex bg={"#FFF"} p={"25px"} borderRadius={"5px"} flexDir={"column"} w={'400px'} align={'center'}>
+            <Text>Columns config</Text>
+            <Flex flexDir={"column"} w={'100%'}>
+              {columns.map((col) => (
+                <Flex
+                  key={col}
+                  w={"100%"}
+                  justifyContent={"space-between"}
+                  h={"25px"}
+                  py={"5px"}
+                >
+                  <Text>{col}</Text>
+                  <Flex my={"1px"} h={"5px"}>
+                    <Text>
+                      <ArrowUp></ArrowUp>
+                    </Text>
+                    <Text>
+                      <ArrowDown></ArrowDown>
+                    </Text>
+                  </Flex>
                 </Flex>
-              </Flex>
-            ))}
+              ))}
+            </Flex>
           </Flex>
         </Flex>
-      </Flex>
-}
+      }
       <TableContainer w={"100%"} h="100%" maxH="100%" overflowY={"scroll"}>
         <TableC size="sm" variant="striped" colorScheme="blue">
           <Thead bg={"#175796"}>
@@ -104,29 +105,65 @@ const ServiciosTable = ({
               </Tr>
             )}
 
-            {fields.map((data, i) => {
-              if (i >= page * pageSize && i <= page * pageSize + pageSize)
-                return (
-                  <Tr key={i}>
-                    {columns.map((key) => (
-                      <Td
-                        key={key}
-                        onDoubleClick={() => {
-                          //setUpdateRow({ data: data, keyData: key });
-                        }}
-                      >
-                        <Flex justifyContent={"center"} alignItems="center">
-                          {key === "inicioTarea" || key === "finTarea"
-                            ? dateformat(data[key])
-                            : data[key]
-                            ? data[key]
-                            : "-"}
-                        </Flex>
-                      </Td>
-                    ))}
-                  </Tr>
-                );
-            })}
+            {fields
+              .filter(fil => {
+                if (!filter.fechaDesde || !filter.fechaHasta) return true
+                const fechaInicioTarea = new Date(fil.inicioTarea);
+                const fechaFinTarea = new Date(fil.finTarea);
+                const fechaFilDesde = new Date(filter.fechaDesde);
+                const fechaFilHasta = new Date(filter.fechaHasta);
+                if (fechaInicioTarea >= fechaFilDesde && fechaFinTarea <= fechaFilHasta)
+                  return true
+                return false
+              })
+              .filter(fil => {
+                const filterValue = fil.tipoProblema + ''
+                if (!filter.tipoProblema || (filter.tipoProblema && filter.tipoProblema.length < 2)) return true
+                if (fil.tipoProblema && filterValue.toLowerCase().includes(filter.tipoProblema.toLowerCase()))
+                  return true
+                return false
+              })
+              .filter(fil => {
+                console.log('filter.solucionado',filter.solucionado)
+                if (!filter.solucionado || filter.solucionado === '-') return true
+                if (fil.seSoluciono && fil.seSoluciono.toLowerCase().includes(filter.solucionado.toLowerCase()))
+                  return true
+                return false
+              })
+              .map((data, i) => {
+                if (i >= page * pageSize && i <= page * pageSize + pageSize)
+                  return (
+                    <Tr key={i}>
+                      {columns.map((key) => (
+                        <Td
+                          key={key}
+                          onDoubleClick={() => {
+                            //setUpdateRow({ data: data, keyData: key });
+                          }}
+                        >
+                          <Flex justifyContent={"center"} alignItems="center">
+                            {key === "inicioTarea" || key === "finTarea"
+                              ? dateformat(data[key])
+                              :
+                              key === 'seSoluciono' ?
+                                <Text
+                                  bg={data[key] === 'Si' ? 'green' : data[key] === 'No' ? 'red' : '#ffff'}
+                                  px={'10px'}
+                                  borderRadius={'10px'}
+                                  color={'#fff'}
+                                >
+                                  {data[key]}
+                                </Text>
+                                :
+                                data[key]
+                                  ? data[key]
+                                  : "-"}
+                          </Flex>
+                        </Td>
+                      ))}
+                    </Tr>
+                  );
+              })}
           </Tbody>
         </TableC>
       </TableContainer>

@@ -85,10 +85,10 @@ const ViewServicios = () => {
             <Flex
               my={"30px"}
               w={"80%"}
-              h="100px"
+              h="120px"
               px={"1.5rem"}
               bg="#fff"
-              justifyContent="center"
+              justifyContent="start"
               alignItems={"center"}
               position="relative"
               borderRadius={"15px"}
@@ -112,19 +112,89 @@ const ViewServicios = () => {
               >
                 <Flex
                   flexDir={"column"}
-                  alignItems={"center"}
                   justifyContent={"center"}
+                  ms={'25px'}
+                  zIndex={'1000'}
                 >
+                  <Flex>
+                    <Text fontWeight={'bold'} fontSize={'14px'}>Rango de fecha</Text>
+                    <Flex borderRadius={'5px'} bg={'red'} minW={'35px'} minH={'14px'} ms={'5px'} color={'#fff'} fontSize={'10px'} justifyContent={'center'} align={'center'} cursor={'pointer'} _hover={{ opacity: .8 }} onClick={() => setFilter(state => ({ ...state, fechaDesde: null, fechaHasta: null }))}>borrar</Flex>
+                  </Flex>
+                  <Flex alignItems={'center'}>
+                    <Text fontSize={'13px'} w={'40px'}>Desde: </Text>
+                    <Input
+                      value={filter.fechaDesde}
+                      w="170px"
+                      ms={"15px"}
+                      my="3px"
+                      onChange={(e) => {
+                        setFilter({ ...filter, fechaDesde: e.target.value });
+                      }}
+                      type="datetime-local"
+                      size={'sm'}
+                    />
+                  </Flex>
+                  <Flex alignItems={'center'}>
+                    <Text fontSize={'13px'} w={'40px'}>Hasta: </Text>
+                    <Input
+                      value={filter.fechaHasta}
+                      w="170px"
+                      ms={"15px"}
+                      my="3px"
+                      onChange={(e) => {
+                        setFilter({ ...filter, fechaHasta: e.target.value });
+                      }}
+                      type="datetime-local"
+                      size={'sm'}
+                      min={filter.fechaDesde}
+                    />
+                  </Flex>
+                </Flex>
+              </Flex>
+              <Flex
+                flexDir={"column"}
+                justifyContent={"center"}
+                ms={'25px'}
+                zIndex={'1000'}
+              >
+                <Flex alignItems={'center'} flexDir={'column'}>
+                  <Text fontSize={'13px'} fontWeight={'bold'}>Tipo Problema: </Text>
                   <Input
-                    value={filter.nombre}
-                    w="250px"
+                    value={filter.tipoProblema}
+                    w="170px"
                     ms={"15px"}
                     my="3px"
                     onChange={(e) => {
-                      setFilter({ ...filter, nombre: e.target.value });
+                      setFilter({ ...filter, tipoProblema: e.target.value });
                     }}
-                    placeholder="Nombre equipo"
-                  ></Input>
+                    size={'sm'}
+                    min={filter.tipoProblema}
+                  />
+                </Flex>
+              </Flex>
+              <Flex
+                flexDir={"column"}
+                justifyContent={"center"}
+                ms={'25px'}
+                zIndex={'1000'}
+              >
+                <Flex alignItems={'center'} flexDir={'column'}>
+                  <Text fontSize={'13px'} fontWeight={'bold'}>Solucionado: </Text>
+                  <Select
+                    value={filter.solucionado}
+                    w="170px"
+                    ms={"15px"}
+                    my="3px"
+                    onChange={(e) => {
+                      setFilter({ ...filter, solucionado: e.target.value });
+                    }}
+                    size={'sm'}
+                    min={filter.solucionado}
+                  >
+                    <option value={null}>-</option>
+                    <option value="Si">Si</option>
+                    <option value="No">No</option>
+                  </Select>
                 </Flex>
               </Flex>
             </Flex>
@@ -154,6 +224,7 @@ const ViewServicios = () => {
                   newEquipo={newEquipo}
                   handleChangeData={handleChangeData}
                   newEquipoData={newEquipoData}
+                  filter={filter}
                 />
                 <Flex mt={"5px"} w="100%" justifyContent={"end"}>
                   <Flex
