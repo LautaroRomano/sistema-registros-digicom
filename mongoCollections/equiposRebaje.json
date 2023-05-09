@@ -1,27 +1,507 @@
 [{
-    "administracion":"Monteros",
-    "sucursal":"Lules",
-    "localidad":"Lules",
-    "direccion":"Rotonda de Lules",
-    "nombre":"Lules",
-    "ultima_visita":"2023-02-27",
-    "id_sist":195,
-    "id-rtu":204,
-    "id_radio":null,
-    "id_master":512,
-    "canal_de_radio":"V.N.Rebajes",
-    "rpt/directo":"directo",
-    "rep_asociado":"*",
-    "v-prim":33,
-    "v_sec":13,
-    "cant_distrib":5,
-    "latitud_sur": "26°55'31.86\"S",
-    "latitud_oeste": "65° 19'59.43\"O",
-    "orientacion_antena": "320",
-    "fecha_instalacion": "",
-    "cambio_bateria": null,
-    "numero_serie": "00265a 04/2009",
-    "numero_serie_reemplazo": "",
-    "rm/n":null,
-    "observaciones": "30/11/2022 se agrego RTU para REC de entrada. "
+  "_id": {
+    "$oid": "645a52cf37deef2e7b97d232"
+  },
+  "direccion": "x",
+  "nombre": "Santo Domingo",
+  "id_sist": 193
+},{
+  "_id": {
+    "$oid": "645a52cf37deef2e7b97d233"
+  },
+  "administracion": "Tafi viejo",
+  "direccion": "x (sin plano)",
+  "nombre": "CM La Rural",
+  "id_sist": 194,
+  "id-rtu": 1028,
+  "id_radio": 1540,
+  "id_master": 1024,
+  "canal_de_radio": "Tafi Viejo",
+  "rpt/directo": "si",
+  "rep_asociado": "Los Cebiles",
+  "latitud_sur": "26°47'56.38\"S",
+  "latitud_oeste": "65°15'34.61\"O",
+  "orientacion_antena": "10°",
+  "cambio_bateria": "1/26/2023"
+},{
+  "_id": {
+    "$oid": "645a52cf37deef2e7b97d234"
+  },
+  "direccion": "x",
+  "nombre": "Banda",
+  "id_sist": 195
+},{
+  "_id": {
+    "$oid": "645a52cf37deef2e7b97d235"
+  },
+  "administracion": "Monteros",
+  "sucursal": "Lules",
+  "localidad": "Lules",
+  "direccion": "Rotonda de Lules",
+  "nombre": "Lules",
+  "id_sist": 204,
+  "id-rtu": 204,
+  "id_master": 512,
+  "canal_de_radio": "V. N Rebajes",
+  "rpt/directo": "drecto",
+  "rep_asociado": "*",
+  "v-prim": 33,
+  "v_sec": 13,
+  "cant_distrib": 5,
+  "latitud_sur": "26°55'31.86\"S",
+  "latitud_oeste": " 65°19'59.43\"O",
+  "orientacion_antena": "320°"
+},{
+  "_id": {
+    "$oid": "645a52cf37deef2e7b97d236"
+  },
+  "administracion": "Monteros",
+  "sucursal": "Lules",
+  "localidad": "Lules",
+  "direccion": "ET Lules",
+  "nombre": "Lules 2",
+  "id_sist": 187,
+  "id-rtu": 187,
+  "id_radio": 699,
+  "id_master": 512,
+  "canal_de_radio": "Ñuñorco",
+  "rpt/directo": "directo",
+  "rep_asociado": "no aplica",
+  "v-prim": 33,
+  "v_sec": 13,
+  "cant_distrib": 4,
+  "latitud_sur": "26°56'48.93\"S",
+  "latitud_oeste": "65°20'22.51\"O",
+  "orientacion_antena": "270°"
+},{
+  "_id": {
+    "$oid": "645a52cf37deef2e7b97d237"
+  },
+  "administracion": "Monteros",
+  "sucursal": "Monteros",
+  "localidad": "Monteros",
+  "direccion": "Monteros",
+  "nombre": "Reb. Monteros",
+  "id_sist": 207,
+  "id-rtu": 207,
+  "id_master": 512,
+  "canal_de_radio": "Mponteros",
+  "rpt/directo": "directo",
+  "rep_asociado": "no aplica",
+  "v-prim": 33,
+  "v_sec": 13,
+  "cant_distrib": "4(4C)",
+  "latitud_sur": " 27°10'19.50\"S",
+  "latitud_oeste": "65°29'54.12\"O",
+  "orientacion_antena": "40°"
+},{
+  "_id": {
+    "$oid": "645a52cf37deef2e7b97d238"
+  },
+  "direccion": "x",
+  "nombre": "Bella Vista",
+  "id_sist": 209
+},{
+  "_id": {
+    "$oid": "645a52cf37deef2e7b97d239"
+  },
+  "direccion": "x",
+  "nombre": "Simoca",
+  "id_sist": 211
+},{
+  "_id": {
+    "$oid": "645a52cf37deef2e7b97d23a"
+  },
+  "administracion": "Concepcion",
+  "sucursal": "Concepcion",
+  "localidad": "Concepcion",
+  "direccion": "Dentro de la Sucursal Concepcion",
+  "nombre": "Concepción",
+  "id_sist": 213
+},{
+  "_id": {
+    "$oid": "645a52cf37deef2e7b97d23b"
+  },
+  "direccion": "x",
+  "nombre": "Reb. Cam. del Peru",
+  "id_sist": 216,
+  "id-rtu": 217,
+  "id_radio": 610,
+  "id_master": 512,
+  "canal_de_radio": "Tafi Viejo",
+  "rpt/directo": "no",
+  "latitud_sur": "26°44'32.04\"S",
+  "latitud_oeste": "65°16'9.85\"O",
+  "orientacion_antena": "60°"
+},{
+  "_id": {
+    "$oid": "645a52cf37deef2e7b97d23c"
+  },
+  "direccion": "x",
+  "nombre": "S.P. de Colalao",
+  "id_sist": 219
+},{
+  "_id": {
+    "$oid": "645a52cf37deef2e7b97d23d"
+  },
+  "direccion": "x",
+  "nombre": "Tafí Viejo",
+  "id_sist": 224
+},{
+  "_id": {
+    "$oid": "645a52cf37deef2e7b97d23e"
+  },
+  "administracion": "Monteros",
+  "sucursal": "Lules",
+  "localidad": "Manantial",
+  "direccion": "manantial sobre suta ex 38",
+  "nombre": "Manantial II",
+  "id_sist": 5178,
+  "id-rtu": 5178,
+  "id_radio": 5690,
+  "id_master": 5120,
+  "canal_de_radio": "Los Ralos",
+  "rpt/directo": "repetidora",
+  "rep_asociado": "Del Este",
+  "v-prim": 33,
+  "v_sec": 13,
+  "cant_distrib": "4 F5 - Rec TR1 4C- Rec TR2 F5",
+  "latitud_sur": "26°51'23.00\"S",
+  "latitud_oeste": "65°17'21.46\"O",
+  "orientacion_antena": "60°"
+},{
+  "_id": {
+    "$oid": "645a52cf37deef2e7b97d23f"
+  },
+  "administracion": "Concepcion",
+  "sucursal": "Concepcion",
+  "localidad": "Concepcion",
+  "direccion": "RTU-CTRL + (ED12-4C x 9)",
+  "nombre": "Concepción II",
+  "id_sist": 222,
+  "id-rtu": 222,
+  "id_radio": 422,
+  "id_master": 511,
+  "canal_de_radio": "Base Concepcion",
+  "rpt/directo": "directo",
+  "rep_asociado": "*",
+  "v-prim": 33,
+  "v_sec": 13,
+  "cant_distrib": "4 - 3 Telecomandados",
+  "latitud_sur": "27°20'53.83\"S",
+  "latitud_oeste": "65°37'0.58\"O",
+  "orientacion_antena": "90°",
+  "rm/n": 2
+},{
+  "_id": {
+    "$oid": "645a52cf37deef2e7b97d240"
+  },
+  "administracion": "Tafi Viejo",
+  "sucursal": "Tafi Viejo",
+  "localidad": "Los Nogales",
+  "direccion": "Citricola Trapani",
+  "nombre": "Trapani",
+  "id_sist": 231
+},{
+  "_id": {
+    "$oid": "645a52cf37deef2e7b97d241"
+  },
+  "administracion": "Banda Rio Sali",
+  "sucursal": "Banda Rio Sali",
+  "localidad": "Lastenia",
+  "direccion": "Hos. Eva Peron",
+  "nombre": "Hospital del Este",
+  "id_sist": 232,
+  "rm/n": "2.0 sin N°"
+},{
+  "_id": {
+    "$oid": "645a52cf37deef2e7b97d242"
+  },
+  "administracion": "Monteros",
+  "sucursal": "Tafi del Valle",
+  "localidad": "Tafi del Valle",
+  "direccion": "Suc. T.del Valle",
+  "nombre": "Rebaje Tafí del Valle",
+  "id_sist": 234,
+  "id-rtu": 234,
+  "id_radio": 606,
+  "id_master": 512,
+  "canal_de_radio": "Ñuñorco",
+  "rpt/directo": "directo",
+  "rep_asociado": "no aplica",
+  "v-prim": 33,
+  "v_sec": 13,
+  "cant_distrib": 3,
+  "latitud_sur": " 26°51'24.10\"S",
+  "latitud_oeste": " 65°41'43.01\"O",
+  "orientacion_antena": "180°"
+},{
+  "_id": {
+    "$oid": "645a52cf37deef2e7b97d243"
+  },
+  "direccion": "x",
+  "nombre": "Dist. El Bracho",
+  "id_sist": 235
+},{
+  "_id": {
+    "$oid": "645a52cf37deef2e7b97d244"
+  },
+  "direccion": "x",
+  "nombre": "Alberdi II",
+  "id_sist": 239
+},{
+  "_id": {
+    "$oid": "645a52cf37deef2e7b97d245"
+  },
+  "direccion": "x",
+  "nombre": "Cruz del Norte",
+  "id_sist": 246
+},{
+  "_id": {
+    "$oid": "645a52cf37deef2e7b97d246"
+  },
+  "administracion": "Monteros",
+  "sucursal": "Lules",
+  "localidad": "San Pablo",
+  "direccion": "Ohuanta",
+  "nombre": "San Pablo",
+  "id_sist": 247,
+  "id-rtu": 247,
+  "id_radio": 602,
+  "id_master": 512,
+  "canal_de_radio": "V. Nogues Rebajes",
+  "rpt/directo": "directo",
+  "rep_asociado": "*",
+  "v-prim": 33,
+  "v_sec": 13,
+  "cant_distrib": "4- (2 ABB por protocolo y 2ABB cableados)",
+  "latitud_sur": " 26°51'29.45\"S",
+  "latitud_oeste": "65°18'19.39\"O",
+  "orientacion_antena": "270°"
+},{
+  "_id": {
+    "$oid": "645a52cf37deef2e7b97d247"
+  },
+  "administracion": "concepcion",
+  "sucursal": "Concepcion",
+  "localidad": "La trinidad",
+  "direccion": "x",
+  "nombre": "La Trinidad",
+  "id_sist": 255,
+  "id-rtu": 255,
+  "id_radio": 437,
+  "id_master": 511,
+  "canal_de_radio": "Base Concepcion",
+  "rpt/directo": "directo",
+  "rep_asociado": "*",
+  "v-prim": 33,
+  "v_sec": 13,
+  "cant_distrib": "3, uno sin cablear",
+  "latitud_sur": "27°24'12.41\"S",
+  "latitud_oeste": "65°31'11.51\"O",
+  "orientacion_antena": "320°",
+  "rm/n": "2.0 sin N°"
+},{
+  "_id": {
+    "$oid": "645a52cf37deef2e7b97d248"
+  },
+  "direccion": "x",
+  "nombre": "CD Sheraton",
+  "id_sist": 264
+},{
+  "_id": {
+    "$oid": "645a52cf37deef2e7b97d249"
+  },
+  "direccion": "x",
+  "nombre": "Los Vallistos",
+  "id_sist": 3088
+},{
+  "_id": {
+    "$oid": "645a52cf37deef2e7b97d24a"
+  },
+  "administracion": "Banda Rio Sali",
+  "sucursal": "Santa Rosa de leales",
+  "localidad": "Lelaes",
+  "direccion": "Villa Fiat",
+  "nombre": "Reb. Villa Fiad",
+  "id_sist": 3100,
+  "id-rtu": 3100,
+  "id_radio": 3612,
+  "id_master": 3072,
+  "canal_de_radio": "Ñuñorco",
+  "rpt/directo": "directo",
+  "rep_asociado": "*",
+  "v-prim": 33,
+  "v_sec": 13,
+  "cant_distrib": 1,
+  "latitud_sur": " 27° 4'30.00\"S",
+  "latitud_oeste": "65°14'32.40\"O",
+  "orientacion_antena": "290°"
+},{
+  "_id": {
+    "$oid": "645a52cf37deef2e7b97d24b"
+  },
+  "direccion": "x",
+  "nombre": "Central Tafí del Valle",
+  "id_sist": 4107
+},{
+  "_id": {
+    "$oid": "645a52cf37deef2e7b97d24c"
+  },
+  "nombre": "Burruyacu"
+},{
+  "_id": {
+    "$oid": "645a52cf37deef2e7b97d24d"
+  },
+  "administracion": "Metropolitana",
+  "nombre": "La SAT - Las Talitas",
+  "id_sist": "Rtu IN:175     Rtu ctrl:174",
+  "id-rtu": "Rtu IN:175     Rtu ctrl:174",
+  "id_radio": 686,
+  "id_master": 512,
+  "canal_de_radio": "Villa Nogues Rebajes",
+  "rpt/directo": "directo",
+  "cant_distrib": "2-ABB",
+  "latitud_sur": " 26°47'22.44\"S",
+  "latitud_oeste": " 65°10'3.62\"O",
+  "numero_serie": "DIGICOM 032019 REB S/N00352",
+  "numero_serie_reemplazo": "RM B R5 - CC/1082"
+},{
+  "_id": {
+    "$oid": "645a52cf37deef2e7b97d24e"
+  },
+  "administracion": "Tafi Viejo",
+  "sucursal": "Tafi Viejo",
+  "localidad": "Raco",
+  "nombre": "Raco",
+  "id_sist": 6160,
+  "id-rtu": 6160,
+  "id_radio": 6672,
+  "id_master": 6144,
+  "canal_de_radio": "C. del 25",
+  "rpt/directo": "repetidora",
+  "rep_asociado": "Las Tuquitas",
+  "v-prim": 33,
+  "v_sec": 13,
+  "cant_distrib": "1 (F6)- 1 (F5)",
+  "latitud_sur": "26°39'23.91\"S",
+  "latitud_oeste": "65°23'23.14\"O",
+  "orientacion_antena": "40°",
+  "fecha_instalacion": "2/1/2022"
+},{
+  "_id": {
+    "$oid": "645a52cf37deef2e7b97d24f"
+  },
+  "administracion": "Banda Rio Sali",
+  "sucursal": "Santa Rosa de leales",
+  "localidad": "ingenio de leales",
+  "nombre": "Castoral",
+  "id_sist": 180,
+  "id-rtu": 181,
+  "id_radio": 692,
+  "id_master": 512,
+  "canal_de_radio": "Ñuñorco",
+  "rpt/directo": "directo",
+  "rep_asociado": "*",
+  "v-prim": 33,
+  "v_sec": 13,
+  "cant_distrib": 2,
+  "latitud_sur": "27°12'18.55\"S",
+  "latitud_oeste": " 65°17'51.17\"O",
+  "orientacion_antena": "310°"
+},{
+  "_id": {
+    "$oid": "645a52cf37deef2e7b97d250"
+  },
+  "administracion": "Metropilitana",
+  "sucursal": "Metropolitana",
+  "localidad": "Las Talitas",
+  "direccion": "Barrio el SOL - IPV",
+  "nombre": "Barrio el Sol",
+  "fecha_instalacion": "3/1/2022"
+},{
+  "_id": {
+    "$oid": "645a52cf37deef2e7b97d251"
+  },
+  "direccion": "x",
+  "nombre": "Reb Alderetes",
+  "id_sist": 5141
+},{
+  "_id": {
+    "$oid": "645a52cf37deef2e7b97d252"
+  },
+  "nombre": "Ampliacion Reb. Alderetes",
+  "id_sist": 5146
+},{
+  "_id": {
+    "$oid": "645a52cf37deef2e7b97d253"
+  },
+  "direccion": "x",
+  "nombre": "Los Quemados II",
+  "id_sist": 5148
+},{
+  "_id": {
+    "$oid": "645a52cf37deef2e7b97d254"
+  },
+  "direccion": "x",
+  "nombre": "Reb. Los Ralos-8669"
+},{
+  "_id": {
+    "$oid": "645a52cf37deef2e7b97d255"
+  },
+  "nombre": "Campo T3BR"
+},{
+  "_id": {
+    "$oid": "645a52cf37deef2e7b97d256"
+  },
+  "direccion": "x",
+  "nombre": "Central Amaicha",
+  "id_sist": 3106,
+  "id-rtu": 3106,
+  "id_radio": 3618,
+  "id_master": 3072,
+  "canal_de_radio": "Ampimpa",
+  "rpt/directo": "directo",
+  "rep_asociado": "*",
+  "v-prim": 33,
+  "v_sec": 13,
+  "cant_distrib": 4,
+  "latitud_sur": "26°35'24.53\"S",
+  "latitud_oeste": "65°56'23.67\"O",
+  "orientacion_antena": "100°",
+  "cambio_bateria": "*"
+},{
+  "_id": {
+    "$oid": "645a52cf37deef2e7b97d257"
+  },
+  "nombre": "ET Lules"
+},{
+  "_id": {
+    "$oid": "645a52cf37deef2e7b97d258"
+  },
+  "nombre": "Manantial"
+},{
+  "_id": {
+    "$oid": "645a52cf37deef2e7b97d259"
+  },
+  "administracion": "Monteros",
+  "sucursal": "Tafi del Valle",
+  "localidad": "Mollar",
+  "direccion": "Villa del Mollar",
+  "nombre": "El Mollar",
+  "id_sist": 186,
+  "id-rtu": 186,
+  "id_radio": 698,
+  "id_master": 512,
+  "canal_de_radio": "Ñuñorco",
+  "rpt/directo": "directo",
+  "rep_asociado": "*",
+  "v-prim": 33,
+  "v_sec": 13.2,
+  "cant_distrib": 4,
+  "latitud_sur": "26°56'30.70\"S",
+  "latitud_oeste": "65°42'51.50\"O",
+  "orientacion_antena": "140°",
+  "fecha_instalacion": "2/7/2019",
+  "rm/n": "R5 /"
 }]
