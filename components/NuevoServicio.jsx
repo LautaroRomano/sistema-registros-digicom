@@ -98,8 +98,8 @@ export default function NuevoServicio({
           <Text>Tipos de problemas seleccionados: </Text>
           <Flex overflowX={'scroll'} w={'100%'}>
             {
-              newServiceData.tipoProblema && newServiceData.tipoProblema.map(pro => (
-                <Flex mb={'2px'} align={'center'} mx={'2px'}>
+              newServiceData.tipoProblema && newServiceData.tipoProblema.map((pro,i) => (
+                <Flex mb={'2px'} align={'center'} mx={'2px'} key={i}>
                   <Text key={pro} bg={'#fff'} color={'#262626'} borderRadius={'15px 0 0 15px'} px={'4px'} py={'2px'}>{pro}</Text>
                   <Text onClick={() => deleteTipoProblema(pro)} bg={'#aaf'} color={'#262626'} borderRadius={'0 15px 15px 0'} px={'8px'} py={'5px'} fontSize={'12px'} fontWeight={'bold'} cursor={'pointer'}>X</Text>
                 </Flex>
