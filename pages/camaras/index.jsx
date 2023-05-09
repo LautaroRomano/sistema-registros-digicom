@@ -126,10 +126,20 @@ const ViewEquipos = () => {
                 justifyContent="center"
               >
                 <Flex
-                  flexDir={"column"}
+                  flexDir={"row"}
                   alignItems={"center"}
                   justifyContent={"center"}
                 >
+                  <Input
+                    value={filter.id}
+                    w="250px"
+                    ms={"15px"}
+                    my="3px"
+                    onChange={(e) => {
+                      setFilter({ ...filter, id: e.target.value });
+                    }}
+                    placeholder="ID camara"
+                  ></Input>
                   <Input
                     value={filter.nombre}
                     w="250px"
@@ -138,7 +148,7 @@ const ViewEquipos = () => {
                     onChange={(e) => {
                       setFilter({ ...filter, nombre: e.target.value });
                     }}
-                    placeholder="Nombre camara"
+                    placeholder="Numero camara"
                   ></Input>
                 </Flex>
               </Flex>
@@ -170,6 +180,7 @@ const ViewEquipos = () => {
                   postEquipo={postEquipo}
                   handleChangeData={handleChangeData}
                   newEquipoData={newEquipoData}
+                  filter={filter}
                 />
                 <Flex mt={"5px"} w="100%" justifyContent={"end"}>
                   <Flex justifyContent={"end"} ms="15px">

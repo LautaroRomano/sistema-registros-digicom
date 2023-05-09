@@ -24,7 +24,8 @@ const EquiposTable = ({
   newEquipoData,
   filter
 }) => {
-  const filterKeys = filter ? Object.keys(filter) : []
+  let filterKeys = filter ? Object.keys(filter) : []
+  filterKeys = filterKeys.filter(fil => filter[fil].length > 0)
   let keys = equiposConfig
 
   return (
@@ -57,12 +58,12 @@ const EquiposTable = ({
 
           {equiposList
             .filter(equipo => {
-              if(filterKeys.length === 0) return true
+              let flag = 1
+              if (filterKeys.length === 0) return true
               for (const key of filterKeys) {
-                if (filter[key].length < 2) return true
-                if (compararCadenas(equipo[key] + '', filter[key])) return true
+                if (!compararCadenas(equipo[key] + '', filter[key])) flag = 0
               }
-              return false
+              return flag
             })
             .map((data, i) => {
               if (i >= page * pageSize && i <= page * pageSize + pageSize)
@@ -77,9 +78,12 @@ const EquiposTable = ({
                       >
                         <Flex justifyContent={"center"} alignItems="center">
                           {
-                            data[key]
-                              ? data[key]
-                              : "-"}
+                            key === "ultima_visita" ?
+                              data[key] ? data[key][0] : '-'
+                              :
+                              data[key]
+                                ? data[key]
+                                : "-"}
                           {key === "ultima_visita" && (
                             <Flex
                               w={"25px"}
@@ -113,6 +117,7 @@ const EquiposTable = ({
 export default EquiposTable;
 
 const compararCadenas = (cad1, cad2) => {
+  console.log(cad1, cad2);
   if (!cad1) return false;
   if (!cad2) return false;
   return cad1.toLowerCase().includes(cad2.toLowerCase());

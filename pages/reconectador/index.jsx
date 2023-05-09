@@ -126,10 +126,30 @@ const ViewEquipos = () => {
                 justifyContent="center"
               >
                 <Flex
-                  flexDir={"column"}
+                  flexDir={"row"}
                   alignItems={"center"}
                   justifyContent={"center"}
                 >
+                  <Input
+                    value={filter.administracion}
+                    w="250px"
+                    ms={"15px"}
+                    my="3px"
+                    onChange={(e) => {
+                      setFilter({ ...filter,  administracion: e.target.value });
+                    }}
+                    placeholder="Administracion seccionador"
+                  ></Input>
+                  <Input
+                    value={filter.localidad}
+                    w="250px"
+                    ms={"15px"}
+                    my="3px"
+                    onChange={(e) => {
+                      setFilter({ ...filter, localidad: e.target.value });
+                    }}
+                    placeholder="Localidad seccionador"
+                  ></Input>
                   <Input
                     value={filter.nombre}
                     w="250px"
@@ -170,6 +190,7 @@ const ViewEquipos = () => {
                   postEquipo={postEquipo}
                   handleChangeData={handleChangeData}
                   newEquipoData={newEquipoData}
+                  filter={filter}
                 />
                  <Flex mt={"5px"} w="100%" justifyContent={"end"}>
                   <Flex justifyContent={"end"} ms="15px">
