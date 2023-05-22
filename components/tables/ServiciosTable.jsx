@@ -124,7 +124,6 @@ const ServiciosTable = ({
                 return false
               })
               .filter(fil => {
-                console.log('filter.solucionado',filter.solucionado)
                 if (!filter.solucionado || filter.solucionado === '-') return true
                 if (fil.seSoluciono && fil.seSoluciono.toLowerCase().includes(filter.solucionado.toLowerCase()))
                   return true
@@ -141,13 +140,31 @@ const ServiciosTable = ({
                             //setUpdateRow({ data: data, keyData: key });
                           }}
                         >
-                          <Flex justifyContent={"center"} alignItems="center">
+                          <Flex justifyContent={"start"} alignItems="center" maxW={'400px'} 
+                          overflowX={key === 'solucion' || key === 'observaciones' && 'scroll'} 
+                          overflowY={'hidden'}
+                            css={{
+                              scrollbarWidth: 'thin',
+                              '&::-webkit-scrollbar': {
+                                width: '3px',
+                                height: '3px'
+                              },
+                              '&::-webkit-scrollbar-thumb': {
+                                background: '#888',
+                                borderRadius: '3px',
+                              },
+                              '&::-webkit-scrollbar-track': {
+                                background: '#f1f1f1',
+                                borderRadius: '3px',
+                              },
+                            }}
+                          >
                             {key === "inicioTarea" || key === "finTarea"
                               ? dateformat(data[key])
                               :
                               key === 'seSoluciono' ?
                                 <Text
-                                  bg={data[key] === 'Si' ? 'green' : data[key] === 'No' ? 'red' : '#ffff'}
+                                  bg={data[key] === 'Sí' ? 'green' : data[key] === 'No' ? 'red' : '#ffff'}
                                   px={'10px'}
                                   borderRadius={'10px'}
                                   color={'#fff'}

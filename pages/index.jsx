@@ -364,7 +364,7 @@ export default function Home() {
                             equipo: searchEquipo.equipo,
                             inicioTarea: now.getTime(),
                             tipoServicio: "PREVENTIVO",
-                            seSoluciono: "Si",
+                            seSoluciono: "Sí",
                           });
                           setNewService(true);
                         }

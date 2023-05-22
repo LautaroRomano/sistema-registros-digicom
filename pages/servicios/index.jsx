@@ -192,7 +192,7 @@ const ViewServicios = () => {
                     min={filter.solucionado}
                   >
                     <option value={null}>-</option>
-                    <option value="Si">Si</option>
+                    <option value="Sí">Sí</option>
                     <option value="No">No</option>
                   </Select>
                 </Flex>

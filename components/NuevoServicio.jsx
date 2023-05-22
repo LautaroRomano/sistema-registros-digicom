@@ -220,7 +220,7 @@ export default function NuevoServicio({
           value={newServiceData.seSoluciono}
           onChange={handleChange}
         >
-          <option value="Si">Si</option>
+          <option value="Sí">Sí</option>
           <option value="No">No</option>
         </Select>
       </Flex>
