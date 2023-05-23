@@ -1,6 +1,4 @@
-import { useEffect, useState } from "react";
 import { Flex, Text, Button, Select, Input } from "@chakra-ui/react";
-import SelectR from "react-select";
 import axios from "axios";
 import Swal from "sweetalert2";
 
@@ -12,9 +10,8 @@ export default function NuevoServicio({
   newServiceData,
   handleChange,
   postNewService,
-  deleteTipoProblema
+  deleteTipoDe,
 }) {
-
   const sendNuevoTipoDeProblema = () => {
     Swal.fire({
       title: "Ingresa el nuevo tipo de problema",
@@ -38,6 +35,38 @@ export default function NuevoServicio({
           })
           .then(({ data }) => {
             console.log(data);
+            getConfig();
+          });
+      },
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: `Guardado correctamente`,
+        });
+      }
+    });
+  };
+  const sendNuevoTipoDeSolucion = () => {
+    Swal.fire({
+      title: "Ingresa el nuevo tipo de solucion",
+      input: "text",
+      inputAttributes: {
+        autocapitalize: "off",
+      },
+      showCancelButton: true,
+      confirmButtonText: "Guardar",
+      showLoaderOnConfirm: true,
+      preConfirm: (text) => {
+        console.log("guardar", text);
+        let configAux = config;
+        configAux.tiposDeSoluciones.push(text);
+        axios
+          .put("/api/getconfig", {
+            _id: configAux._id,
+            field: "tiposDeSoluciones",
+            newData: configAux.tiposDeSoluciones,
+          })
+          .then(({ data }) => {
             getConfig();
           });
       },
@@ -84,30 +113,50 @@ export default function NuevoServicio({
           <option value="CORRECTIVO">CORRECTIVO</option>
         </Select>
       </Flex>
-      {
-        newServiceData.tipoProblema && newServiceData.tipoProblema.length > 0 &&
-        <Flex
-          w={"60vw"}
-          alignItems={"center"}
-          bg={"#00468C"}
-          p={"10px"}
-          borderRadius={"10px"}
-          color={"#fff"}
-          mt={"15px"}
-        >
-          <Text>Tipos de problemas seleccionados: </Text>
-          <Flex overflowX={'scroll'} w={'100%'}>
-            {
-              newServiceData.tipoProblema && newServiceData.tipoProblema.map((pro,i) => (
-                <Flex mb={'2px'} align={'center'} mx={'2px'} key={i}>
-                  <Text key={pro} bg={'#fff'} color={'#262626'} borderRadius={'15px 0 0 15px'} px={'4px'} py={'2px'}>{pro}</Text>
-                  <Text onClick={() => deleteTipoProblema(pro)} bg={'#aaf'} color={'#262626'} borderRadius={'0 15px 15px 0'} px={'8px'} py={'5px'} fontSize={'12px'} fontWeight={'bold'} cursor={'pointer'}>X</Text>
-                </Flex>
-              ))
-            }
+      {newServiceData.tipoProblema &&
+        newServiceData.tipoProblema.length > 0 && (
+          <Flex
+            w={"60vw"}
+            alignItems={"center"}
+            bg={"#00468C"}
+            p={"10px"}
+            borderRadius={"10px"}
+            color={"#fff"}
+            mt={"15px"}
+          >
+            <Text>Tipos de problemas seleccionados: </Text>
+            <Flex overflowX={"scroll"} w={"100%"}>
+              {newServiceData.tipoProblema &&
+                newServiceData.tipoProblema.map((pro, i) => (
+                  <Flex mb={"2px"} align={"center"} mx={"2px"} key={i}>
+                    <Text
+                      key={pro}
+                      bg={"#fff"}
+                      color={"#262626"}
+                      borderRadius={"15px 0 0 15px"}
+                      px={"4px"}
+                      py={"2px"}
+                    >
+                      {pro}
+                    </Text>
+                    <Text
+                      onClick={() => deleteTipoDe(pro,'tipoProblema')}
+                      bg={"#aaf"}
+                      color={"#262626"}
+                      borderRadius={"0 15px 15px 0"}
+                      px={"8px"}
+                      py={"5px"}
+                      fontSize={"12px"}
+                      fontWeight={"bold"}
+                      cursor={"pointer"}
+                    >
+                      X
+                    </Text>
+                  </Flex>
+                ))}
+            </Flex>
           </Flex>
-        </Flex>
-      }
+        )}
       <Flex
         w={"60vw"}
         alignItems={"center"}
@@ -124,7 +173,9 @@ export default function NuevoServicio({
           color={"#252525"}
           bg={"#FFF"}
           name="tipoProblema"
-          value={newServiceData.tipoProblema ? newServiceData.tipoProblema[0] : null}
+          value={
+            newServiceData.tipoProblema ? newServiceData.tipoProblema[0] : null
+          }
           onChange={handleChange}
         >
           <option value={null}>Sin tipo de problema</option>
@@ -223,6 +274,102 @@ export default function NuevoServicio({
           <option value="Sí">Sí</option>
           <option value="No">No</option>
         </Select>
+      </Flex>
+
+      {newServiceData.tipoSolucion &&
+        newServiceData.tipoSolucion.length > 0 && (
+          <Flex
+            w={"60vw"}
+            alignItems={"center"}
+            bg={"#00468C"}
+            p={"10px"}
+            borderRadius={"10px"}
+            color={"#fff"}
+            mt={"15px"}
+          >
+            <Text>Tipos de soluciones seleccionados: </Text>
+            <Flex overflowX={"scroll"} w={"100%"}>
+              {newServiceData.tipoSolucion &&
+                newServiceData.tipoSolucion.map((pro, i) => (
+                  <Flex mb={"2px"} align={"center"} mx={"2px"} key={i}>
+                    <Text
+                      key={pro}
+                      bg={"#fff"}
+                      color={"#262626"}
+                      borderRadius={"15px 0 0 15px"}
+                      px={"4px"}
+                      py={"2px"}
+                    >
+                      {pro}
+                    </Text>
+                    <Text
+                      onClick={() => deleteTipoDe(pro,'tipoSolucion')}
+                      bg={"#aaf"}
+                      color={"#262626"}
+                      borderRadius={"0 15px 15px 0"}
+                      px={"8px"}
+                      py={"5px"}
+                      fontSize={"12px"}
+                      fontWeight={"bold"}
+                      cursor={"pointer"}
+                    >
+                      X
+                    </Text>
+                  </Flex>
+                ))}
+            </Flex>
+          </Flex>
+        )}
+
+      <Flex
+        w={"60vw"}
+        alignItems={"center"}
+        bg={"#00468C"}
+        p={"10px"}
+        borderRadius={"10px"}
+        color={"#fff"}
+        mt={"15px"}
+      >
+        <Text minW={"180px"} fontSize={"17px"} fontWeight={"bold"} me={"10px"}>
+          Tipo de solucion
+        </Text>
+        <Select
+          color={"#252525"}
+          bg={"#FFF"}
+          name="tipoSolucion"
+          value={
+            newServiceData.tipoSolucion ? newServiceData.tipoSolucion[0] : null
+          }
+          onChange={handleChange}
+        >
+          <option value={null}>Sin tipo de solucion</option>
+          {config.tiposDeSoluciones.map((tp, i) => (
+            <option value={tp} key={i}>
+              {tp}
+            </option>
+          ))}
+        </Select>
+        <Flex
+          bg={"#FFF"}
+          borderRadius={"50%"}
+          minW={"30px"}
+          minH={"30px"}
+          ms={"10px"}
+          alignItems={"center"}
+          justifyContent={"center"}
+          cursor={"pointer"}
+          _hover={{ opacity: 0.8 }}
+        >
+          <Text
+            fontWeight={"bold"}
+            fontSize={"20px"}
+            color={"#00468C"}
+            mt={"-3px"}
+            onClick={sendNuevoTipoDeSolucion}
+          >
+            +
+          </Text>
+        </Flex>
       </Flex>
 
       <Flex

@@ -19,17 +19,22 @@ export default function Home() {
 
   const handleChange = ({ target }) => {
     const { name, value } = target;
-    if (value === 'Sin tipo de problema') return
-    if (name === 'tipoProblema')
-      setNewServiceData((state) => ({ ...state, [name]: state[name] ? [...state[name], value] : [value] }));
-    else
-      setNewServiceData((state) => ({ ...state, [name]: value }));
+    if (value === "Sin tipo de problema" || value === "Sin tipo de solucion")
+      return;
+    if (name === "tipoProblema" || name === "tipoSolucion") {
+      setNewServiceData((state) => ({
+        ...state,
+        [name]: state[name] ? [...state[name], value] : [value],
+      }));
+    } else setNewServiceData((state) => ({ ...state, [name]: value }));
   };
 
-  const deleteTipoProblema = (tp) => {
-    const name = 'tipoProblema'
-    setNewServiceData((state) => ({ ...state, [name]: state[name] ? state[name].filter(f => f !== tp) : [] }));
-  }
+  const deleteTipoDe = (tp, name) => {
+    setNewServiceData((state) => ({
+      ...state,
+      [name]: state[name] ? state[name].filter((f) => f !== tp) : [],
+    }));
+  };
 
   const handleChangeSearchEquipo = ({ target }) => {
     const { name, value } = target;
@@ -77,7 +82,7 @@ export default function Home() {
           newServiceData={newServiceData}
           handleChange={handleChange}
           postNewService={postNewService}
-          deleteTipoProblema={deleteTipoProblema}
+          deleteTipoDe={deleteTipoDe}
         />
       ) : (
         <Flex
@@ -318,13 +323,19 @@ export default function Home() {
                           return;
                         if (
                           searchEquipo.tipoEquipo &&
-                          equ.tipo_equipo != searchEquipo.tipoEquipo
+                          equ.tipoEquipo != searchEquipo.tipoEquipo
                         )
                           return;
 
                         return {
                           value: equ._id,
-                          label: `${equ.tipoEquipo}: ` + (equ.nro_set ? equ.nro_set : equ.nombre ? equ.nombre : "Sin asignar"),
+                          label:
+                            `${equ.tipoEquipo}: ` +
+                            (equ.nro_set
+                              ? equ.nro_set
+                              : equ.nombre
+                              ? equ.nombre
+                              : "Sin asignar"),
                         };
                       })
                       .filter((equ) => equ !== undefined)}
@@ -353,24 +364,24 @@ export default function Home() {
                 onClick={
                   !newService && searchEquipo.equipo
                     ? () => {
-                      Swal.fire({
-                        title: "Quiere iniciar un nuevo servicio?",
-                        showCancelButton: "Cancelar",
-                        confirmButtonText: "Comenzar",
-                      }).then((result) => {
-                        if (result.isConfirmed) {
-                          const now = new Date();
-                          setNewServiceData({
-                            equipo: searchEquipo.equipo,
-                            inicioTarea: now.getTime(),
-                            tipoServicio: "PREVENTIVO",
-                            seSoluciono: "Sí",
-                          });
-                          setNewService(true);
-                        }
-                      });
-                    }
-                    : () => { }
+                        Swal.fire({
+                          title: "Quiere iniciar un nuevo servicio?",
+                          showCancelButton: "Cancelar",
+                          confirmButtonText: "Comenzar",
+                        }).then((result) => {
+                          if (result.isConfirmed) {
+                            const now = new Date();
+                            setNewServiceData({
+                              equipo: searchEquipo.equipo,
+                              inicioTarea: now.getTime(),
+                              tipoServicio: "PREVENTIVO",
+                              seSoluciono: "Sí",
+                            });
+                            setNewService(true);
+                          }
+                        });
+                      }
+                    : () => {}
                 }
               >
                 Nuevo servicio

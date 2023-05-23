@@ -284,7 +284,8 @@
     "solucion",
     "seSoluciono",
     "observaciones",
-    "equipo"
+    "equipo",
+    "tipoSolucion"
   ],
   "equiposSeccionadorData": [
     "administracion",
@@ -378,5 +379,6 @@
     "numero_serie_reemplazo",
     "rm/n",
     "observaciones"
-  ]
+  ],
+  "tiposDeSoluciones": []
 }]

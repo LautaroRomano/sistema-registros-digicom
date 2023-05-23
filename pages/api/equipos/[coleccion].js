@@ -64,19 +64,12 @@ const get = async (req, res) => {
 const post = async (req, res) => {
   const { coleccion } = req.query
   try {
-    try {
-      // Connect the client to the server	(optional starting in v4.7)
       await client.connect();
-      // Send a ping to confirm a successful connection
       const result = await client
         .db("registrosDigicom")
         .collection(coleccion)
         .insertOne(req.body);
       res.status(200).json(result);
-    } finally {
-      // Ensures that the client will close when you finish/error
-      // await client.close();
-    }
   } catch (error) {
     console.log(error);
   }
@@ -84,8 +77,6 @@ const post = async (req, res) => {
 const put = async (req, res) => {
   const { coleccion } = req.query
   const { body } = req;
-  console.log('coleccion',coleccion)
-  console.log('body',body)
   try {
     await client.connect();
     const result = await client

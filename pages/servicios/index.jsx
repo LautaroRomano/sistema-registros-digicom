@@ -10,6 +10,7 @@ const ViewServicios = () => {
   const [filter, setFilter] = useState({ nombre: "" });
   const [newEquipo, setNewEquipo] = useState(false);
   const [servicios, setEquipos] = useState([]);
+  const [serviciosFilter, setServiciosFilter] = useState([]);
   const [config, setConfig] = useState([]);
   const [updateRow, setUpdateRow] = useState(false);
   const [viewUltimaVisita, setViewUltimaVisita] = useState(false);
@@ -24,6 +25,59 @@ const ViewServicios = () => {
   useEffect(() => {
     get();
   }, []);
+  useEffect(() => {
+    const newServiciosList = servicios
+      .filter((fil) => {
+        if (!filter.fechaDesde || !filter.fechaHasta) return true;
+        const fechaInicioTarea = new Date(fil.inicioTarea);
+        const fechaFinTarea = new Date(fil.finTarea);
+        const fechaFilDesde = new Date(filter.fechaDesde);
+        const fechaFilHasta = new Date(filter.fechaHasta);
+        if (fechaInicioTarea >= fechaFilDesde && fechaFinTarea <= fechaFilHasta)
+          return true;
+        return false;
+      })
+      .filter((fil) => {
+        const filterValue = fil.tipoProblema + "";
+        if (
+          !filter.tipoProblema ||
+          (filter.tipoProblema && filter.tipoProblema.length < 2)
+        )
+          return true;
+        if (
+          fil.tipoProblema &&
+          filterValue.toLowerCase().includes(filter.tipoProblema.toLowerCase())
+        )
+          return true;
+        return false;
+      })
+      .filter((fil) => {
+        const filterValue = fil.tipoSolucion + "";
+        if (
+          !filter.tipoSolucion ||
+          (filter.tipoSolucion && filter.tipoSolucion.length < 2)
+        )
+          return true;
+        if (
+          fil.tipoSolucion &&
+          filterValue.toLowerCase().includes(filter.tipoSolucion.toLowerCase())
+        )
+          return true;
+        return false;
+      })
+      .filter((fil) => {
+        if (!filter.solucionado || filter.solucionado === "-") return true;
+        if (
+          fil.seSoluciono &&
+          fil.seSoluciono
+            .toLowerCase()
+            .includes(filter.solucionado.toLowerCase())
+        )
+          return true;
+        return false;
+      });
+    setServiciosFilter(newServiciosList);
+  }, [filter,servicios]);
 
   const get = () => {
     axios.get(`/api/servicios`).then((res) => {
@@ -113,15 +167,40 @@ const ViewServicios = () => {
                 <Flex
                   flexDir={"column"}
                   justifyContent={"center"}
-                  ms={'25px'}
-                  zIndex={'1000'}
+                  ms={"25px"}
+                  zIndex={"1000"}
                 >
                   <Flex>
-                    <Text fontWeight={'bold'} fontSize={'14px'}>Rango de fecha</Text>
-                    <Flex borderRadius={'5px'} bg={'red'} minW={'35px'} minH={'14px'} ms={'5px'} color={'#fff'} fontSize={'10px'} justifyContent={'center'} align={'center'} cursor={'pointer'} _hover={{ opacity: .8 }} onClick={() => setFilter(state => ({ ...state, fechaDesde: null, fechaHasta: null }))}>borrar</Flex>
+                    <Text fontWeight={"bold"} fontSize={"14px"}>
+                      Rango de fecha
+                    </Text>
+                    <Flex
+                      borderRadius={"5px"}
+                      bg={"red"}
+                      minW={"35px"}
+                      minH={"14px"}
+                      ms={"5px"}
+                      color={"#fff"}
+                      fontSize={"10px"}
+                      justifyContent={"center"}
+                      align={"center"}
+                      cursor={"pointer"}
+                      _hover={{ opacity: 0.8 }}
+                      onClick={() =>
+                        setFilter((state) => ({
+                          ...state,
+                          fechaDesde: null,
+                          fechaHasta: null,
+                        }))
+                      }
+                    >
+                      borrar
+                    </Flex>
                   </Flex>
-                  <Flex alignItems={'center'}>
-                    <Text fontSize={'13px'} w={'40px'}>Desde: </Text>
+                  <Flex alignItems={"center"}>
+                    <Text fontSize={"13px"} w={"40px"}>
+                      Desde:{" "}
+                    </Text>
                     <Input
                       value={filter.fechaDesde}
                       w="170px"
@@ -131,11 +210,13 @@ const ViewServicios = () => {
                         setFilter({ ...filter, fechaDesde: e.target.value });
                       }}
                       type="datetime-local"
-                      size={'sm'}
+                      size={"sm"}
                     />
                   </Flex>
-                  <Flex alignItems={'center'}>
-                    <Text fontSize={'13px'} w={'40px'}>Hasta: </Text>
+                  <Flex alignItems={"center"}>
+                    <Text fontSize={"13px"} w={"40px"}>
+                      Hasta:{" "}
+                    </Text>
                     <Input
                       value={filter.fechaHasta}
                       w="170px"
@@ -145,41 +226,23 @@ const ViewServicios = () => {
                         setFilter({ ...filter, fechaHasta: e.target.value });
                       }}
                       type="datetime-local"
-                      size={'sm'}
+                      size={"sm"}
                       min={filter.fechaDesde}
                     />
                   </Flex>
                 </Flex>
               </Flex>
+
               <Flex
                 flexDir={"column"}
                 justifyContent={"center"}
-                ms={'25px'}
-                zIndex={'1000'}
+                ms={"25px"}
+                zIndex={"1000"}
               >
-                <Flex alignItems={'center'} flexDir={'column'}>
-                  <Text fontSize={'13px'} fontWeight={'bold'}>Tipo Problema: </Text>
-                  <Input
-                    value={filter.tipoProblema}
-                    w="170px"
-                    ms={"15px"}
-                    my="3px"
-                    onChange={(e) => {
-                      setFilter({ ...filter, tipoProblema: e.target.value });
-                    }}
-                    size={'sm'}
-                    min={filter.tipoProblema}
-                  />
-                </Flex>
-              </Flex>
-              <Flex
-                flexDir={"column"}
-                justifyContent={"center"}
-                ms={'25px'}
-                zIndex={'1000'}
-              >
-                <Flex alignItems={'center'} flexDir={'column'}>
-                  <Text fontSize={'13px'} fontWeight={'bold'}>Solucionado: </Text>
+                <Flex alignItems={"center"} flexDir={"column"}>
+                  <Text fontSize={"13px"} fontWeight={"bold"}>
+                    Solucionado:{" "}
+                  </Text>
                   <Select
                     value={filter.solucionado}
                     w="170px"
@@ -188,13 +251,62 @@ const ViewServicios = () => {
                     onChange={(e) => {
                       setFilter({ ...filter, solucionado: e.target.value });
                     }}
-                    size={'sm'}
+                    size={"sm"}
                     min={filter.solucionado}
                   >
                     <option value={null}>-</option>
                     <option value="Sí">Sí</option>
                     <option value="No">No</option>
                   </Select>
+                </Flex>
+              </Flex>
+
+              <Flex flexDir={"column"}>
+                <Flex
+                  flexDir={"column"}
+                  justifyContent={"center"}
+                  ms={"25px"}
+                  zIndex={"1000"}
+                >
+                  <Flex alignItems={"center"} flexDir={"row"}>
+                    <Text fontSize={"11px"} fontWeight={"bold"} w={"80px"}>
+                      Tipo Problema:{" "}
+                    </Text>
+                    <Input
+                      value={filter.tipoProblema}
+                      w="170px"
+                      ms={"15px"}
+                      my="3px"
+                      onChange={(e) => {
+                        setFilter({ ...filter, tipoProblema: e.target.value });
+                      }}
+                      size={"sm"}
+                      min={filter.tipoProblema}
+                    />
+                  </Flex>
+                </Flex>
+                <Flex
+                  flexDir={"column"}
+                  justifyContent={"center"}
+                  ms={"25px"}
+                  zIndex={"1000"}
+                >
+                  <Flex alignItems={"center"} flexDir={"row"}>
+                    <Text fontSize={"11px"} fontWeight={"bold"} w={"80px"}>
+                      Tipo Solucion:{" "}
+                    </Text>
+                    <Input
+                      value={filter.tipoSolucion}
+                      w="170px"
+                      ms={"15px"}
+                      my="3px"
+                      onChange={(e) => {
+                        setFilter({ ...filter, tipoSolucion: e.target.value });
+                      }}
+                      size={"sm"}
+                      min={filter.tipoSolucion}
+                    />
+                  </Flex>
                 </Flex>
               </Flex>
             </Flex>
@@ -215,7 +327,7 @@ const ViewServicios = () => {
                 flexDir="column"
               >
                 <Table
-                  fields={servicios}
+                  fields={serviciosFilter}
                   columns={config.serviciosData || []}
                   setUpdateRow={setUpdateRow}
                   tipo={1}
@@ -225,8 +337,12 @@ const ViewServicios = () => {
                   handleChangeData={handleChangeData}
                   newEquipoData={newEquipoData}
                   filter={filter}
+                  setServiciosFilter={setServiciosFilter}
+                  config={config}
+                  getAll={get}
                 />
                 <Flex mt={"5px"} w="100%" justifyContent={"end"}>
+                  <Text>Cantidad de servicios: {serviciosFilter.length}</Text>
                   <Flex
                     bg={"primary"}
                     w={"25px"}

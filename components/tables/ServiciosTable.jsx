@@ -7,12 +7,13 @@ import {
   Td,
   TableContainer,
   Input,
+  Select,
+  Button
 } from "@chakra-ui/react";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
-import ArrowUp from "@mui/icons-material/KeyboardArrowUp";
-import ArrowDown from "@mui/icons-material/KeyboardArrowDown";
 import { Flex, Text } from "@chakra-ui/react";
 import { useState } from "react";
+import Swal from "sweetalert2";
+import axios from "axios";
 
 const ServiciosTable = ({
   fields,
@@ -23,16 +24,84 @@ const ServiciosTable = ({
   newEquipo,
   handleChangeData,
   newEquipoData,
-  filter
+  config,
+  getAll
 }) => {
-  const [updateColumns, setUpdateColumns] = useState(false)
+  const [insertTipoProblema,setInsertTipoProblema] = useState(false)
+
+  const handleChange = ({ target }) => {
+    const { name, value } = target;
+    if (value === "Sin tipo de problema" || value === "Sin tipo de solucion")
+      return;
+    if (name === "tipoProblema" || name === "tipoSolucion") {
+      setInsertTipoProblema((state) => ({
+        ...state,
+        [name]: state[name] ? [...state[name], value] : [value],
+      }));
+    } 
+  };
+
+  const sendNuevoTipoDeSolucion = () => {
+    Swal.fire({
+      title: "Ingresa el nuevo tipo de solucion",
+      input: "text",
+      inputAttributes: {
+        autocapitalize: "off",
+      },
+      showCancelButton: true,
+      confirmButtonText: "Guardar",
+      showLoaderOnConfirm: true,
+      preConfirm: (text) => {
+        console.log("guardar", text);
+        let configAux = config;
+        configAux.tiposDeSoluciones.push(text);
+        axios
+          .put("/api/getconfig", {
+            _id: configAux._id,
+            field: "tiposDeSoluciones",
+            newData: configAux.tiposDeSoluciones,
+          })
+          .then(({ data }) => {
+            getAll();
+          });
+      },
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: `Guardado correctamente`,
+        });
+      }
+    });
+  };
+
+  const deleteTipoDe = (tp, name) => {
+    setInsertTipoProblema((state) => ({
+      ...state,
+      [name]: state[name] ? state[name].filter((f) => f !== tp) : [],
+    }));
+  };
+
+  const handleSave = ()=>{
+    const collection = insertTipoProblema.coleccion
+    axios
+      .put(`/api/servicios`, {
+        newData: insertTipoProblema.tipoSolucion,
+        keyData: "tipoSolucion",
+        _id: insertTipoProblema._id,
+      })
+      .then(({ data }) => {
+        getAll();
+        setInsertTipoProblema(false)
+      });
+  }
+
   return (
     <>
       {
-        updateColumns &&
+        insertTipoProblema &&
         <Flex
           position={"fixed"}
-          zIndex={1}
+          zIndex={10}
           top={0}
           left={0}
           w={"100%"}
@@ -41,29 +110,107 @@ const ServiciosTable = ({
           justifyContent={"center"}
           alignItems={"center"}
         >
-          <Flex bg={"#FFF"} p={"25px"} borderRadius={"5px"} flexDir={"column"} w={'400px'} align={'center'}>
-            <Text>Columns config</Text>
-            <Flex flexDir={"column"} w={'100%'}>
-              {columns.map((col) => (
-                <Flex
-                  key={col}
-                  w={"100%"}
-                  justifyContent={"space-between"}
-                  h={"25px"}
-                  py={"5px"}
-                >
-                  <Text>{col}</Text>
-                  <Flex my={"1px"} h={"5px"}>
-                    <Text>
-                      <ArrowUp></ArrowUp>
+          <Flex bg={"#FFF"} p={"25px"} borderRadius={"5px"} flexDir={"column"} w={'800'} align={'center'} position={'relative'}>
+            <Text>Tipos de soluciones</Text>
+            <Text position={'absolute'} right={5} bg={'#00468C'} borderRadius={'50%'} minW={'15px'} minH={'15px'} fontSize={'12px'} color={'#FFF'} textAlign={'center'} cursor={'pointer'} 
+            onClick={()=>setInsertTipoProblema(false)}
+            >X</Text>
+            {insertTipoProblema.tipoSolucion &&
+              insertTipoProblema.tipoSolucion.length > 0 && (
+          <Flex
+            w={"60vw"}
+            alignItems={"center"}
+            bg={"#00468C"}
+            p={"10px"}
+            borderRadius={"10px"}
+            color={"#fff"}
+            mt={"15px"}
+          >
+            <Text>Tipos de soluciones seleccionados: </Text>
+            <Flex overflowX={"scroll"} w={"100%"}>
+              {insertTipoProblema.tipoSolucion &&
+                insertTipoProblema.tipoSolucion.map((pro, i) => (
+                  <Flex mb={"2px"} align={"center"} mx={"2px"} key={i}>
+                    <Text
+                      key={pro}
+                      bg={"#fff"}
+                      color={"#262626"}
+                      borderRadius={"15px 0 0 15px"}
+                      px={"4px"}
+                      py={"2px"}
+                    >
+                      {pro}
                     </Text>
-                    <Text>
-                      <ArrowDown></ArrowDown>
+                    <Text
+                      onClick={() => deleteTipoDe(pro,'tipoSolucion')}
+                      bg={"#aaf"}
+                      color={"#262626"}
+                      borderRadius={"0 15px 15px 0"}
+                      px={"8px"}
+                      py={"5px"}
+                      fontSize={"12px"}
+                      fontWeight={"bold"}
+                      cursor={"pointer"}
+                    >
+                      X
                     </Text>
                   </Flex>
-                </Flex>
-              ))}
+                ))}
             </Flex>
+          </Flex>
+        )}
+
+      <Flex
+        w={"60vw"}
+        alignItems={"center"}
+        bg={"#00468C"}
+        p={"10px"}
+        borderRadius={"10px"}
+        color={"#fff"}
+        mt={"15px"}
+      >
+        <Text minW={"180px"} fontSize={"17px"} fontWeight={"bold"} me={"10px"}>
+          Tipo de solucion
+        </Text>
+        <Select
+          color={"#252525"}
+          bg={"#FFF"}
+          name="tipoSolucion"
+          value={
+            insertTipoProblema.tipoSolucion ? insertTipoProblema.tipoSolucion[0] : null
+          }
+          onChange={handleChange}
+        >
+          <option value={null}>Sin tipo de solucion</option>
+          {config.tiposDeSoluciones.map((tp, i) => (
+            <option value={tp} key={i}>
+              {tp}
+            </option>
+          ))}
+        </Select>
+        <Flex
+          bg={"#FFF"}
+          borderRadius={"50%"}
+          minW={"30px"}
+          minH={"30px"}
+          ms={"10px"}
+          alignItems={"center"}
+          justifyContent={"center"}
+          cursor={"pointer"}
+          _hover={{ opacity: 0.8 }}
+        >
+          <Text
+            fontWeight={"bold"}
+            fontSize={"20px"}
+            color={"#00468C"}
+            mt={"-3px"}
+            onClick={sendNuevoTipoDeSolucion}
+          >
+            +
+          </Text>
+        </Flex>
+      </Flex>
+      <Button colorScheme="blue" mt={'10px'} size={'sm'} onClick={handleSave}>Guardar</Button>
           </Flex>
         </Flex>
       }
@@ -106,29 +253,6 @@ const ServiciosTable = ({
             )}
 
             {fields
-              .filter(fil => {
-                if (!filter.fechaDesde || !filter.fechaHasta) return true
-                const fechaInicioTarea = new Date(fil.inicioTarea);
-                const fechaFinTarea = new Date(fil.finTarea);
-                const fechaFilDesde = new Date(filter.fechaDesde);
-                const fechaFilHasta = new Date(filter.fechaHasta);
-                if (fechaInicioTarea >= fechaFilDesde && fechaFinTarea <= fechaFilHasta)
-                  return true
-                return false
-              })
-              .filter(fil => {
-                const filterValue = fil.tipoProblema + ''
-                if (!filter.tipoProblema || (filter.tipoProblema && filter.tipoProblema.length < 2)) return true
-                if (fil.tipoProblema && filterValue.toLowerCase().includes(filter.tipoProblema.toLowerCase()))
-                  return true
-                return false
-              })
-              .filter(fil => {
-                if (!filter.solucionado || filter.solucionado === '-') return true
-                if (fil.seSoluciono && fil.seSoluciono.toLowerCase().includes(filter.solucionado.toLowerCase()))
-                  return true
-                return false
-              })
               .map((data, i) => {
                 if (i >= page * pageSize && i <= page * pageSize + pageSize)
                   return (
@@ -171,6 +295,49 @@ const ServiciosTable = ({
                                 >
                                   {data[key]}
                                 </Text>
+                                :
+                              key === 'tipoProblema' ?
+                              Array.isArray(data[key]) && data[key].map((d,i)=>(
+                                <Text
+                                key={d}
+                                bg={i%2==0?'#00468C':'#2255F8'}
+                                px={'10px'}
+                                borderRadius={'10px'}
+                                color={'#fff'}
+                                ms={'1px'}
+                                >
+                                  {d}
+                                </Text>
+                                  ))
+                                :
+                              key === 'tipoSolucion' ?
+                              <>
+                              {
+                              Array.isArray(data[key]) && data[key].map((d,i)=>(
+                                <Text
+                                key={d}
+                                bg={i%2==0?'#00468C':'#2255F8'}
+                                px={'10px'}
+                                borderRadius={'10px'}
+                                color={'#fff'}
+                                ms={'1px'}
+                                >
+                                  {d}
+                                </Text>
+                                  ))
+                                }
+                                <Text
+                                bg={'#00468C'}
+                                px={'10px'}
+                                borderRadius={'10px'}
+                                color={'#fff'}
+                                ms={'1px'}
+                                cursor={'pointer'}
+                                onClick={()=>setInsertTipoProblema(data)}
+                                >
+                                  {"+"}
+                                </Text>
+                                  </>
                                 :
                                 data[key]
                                   ? data[key]

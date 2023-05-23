@@ -22,7 +22,9 @@ const get = async (req, res) => {
       .db("registrosDigicom")
       .collection("servicios")
       .find({})
+      .sort({ inicioTarea: -1 })
       .toArray();
+
     res.status(200).json(result);
   } catch (error) {
     console.log(error);
@@ -54,7 +56,7 @@ const put = async (req, res) => {
     await client.connect();
     const result = await client
       .db("registrosDigicom")
-      .collection("equiposTelgecs")
+      .collection("servicios")
       .updateOne(
         { _id: new ObjectId(body._id) },
         { $set: { [body.keyData]: body.newData } }
