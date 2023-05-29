@@ -3,17 +3,37 @@ import axios from "axios";
 import { Flex, Button, Input, Text } from "@chakra-ui/react";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 
-const ViewUltimaVisita = ({ data, setData, getUltVisita, equipo }) => {
+const keys = [
+  "equiposReconectador",
+  "equiposCamaras",
+  "equiposCMM",
+  "equiposRebaje",
+  "equiposSeccionador",
+  "equiposTelgecs",
+];
+const tiposEquipos = [
+  "RECONECTADOR",
+  "CAMARA",
+  "CMM",
+  "REBAJE",
+  "SECCIONADOR",
+  "SET",
+];
+
+const ViewUltimaVisita = ({ data, setData,getEquipos }) => {
   const [newData, setNewData] = useState();
 
   const handleGuardar = () => {
+    const index = tiposEquipos.findIndex(f=>f===data.tipoEquipo)
+    const coleccion = keys[index]
     if (newData)
       axios
-        .post("/api/ultimavisita/" + equipo.id_equipo, {
-          fecha: newData,
+        .post("/api/ultimavisita/" + coleccion, {
+          newfecha: newData,
+          ...data,
         })
         .then(({ data }) => {
-          getUltVisita(equipo.id_equipo);
+          if(getEquipos)getEquipos();
         });
   };
 
@@ -26,6 +46,8 @@ const ViewUltimaVisita = ({ data, setData, getUltVisita, equipo }) => {
       bg={"#0005"}
       alignItems="center"
       justifyContent="center"
+      top={0}
+      left={0}
     >
       <Flex
         w={"400px"}
@@ -48,7 +70,7 @@ const ViewUltimaVisita = ({ data, setData, getUltVisita, equipo }) => {
           py="10px"
           position={"relative"}
         >
-          Ultimas Visitas de equipo {equipo.nombre || equipo.nroSet}{" "}
+          Ultimas Visitas de equipo {data.nombre || data.nroSet}{" "}
           <Button
             colorScheme={"red"}
             onClick={() => setData(false)}
@@ -81,9 +103,10 @@ const ViewUltimaVisita = ({ data, setData, getUltVisita, equipo }) => {
 
         <Flex flexDir={"column"} overflowY={"scroll"} px="25px">
           {data &&
-            data.map((dat, i) => (
+            Array.isArray(data.ultima_visita) &&
+            data.ultima_visita.map((fecha, i) => (
               <Text key={i} fontWeight="bold" letterSpacing={"widest"}>
-                {dat.fecha}
+                {fecha}
               </Text>
             ))}
         </Flex>

@@ -188,6 +188,7 @@ const ViewEquipos = () => {
                   handleChangeData={handleChangeData}
                   newEquipoData={newEquipoData}
                   filter={filter}
+                  getEquipos={getEquipos}
                 />
                 <Flex mt={"5px"} w="100%" justifyContent={"end"}>
                   <Flex justifyContent={"end"} ms="15px">

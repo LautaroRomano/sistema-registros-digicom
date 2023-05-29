@@ -38,7 +38,7 @@ const UpdateRowEquipo = ({ data, keyData, setUpdateRow, getEquipos }) => {
         setAdministracionesList(data);
       });
     }
-    if (keyData === "fecha_cambio_bateria") setUpdateRow(false);
+    if (keyData === "fecha_cambio_bateria" || keyData === "ultima_visita") setUpdateRow(false);
   }, []);
 
   const handleChange = (e) => {
@@ -58,7 +58,7 @@ const UpdateRowEquipo = ({ data, keyData, setUpdateRow, getEquipos }) => {
       });
   };
 
-  if (keyData === "fecha_cambio_bateria") return <></>;
+  if (keyData === "fecha_cambio_bateria" || keyData === "ultima_visita") return <></>;
 
   if (
     keyData === "sucursal" ||
