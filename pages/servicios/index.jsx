@@ -5,6 +5,7 @@ import ViewUltimaVisita from "../../components/ViewUltimaVisita";
 import Table from "../../components/tables/ServiciosTable";
 import UpdateRow from "../../components/UpdateRowEquipo";
 import Navbar from "../../components/Navbar";
+import Informe from './Informe'
 
 const ViewServicios = () => {
   const [filter, setFilter] = useState({ nombre: "" });
@@ -17,9 +18,13 @@ const ViewServicios = () => {
   const [pageSize] = useState(15);
   const [page, setPage] = useState(0);
   const [newEquipoData, setNewEquipoData] = useState({});
+  const [viewInforme, setViewInforme] = useState(false);
 
   const handleChangeData = ({ target }) => {
     setNewEquipoData((state) => ({ ...state, [target.name]: target.value }));
+  };
+  const handleViewInforme = () => {
+    setViewInforme(!viewInforme)
   };
 
   useEffect(() => {
@@ -77,7 +82,7 @@ const ViewServicios = () => {
         return false;
       });
     setServiciosFilter(newServiciosList);
-  }, [filter,servicios]);
+  }, [filter, servicios]);
 
   const get = () => {
     axios.get(`/api/servicios`).then((res) => {
@@ -108,6 +113,14 @@ const ViewServicios = () => {
           getUltVisita={getUltVisita}
         />
       )}
+      {
+        viewInforme && <Informe
+          fields={serviciosFilter}
+          columns={config.serviciosData || []}
+          config={config}
+          handleViewInforme={handleViewInforme}
+        />
+      }
       {!updateRow && (
         <Flex
           w={"100vw"}
@@ -342,6 +355,7 @@ const ViewServicios = () => {
                   getAll={get}
                 />
                 <Flex mt={"5px"} w="100%" justifyContent={"end"}>
+                  <Button colorScheme="blue" size={'sm'} me={'10px'} onClick={handleViewInforme}>Generar informe</Button>
                   <Text>Cantidad de servicios: {serviciosFilter.length}</Text>
                   <Flex
                     bg={"primary"}
