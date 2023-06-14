@@ -6,7 +6,6 @@ import {
   Th,
   Td,
   TableContainer,
-  Input,
   Select,
   Button
 } from "@chakra-ui/react";
@@ -18,16 +17,12 @@ import axios from "axios";
 const ServiciosTable = ({
   fields,
   columns,
-  setUpdateRow,
   pageSize,
   page,
-  newEquipo,
-  handleChangeData,
-  newEquipoData,
   config,
   getAll
 }) => {
-  const [insertTipoProblema,setInsertTipoProblema] = useState(false)
+  const [insertTipoProblema, setInsertTipoProblema] = useState(false)
 
   const handleChange = ({ target }) => {
     const { name, value } = target;
@@ -38,7 +33,7 @@ const ServiciosTable = ({
         ...state,
         [name]: state[name] ? [...state[name], value] : [value],
       }));
-    } 
+    }
   };
 
   const sendNuevoTipoDeSolucion = () => {
@@ -81,7 +76,7 @@ const ServiciosTable = ({
     }));
   };
 
-  const handleSave = ()=>{
+  const handleSave = () => {
     const collection = insertTipoProblema.coleccion
     axios
       .put(`/api/servicios`, {
@@ -112,105 +107,105 @@ const ServiciosTable = ({
         >
           <Flex bg={"#FFF"} p={"25px"} borderRadius={"5px"} flexDir={"column"} w={'800'} align={'center'} position={'relative'}>
             <Text>Tipos de soluciones</Text>
-            <Text position={'absolute'} right={5} bg={'#00468C'} borderRadius={'50%'} minW={'15px'} minH={'15px'} fontSize={'12px'} color={'#FFF'} textAlign={'center'} cursor={'pointer'} 
-            onClick={()=>setInsertTipoProblema(false)}
+            <Text position={'absolute'} right={5} bg={'#00468C'} borderRadius={'50%'} minW={'15px'} minH={'15px'} fontSize={'12px'} color={'#FFF'} textAlign={'center'} cursor={'pointer'}
+              onClick={() => setInsertTipoProblema(false)}
             >X</Text>
             {insertTipoProblema.tipoSolucion &&
               insertTipoProblema.tipoSolucion.length > 0 && (
-          <Flex
-            w={"60vw"}
-            alignItems={"center"}
-            bg={"#00468C"}
-            p={"10px"}
-            borderRadius={"10px"}
-            color={"#fff"}
-            mt={"15px"}
-          >
-            <Text>Tipos de soluciones seleccionados: </Text>
-            <Flex overflowX={"scroll"} w={"100%"}>
-              {insertTipoProblema.tipoSolucion &&
-                insertTipoProblema.tipoSolucion.map((pro, i) => (
-                  <Flex mb={"2px"} align={"center"} mx={"2px"} key={i}>
-                    <Text
-                      key={pro}
-                      bg={"#fff"}
-                      color={"#262626"}
-                      borderRadius={"15px 0 0 15px"}
-                      px={"4px"}
-                      py={"2px"}
-                    >
-                      {pro}
-                    </Text>
-                    <Text
-                      onClick={() => deleteTipoDe(pro,'tipoSolucion')}
-                      bg={"#aaf"}
-                      color={"#262626"}
-                      borderRadius={"0 15px 15px 0"}
-                      px={"8px"}
-                      py={"5px"}
-                      fontSize={"12px"}
-                      fontWeight={"bold"}
-                      cursor={"pointer"}
-                    >
-                      X
-                    </Text>
+                <Flex
+                  w={"60vw"}
+                  alignItems={"center"}
+                  bg={"#00468C"}
+                  p={"10px"}
+                  borderRadius={"10px"}
+                  color={"#fff"}
+                  mt={"15px"}
+                >
+                  <Text>Tipos de soluciones seleccionados: </Text>
+                  <Flex overflowX={"scroll"} w={"100%"}>
+                    {insertTipoProblema.tipoSolucion &&
+                      insertTipoProblema.tipoSolucion.map((pro, i) => (
+                        <Flex mb={"2px"} align={"center"} mx={"2px"} key={i}>
+                          <Text
+                            key={pro}
+                            bg={"#fff"}
+                            color={"#262626"}
+                            borderRadius={"15px 0 0 15px"}
+                            px={"4px"}
+                            py={"2px"}
+                          >
+                            {pro}
+                          </Text>
+                          <Text
+                            onClick={() => deleteTipoDe(pro, 'tipoSolucion')}
+                            bg={"#aaf"}
+                            color={"#262626"}
+                            borderRadius={"0 15px 15px 0"}
+                            px={"8px"}
+                            py={"5px"}
+                            fontSize={"12px"}
+                            fontWeight={"bold"}
+                            cursor={"pointer"}
+                          >
+                            X
+                          </Text>
+                        </Flex>
+                      ))}
                   </Flex>
-                ))}
-            </Flex>
-          </Flex>
-        )}
+                </Flex>
+              )}
 
-      <Flex
-        w={"60vw"}
-        alignItems={"center"}
-        bg={"#00468C"}
-        p={"10px"}
-        borderRadius={"10px"}
-        color={"#fff"}
-        mt={"15px"}
-      >
-        <Text minW={"180px"} fontSize={"17px"} fontWeight={"bold"} me={"10px"}>
-          Tipo de solucion
-        </Text>
-        <Select
-          color={"#252525"}
-          bg={"#FFF"}
-          name="tipoSolucion"
-          value={
-            insertTipoProblema.tipoSolucion ? insertTipoProblema.tipoSolucion[0] : null
-          }
-          onChange={handleChange}
-        >
-          <option value={null}>Sin tipo de solucion</option>
-          {config.tiposDeSoluciones.map((tp, i) => (
-            <option value={tp} key={i}>
-              {tp}
-            </option>
-          ))}
-        </Select>
-        <Flex
-          bg={"#FFF"}
-          borderRadius={"50%"}
-          minW={"30px"}
-          minH={"30px"}
-          ms={"10px"}
-          alignItems={"center"}
-          justifyContent={"center"}
-          cursor={"pointer"}
-          _hover={{ opacity: 0.8 }}
-        >
-          <Text
-            fontWeight={"bold"}
-            fontSize={"20px"}
-            color={"#00468C"}
-            mt={"-3px"}
-            onClick={sendNuevoTipoDeSolucion}
-          >
-            +
-          </Text>
-        </Flex>
-      </Flex>
-      <Button colorScheme="blue" mt={'10px'} size={'sm'} onClick={handleSave}>Guardar</Button>
+            <Flex
+              w={"60vw"}
+              alignItems={"center"}
+              bg={"#00468C"}
+              p={"10px"}
+              borderRadius={"10px"}
+              color={"#fff"}
+              mt={"15px"}
+            >
+              <Text minW={"180px"} fontSize={"17px"} fontWeight={"bold"} me={"10px"}>
+                Tipo de solucion
+              </Text>
+              <Select
+                color={"#252525"}
+                bg={"#FFF"}
+                name="tipoSolucion"
+                value={
+                  insertTipoProblema.tipoSolucion ? insertTipoProblema.tipoSolucion[0] : null
+                }
+                onChange={handleChange}
+              >
+                <option value={null}>Sin tipo de solucion</option>
+                {config.tiposDeSoluciones.map((tp, i) => (
+                  <option value={tp} key={i}>
+                    {tp}
+                  </option>
+                ))}
+              </Select>
+              <Flex
+                bg={"#FFF"}
+                borderRadius={"50%"}
+                minW={"30px"}
+                minH={"30px"}
+                ms={"10px"}
+                alignItems={"center"}
+                justifyContent={"center"}
+                cursor={"pointer"}
+                _hover={{ opacity: 0.8 }}
+              >
+                <Text
+                  fontWeight={"bold"}
+                  fontSize={"20px"}
+                  color={"#00468C"}
+                  mt={"-3px"}
+                  onClick={sendNuevoTipoDeSolucion}
+                >
+                  +
+                </Text>
+              </Flex>
+            </Flex>
+            <Button colorScheme="blue" mt={'10px'} size={'sm'} onClick={handleSave}>Guardar</Button>
           </Flex>
         </Flex>
       }
@@ -226,31 +221,6 @@ const ServiciosTable = ({
             </Tr>
           </Thead>
           <Tbody>
-            {newEquipo && (
-              <Tr>
-                {columns.map((key, i) => (
-                  <Td key={key}>
-                    <Flex
-                      justifyContent={"center"}
-                      alignItems="center"
-                      w={"100%"}
-                      h={"100%"}
-                    >
-                      <Input
-                        p={0}
-                        w={"100%"}
-                        h={"100%"}
-                        borderRadius={"1px"}
-                        onChange={handleChangeData}
-                        name={key}
-                        value={newEquipoData[key]}
-                        bg={"#fff"}
-                      ></Input>
-                    </Flex>
-                  </Td>
-                ))}
-              </Tr>
-            )}
 
             {fields
               .map((data, i) => {
@@ -260,13 +230,10 @@ const ServiciosTable = ({
                       {columns.map((key) => (
                         <Td
                           key={key}
-                          onDoubleClick={() => {
-                            //setUpdateRow({ data: data, keyData: key });
-                          }}
                         >
-                          <Flex justifyContent={"start"} alignItems="center" maxW={'400px'} 
-                          overflowX={key === 'solucion' || key === 'observaciones' && 'scroll'} 
-                          overflowY={'hidden'}
+                          <Flex justifyContent={"start"} alignItems="center" maxW={'400px'}
+                            overflowX={key === 'solucion' || key === 'observaciones' && 'scroll'}
+                            overflowY={'hidden'}
                             css={{
                               scrollbarWidth: 'thin',
                               '&::-webkit-scrollbar': {
@@ -296,52 +263,55 @@ const ServiciosTable = ({
                                   {data[key]}
                                 </Text>
                                 :
-                              key === 'tipoProblema' ?
-                              Array.isArray(data[key]) && data[key].map((d,i)=>(
-                                <Text
-                                key={d}
-                                bg={i%2==0?'#00468C':'#2255F8'}
-                                px={'10px'}
-                                borderRadius={'10px'}
-                                color={'#fff'}
-                                ms={'1px'}
-                                >
-                                  {d}
-                                </Text>
+                                key === 'tipoProblema' ?
+                                  Array.isArray(data[key]) && data[key].map((d, i) => (
+                                    <Text
+                                      key={d}
+                                      bg={i % 2 == 0 ? '#00468C' : '#2255F8'}
+                                      px={'10px'}
+                                      borderRadius={'10px'}
+                                      color={'#fff'}
+                                      ms={'1px'}
+                                    >
+                                      {d}
+                                    </Text>
                                   ))
-                                :
-                              key === 'tipoSolucion' ?
-                              <>
-                              {
-                              Array.isArray(data[key]) && data[key].map((d,i)=>(
-                                <Text
-                                key={d}
-                                bg={i%2==0?'#00468C':'#2255F8'}
-                                px={'10px'}
-                                borderRadius={'10px'}
-                                color={'#fff'}
-                                ms={'1px'}
-                                >
-                                  {d}
-                                </Text>
-                                  ))
-                                }
-                                <Text
-                                bg={'#00468C'}
-                                px={'10px'}
-                                borderRadius={'10px'}
-                                color={'#fff'}
-                                ms={'1px'}
-                                cursor={'pointer'}
-                                onClick={()=>setInsertTipoProblema(data)}
-                                >
-                                  {"+"}
-                                </Text>
-                                  </>
-                                :
-                                data[key]
-                                  ? data[key]
-                                  : "-"}
+                                  :
+                                  key === 'tipoSolucion' ?
+                                    <>
+                                      {
+                                        Array.isArray(data[key]) && data[key].map((d, i) => (
+                                          <Text
+                                            key={d}
+                                            bg={i % 2 == 0 ? '#00468C' : '#2255F8'}
+                                            px={'10px'}
+                                            borderRadius={'10px'}
+                                            color={'#fff'}
+                                            ms={'1px'}
+                                          >
+                                            {d}
+                                          </Text>
+                                        ))
+                                      }
+                                      <Text
+                                        bg={'#00468C'}
+                                        px={'10px'}
+                                        borderRadius={'10px'}
+                                        color={'#fff'}
+                                        ms={'1px'}
+                                        cursor={'pointer'}
+                                        onClick={() => setInsertTipoProblema(data)}
+                                      >
+                                        {"+"}
+                                      </Text>
+                                    </>
+                                    :
+                                    key === 'equipo' ?
+                                      data[key] ? data[key].nombre || data[key].nro_set : '-'
+                                      :
+                                      data[key]
+                                        ? data[key]
+                                        : "-"}
                           </Flex>
                         </Td>
                       ))}

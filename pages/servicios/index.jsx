@@ -9,8 +9,7 @@ import Informe from './Informe'
 
 const ViewServicios = () => {
   const [filter, setFilter] = useState({ nombre: "" });
-  const [newEquipo, setNewEquipo] = useState(false);
-  const [servicios, setEquipos] = useState([]);
+  const [servicios, setServicios] = useState([]);
   const [serviciosFilter, setServiciosFilter] = useState([]);
   const [config, setConfig] = useState([]);
   const [updateRow, setUpdateRow] = useState(false);
@@ -86,7 +85,7 @@ const ViewServicios = () => {
 
   const get = () => {
     axios.get(`/api/servicios`).then((res) => {
-      setEquipos(res.data);
+      setServicios(res.data);
     });
     axios.get(`/api/getconfig`).then((res) => {
       setConfig(res.data);
@@ -183,33 +182,9 @@ const ViewServicios = () => {
                   ms={"25px"}
                   zIndex={"1000"}
                 >
-                  <Flex>
-                    <Text fontWeight={"bold"} fontSize={"14px"}>
-                      Rango de fecha
-                    </Text>
-                    <Flex
-                      borderRadius={"5px"}
-                      bg={"red"}
-                      minW={"35px"}
-                      minH={"14px"}
-                      ms={"5px"}
-                      color={"#fff"}
-                      fontSize={"10px"}
-                      justifyContent={"center"}
-                      align={"center"}
-                      cursor={"pointer"}
-                      _hover={{ opacity: 0.8 }}
-                      onClick={() =>
-                        setFilter((state) => ({
-                          ...state,
-                          fechaDesde: null,
-                          fechaHasta: null,
-                        }))
-                      }
-                    >
-                      borrar
-                    </Flex>
-                  </Flex>
+                  <Text fontWeight={"bold"} fontSize={"14px"}>
+                    Rango de fecha
+                  </Text>
                   <Flex alignItems={"center"}>
                     <Text fontSize={"13px"} w={"40px"}>
                       Desde:{" "}
@@ -346,7 +321,6 @@ const ViewServicios = () => {
                   tipo={1}
                   pageSize={pageSize}
                   page={page}
-                  newEquipo={newEquipo}
                   handleChangeData={handleChangeData}
                   newEquipoData={newEquipoData}
                   filter={filter}
