@@ -4,9 +4,7 @@ import axios from "axios";
 
 const UpdateRowEquipo = ({ data, keyData, setUpdateRow, getEquipos }) => {
   const [newData, setNewData] = useState(data[keyData]);
-  const [administracionesList, setAdministracionesList] = useState([]);
-  const [sucursalesList, setSucursalesList] = useState([]);
-  const [localidadesList, setLocalidadesList] = useState([]);
+  const [config, setConfig] = useState();
 
   const handleGuardar = () => {
     const collection = data.coleccion
@@ -29,41 +27,20 @@ const UpdateRowEquipo = ({ data, keyData, setUpdateRow, getEquipos }) => {
       keyData === "localidad" ||
       keyData === "administracion"
     ) {
-      setNewData({
-        administracion: data.administracion,
-        sucursal: data.sucursal,
-        localidad: data.localidad,
-      });
-      axios.get("/api/administraciones").then(({ data }) => {
-        setAdministracionesList(data);
+      axios.get(`/api/getconfig`).then((res) => {
+        setConfig(res.data);
+        console.log('config:', res.data)
       });
     }
     if (keyData === "fecha_cambio_bateria" || keyData === "ultima_visita") setUpdateRow(false);
   }, []);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setNewData({ ...newData, [name]: value });
-
-    if (name === "administracion") {
-      axios.get("/api/sucursales/" + value).then(({ data }) => {
-        setSucursalesList(data);
-      });
-      setLocalidadesList([]);
-    }
-
-    if (name === "sucursal")
-      axios.get("/api/localidades/" + e.target.value).then(({ data }) => {
-        setLocalidadesList(data);
-      });
-  };
-
   if (keyData === "fecha_cambio_bateria" || keyData === "ultima_visita") return <></>;
 
   if (
-    keyData === "sucursal" ||
-    keyData === "localidad" ||
-    keyData === "administracion"
+    (keyData === "sucursal" ||
+      keyData === "localidad" ||
+      keyData === "administracion") && config
   )
     return (
       <Flex
@@ -79,7 +56,7 @@ const UpdateRowEquipo = ({ data, keyData, setUpdateRow, getEquipos }) => {
       >
         <Flex
           w={"400px"}
-          h="250px"
+          h="200px"
           bg={"#fff"}
           borderRadius="10px"
           flexDir={"column"}
@@ -106,77 +83,46 @@ const UpdateRowEquipo = ({ data, keyData, setUpdateRow, getEquipos }) => {
             justifyContent={"space-between"}
           >
             <Text w={"150px"} m="10px" fontWeight={"600"} fontSize="13px">
-              Administracion:
+              {keyData === "administracion"
+                ? 'Administracion:'
+                : keyData === "sucursal"
+                  ? 'Sucursal:'
+                  : 'Localidad: '}
             </Text>
             <Select
               name={"administracion"}
-              onChange={handleChange}
-              value={newData.administracion}
+              value={newData}
+              onChange={(e) => setNewData(e.target.value)}
               size={"sm"}
+              my={'22px'}
             >
               <option value={"-1"}>...</option>
-              {administracionesList.map((elem, i) => (
-                <option value={elem.id_administracion} key={i}>
-                  {elem.nombre}
-                </option>
-              ))}
+              {keyData === "administracion"
+                ? config.administraciones.map((elem, i) => (
+                  <option value={elem} key={i}>
+                    {elem}
+                  </option>
+                ))
+                : keyData === "sucursal"
+                  ? config.sucursales.map((elem, i) => (
+                    <option value={elem} key={i}>
+                      {elem}
+                    </option>
+                  ))
+                  : keyData === "localidad" && config.localidades.map((elem, i) => (
+                    <option value={elem} key={i}>
+                      {elem}
+                    </option>
+                  ))}
             </Select>
           </Flex>
-
-          <Flex
-            w={"100%"}
-            bg={"white"}
-            alignItems="center"
-            justifyContent={"space-between"}
-          >
-            <Text w={"150px"} m="10px" fontWeight={"600"} fontSize="13px">
-              sucursal:
-            </Text>
-            <Select
-              name={"sucursal"}
-              onChange={handleChange}
-              value={newData.sucursal}
-              size={"sm"}
-            >
-              <option value={"-1"}>...</option>
-              {sucursalesList.map((elem, i) => (
-                <option value={elem.id_sucursal} key={i}>
-                  {elem.nombre}
-                </option>
-              ))}
-            </Select>
-          </Flex>
-
-          <Flex
-            w={"100%"}
-            bg={"white"}
-            alignItems="center"
-            justifyContent={"space-between"}
-          >
-            <Text w={"150px"} m="10px" fontWeight={"600"} fontSize="13px">
-              localidad:
-            </Text>
-            <Select
-              name={"localidad"}
-              onChange={handleChange}
-              value={newData.localidad}
-              size={"sm"}
-            >
-              <option value={"-1"}>...</option>
-              {localidadesList.map((elem, i) => (
-                <option value={elem.id_localidad} key={i}>
-                  {elem.nombre}
-                </option>
-              ))}
-            </Select>
-          </Flex>
-
           <Flex>
             <Button
               my={"5px"}
               mx="15px"
               colorScheme={"orange"}
               onClick={() => setUpdateRow(false)}
+              size={'sm'}
             >
               Cancelar
             </Button>
@@ -188,6 +134,7 @@ const UpdateRowEquipo = ({ data, keyData, setUpdateRow, getEquipos }) => {
               disabled={
                 newData.sucursal && newData.localidad && newData.administracion
               }
+              size={'sm'}
             >
               Guardar
             </Button>
@@ -241,6 +188,7 @@ const UpdateRowEquipo = ({ data, keyData, setUpdateRow, getEquipos }) => {
             mx="15px"
             colorScheme={"orange"}
             onClick={() => setUpdateRow(false)}
+            size={'sm'}
           >
             Cancelar
           </Button>
@@ -249,6 +197,7 @@ const UpdateRowEquipo = ({ data, keyData, setUpdateRow, getEquipos }) => {
             mx="15px"
             colorScheme={"blue"}
             onClick={handleGuardar}
+            size={'sm'}
           >
             Guardar
           </Button>
