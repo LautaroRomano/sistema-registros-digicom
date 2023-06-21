@@ -7,12 +7,15 @@ import {
   Td,
   TableContainer,
   Input,
+  Text,
 } from "@chakra-ui/react";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import { Flex } from "@chakra-ui/react";
 import { useState } from "react";
 import ViewUltimaVisita from "../ViewUltimaVisita";
 import { useEffect } from "react";
+import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
+import Link from "next/link";
 
 const EquiposTable = ({
   equiposList,
@@ -98,6 +101,7 @@ const EquiposTable = ({
                 return flag;
               })
               .map((data, i) => {
+                const planillaLink = `/planilla/${data._id}/${data.coleccion}`
                 if (i >= page * pageSize && i <= page * pageSize + pageSize)
                   return (
                     <Tr key={i}>
@@ -109,13 +113,23 @@ const EquiposTable = ({
                           }}
                         >
                           <Flex justifyContent={"center"} alignItems="center">
-                            {key === "ultima_visita"
-                              ? data[key] && Array.isArray(data[key])
-                                ? data[key][0]
-                                : "-"
-                              : data[key]
-                              ? data[key]
-                              : "-"}
+                            {key === "ultima_visita" ? (
+                              data[key] && Array.isArray(data[key]) ? (
+                                data[key][0]
+                              ) : (
+                                "-"
+                              )
+                            ) : key === "planilla" ? (
+                              <Link  href={planillaLink} target="_blank">
+                                <Text color={"#0F3A64"} _hover={{bg:'#0F3A6433'}} borderRadius={'50%'} p={'5px'}>
+                                  <LibraryBooksIcon />
+                                </Text>
+                              </Link>
+                            ) : data[key] ? (
+                              data[key]
+                            ) : (
+                              "-"
+                            )}
                             {key === "ultima_visita" && (
                               <Flex
                                 w={"25px"}

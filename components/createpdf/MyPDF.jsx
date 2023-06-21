@@ -24,6 +24,7 @@ const styles = StyleSheet.create({
   },
   dataBox: {
     flexDirection: "row",
+    flexWrap: 'wrap',
     fontSize: 9,
     width: "100%",
   },
@@ -33,28 +34,19 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   dataLabel: {
-    fontWeight: "800",
-    marginRight: 10,
+    marginRight: 4,
+    fontSize: 10,
+    color:'#000'
   },
-  dataValue: {},
+  dataValue: {
+    color:'#363636'
+  },
 });
 
-// Datos para el PDF
-const data = {
-  id: "1",
-  set: " T_500.SET",
-  numero: " 383801189-72088",
-  idModbus: "180",
-  placaRadioModem: " Modificada",
-  programaRadioModem: " RM2RMX22.HEX",
-  protegido: " SI",
-  capacidad: "800",
-  numeroCaja: " 85",
-  nroSet: " XF",
-};
-
 // Componente que genera el PDF
-const PDFGenerator = () => {
+const PDFGenerator = ({ data,servicios }) => {
+  console.log('servicios: ',servicios)
+  const labels = Object.keys(data);
   return (
     <Document>
       <Page size="A4" style={styles.page}>
@@ -62,62 +54,14 @@ const PDFGenerator = () => {
           <View style={styles.body}>
             <Text style={styles.title}>Información de los datos</Text>
             <View style={styles.dataBox}>
-              <View style={styles.dataContainer}>
-                <Text style={styles.dataLabel}>SECCIONAMIENTO:</Text>
-                <Text style={styles.dataValue}>S/N</Text>
-              </View>
-              <View style={styles.dataContainer}>
-                <Text style={styles.dataLabel}>DISTRIBUIDOR:</Text>
-                <Text style={styles.dataValue}>BELGRANO</Text>
-              </View>
-              <View style={styles.dataContainer}>
-                <Text style={styles.dataLabel}>PIQUETE: </Text>
-                <Text style={styles.dataValue}>S/N</Text>
-              </View>
-              <View style={styles.dataContainer}>
-                <Text style={styles.dataLabel}>NC: </Text>
-                <Text style={styles.dataValue}>Rec Holmberg</Text>
-              </View>
-            </View>
-            <View style={styles.dataContainer}>
-              <Text style={styles.dataLabel}>ID:</Text>
-              <Text style={styles.dataValue}>{data.id}</Text>
-            </View>
-            <View style={styles.dataContainer}>
-              <Text style={styles.dataLabel}>SET:</Text>
-              <Text style={styles.dataValue}>{data.set}</Text>
-            </View>
-            <View style={styles.dataContainer}>
-              <Text style={styles.dataLabel}>Número:</Text>
-              <Text style={styles.dataValue}>{data.numero}</Text>
-            </View>
-            <View style={styles.dataContainer}>
-              <Text style={styles.dataLabel}>ID MODBUS:</Text>
-              <Text style={styles.dataValue}>{data.idModbus}</Text>
-            </View>
-            <View style={styles.dataContainer}>
-              <Text style={styles.dataLabel}>PLACA RADIO MODEM:</Text>
-              <Text style={styles.dataValue}>{data.placaRadioModem}</Text>
-            </View>
-            <View style={styles.dataContainer}>
-              <Text style={styles.dataLabel}>PROGRAMA RADIO MODEM:</Text>
-              <Text style={styles.dataValue}>{data.programaRadioModem}</Text>
-            </View>
-            <View style={styles.dataContainer}>
-              <Text style={styles.dataLabel}>PROTEGIDO:</Text>
-              <Text style={styles.dataValue}>{data.protegido}</Text>
-            </View>
-            <View style={styles.dataContainer}>
-              <Text style={styles.dataLabel}>CAPACIDAD:</Text>
-              <Text style={styles.dataValue}>{data.capacidad}</Text>
-            </View>
-            <View style={styles.dataContainer}>
-              <Text style={styles.dataLabel}>NÚMERO CAJA:</Text>
-              <Text style={styles.dataValue}>{data.numeroCaja}</Text>
-            </View>
-            <View style={styles.dataContainer}>
-              <Text style={styles.dataLabel}>NRO SET:</Text>
-              <Text style={styles.dataValue}>{data.nroSet}</Text>
+              {labels.map((key, i) => {
+                return (
+                  <View style={styles.dataContainer} key={i}>
+                    <Text style={styles.dataLabel}>{key}:</Text>
+                    <Text style={styles.dataValue}>{data[key]}</Text>
+                  </View>
+                );
+              })}
             </View>
           </View>
         </View>

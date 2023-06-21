@@ -1,10 +1,9 @@
 import MyPDF from "../../components/createpdf/MyPDF";
 import { PDFViewer } from "@react-pdf/renderer";
-import { Flex } from "@chakra-ui/react";
-const PDF = () => {
+const PDF = ({data,servicios}) => {
   return (
     <PDFViewer style={{ width: "100vw", height: "100vh" }}>
-      <MyPDF></MyPDF>
+      <MyPDF data={data} servicios={servicios}></MyPDF>
     </PDFViewer>
   );
 };
